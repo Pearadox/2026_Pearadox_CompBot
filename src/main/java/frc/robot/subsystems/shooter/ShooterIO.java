@@ -11,16 +11,23 @@ public interface ShooterIO {
 
     @AutoLog
     public static class ShooterIOInputs {
-        public double rollerVelocity = 0.0;
+        public double shooterVelocity = 0.0;
+        public double shooterVoltage = 0.0;
 
-        public double supplyCurrent = 0.0;
-        public double statorCurrent = 0.0;
+        public double shooterSupplyCurrent = 0.0;
+        public double shooterStatorCurrent = 0.0;
 
-        public double rollerVoltage = 0.0;
+        public double transportVelocity = 0.0;
+        public double transportVoltage = 0.0;
+
+        public double transportSupplyCurrent = 0.0;
+        public double transportStatorCurrent = 0.0;
     }
 
     public default void updateInputs(ShooterIOInputsAutoLogged inputs) {}
 
-    public default void runVoltage(double voltage) {}
+    public default void runShooterVoltage(double voltage) {}
+
+    public default void runTransportVoltage(double voltage) {}
 
 }

@@ -30,11 +30,14 @@ public class Shooter extends SubsystemBase {
         Logger.processInputs("Shooter", inputs);
 
         SmarterDashboard.putString("Shooter/ShooterState", shooterState.toString());
-        SmarterDashboard.putNumber("Shooter/VoltageOut", inputs.rollerVoltage);
-        SmarterDashboard.putNumber("Shooter/Velocity", inputs.rollerVelocity);
+        SmarterDashboard.putNumber("Shooter/VoltageOut", inputs.shooterVoltage);
+        SmarterDashboard.putNumber("Shooter/Velocity", inputs.shooterVelocity);
         SmarterDashboard.putNumber("Shooter/Voltage-Adjust", shooterState.getAdjust());
 
-        io.runVoltage(shooterState.getVoltage());
+        SmarterDashboard.putNumber("Shooter/Transport/VoltageOut", inputs.transportVoltage);
+        SmarterDashboard.putNumber("Shooter/Transport/Velocity", inputs.transportVelocity);
+
+        io.runShooterVoltage(shooterState.getVelocity());
     }
 
     public void setManual() {
@@ -53,12 +56,24 @@ public class Shooter extends SubsystemBase {
         shooterState = ShooterState.OFF;
     }
 
-    public void adjustSpeed(double adjustBy) {
-        shooterState.adjustVoltage(adjustBy);
+    // public void adjustVoltage(double adjustBy) {
+    //     shooterState.adjustVoltage(adjustBy);
+    // }
+
+    public void adjustVelociy(double adjustBy) {
+        shooterState.adjustVelocity(adjustBy);
     }
 
-    public void resetAdjust() {
+    public void resetVoltageAdjust() {
         shooterState.resetAdjust();
+    }
+
+    public void startShooting() {
+        io.runTransportVoltage(ShooterConstants.TRANSPORT_VOLTAGE);
+    }
+
+    public void stopShooting() {
+        io.runTransportVoltage(0.0);
     }
 
 }

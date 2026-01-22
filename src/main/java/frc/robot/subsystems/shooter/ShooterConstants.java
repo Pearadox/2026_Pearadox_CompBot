@@ -12,23 +12,58 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 /** Add your docs here. */
 public class ShooterConstants {
 
+    // public static enum ShooterState {
+    //     OFF(0.0),
+    //     MANUAL(5.0),
+    //     AUTO_SCORE(0.0),
+    //     AUTO_PASS(0.0);
+
+    //     private double defaultVoltage;
+    //     private double adjust;
+
+    //     private ShooterState(double voltage) {
+    //         defaultVoltage = voltage;
+    //         adjust = 0;
+    //     }
+
+    //     public double getVoltage() {
+    //         if (this == OFF) return 0.0;
+    //         else if (this == MANUAL) return defaultVoltage + adjust;
+    //         else {
+    //             return -1; // TODO: get aiming to work?
+    //         }
+    //     }
+
+    //     public double getAdjust() {
+    //         return adjust;
+    //     }
+
+    //     public void adjustVoltage(double adjustBy) {
+    //         adjust += adjustBy;
+    //     }
+
+    //     public void resetAdjust() {
+    //         adjust = 0;
+    //     }
+    // }
+
     public static enum ShooterState {
         OFF(0.0),
-        MANUAL(5.0),
+        MANUAL(1000.0),
         AUTO_SCORE(0.0),
         AUTO_PASS(0.0);
 
-        private double defaultVoltage;
+        private double defaultVelocity;
         private double adjust;
 
-        private ShooterState(double voltage) {
-            defaultVoltage = voltage;
+        private ShooterState(double velocity) {
+            defaultVelocity = velocity;
             adjust = 0;
         }
 
-        public double getVoltage() {
+        public double getVelocity() {
             if (this == OFF) return 0.0;
-            else if (this == MANUAL) return defaultVoltage + adjust;
+            else if (this == MANUAL) return defaultVelocity + adjust;
             else {
                 return -1; // TODO: get aiming to work?
             }
@@ -38,60 +73,52 @@ public class ShooterConstants {
             return adjust;
         }
 
-        public void adjustVoltage(double adjustBy) {
+        public void adjustVelocity(double adjustBy) {
             adjust += adjustBy;
         }
 
         public void resetAdjust() {
             adjust = 0;
         }
-
-        public String toString() {
-            switch (this) {
-                case OFF : return "OFF";
-                case MANUAL : return "MANUAL";
-                case AUTO_SCORE : return "AUTO_SCORE";
-                case AUTO_PASS : return "AUTO_PASSING";
-                default : return null;
-            }
-        }
     }
 
-    public static final int ROLLER_1_CAN_ID = 21;
+    public static final int SHOOTER_1_CAN_ID = 21;
+    public static final int SHOOTER_2_CAN_ID = 22;
+    public static final NeutralModeValue SHOOTER_NEUTRAL_MODE = NeutralModeValue.Coast;
+    public static final int SHOOTER_CURRENT_LIMIT = 20;
+    public static final int SHOOTER_GEARING = 0;
+    
+    public static final int TRANSPORT_CAN_ID = -1;
+    public static final int TRANSPORT_CURRENT_LIMIT = 20;
+    public static final NeutralModeValue TRANPORT_NEUTRAL_MODE = NeutralModeValue.Brake;
+    public static final boolean TRANSPORT_INVERTED = false; // clockwise positive
 
-    public static final int ROLLER_2_CAN_ID = 22;
-
-    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Coast;
-
-    public static final int CURRENT_LIMIT = 20;
-
-    public static final boolean INVERTED = true;
-
-    public static final int GEARING = 0;
+    public static final double TRANSPORT_VOLTAGE = 1.0;
 
     public static final TalonFXConfiguration CONFIG = new TalonFXConfiguration();
     public static final Slot0Configs SLOT0_CONFIGS = CONFIG.Slot0;
 
-    public static final TalonFXConfiguration shooterConfig() {
+    public static final TalonFXConfiguration rollerConfig() {
         CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-        CONFIG.CurrentLimits.StatorCurrentLimit = CURRENT_LIMIT;
+        CONFIG.CurrentLimits.StatorCurrentLimit = SHOOTER_CURRENT_LIMIT;
 
         CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-        CONFIG.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;
+        CONFIG.CurrentLimits.SupplyCurrentLimit = SHOOTER_CURRENT_LIMIT;
 
         CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         return CONFIG;
-    } // TODO: maybe update PearadoxTalonFX with a constructor that takes in ID and a TalonFXConfiguration
+    }
 
-    public static final Slot0Configs get_shooter_config() {
+    public static final Slot0Configs shooterSlot0config() {
         SLOT0_CONFIGS.kP = 0.1;
         SLOT0_CONFIGS.kI = 0.0;
         SLOT0_CONFIGS.kD = 0.0;
+        SLOT0_CONFIGS.kV = 0.0; // TODO: tune
 
         return SLOT0_CONFIGS;
-    }
+    } // do we need this even?
 
 }

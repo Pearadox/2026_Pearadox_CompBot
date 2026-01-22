@@ -84,12 +84,17 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        opController.leftBumper().onTrue(new InstantCommand(() -> shooter.startShooting()));
+        opController.leftBumper().onFalse(new InstantCommand(() -> shooter.stopShooting()));
+
         opController.a().onTrue(new InstantCommand(() -> shooter.setManual()));
         opController.b().onTrue(new InstantCommand(() -> shooter.setOff()));
 
-        opController.povUp().whileTrue(new InstantCommand(() -> shooter.adjustSpeed(0.1)).withTimeout(0.1));
-        opController.povDown().whileTrue(new InstantCommand(() -> shooter.adjustSpeed(-0.1)).withTimeout(0.1));
-        opController.povLeft().onTrue(new InstantCommand(() -> shooter.resetAdjust()));
+        opController.povUp().whileTrue(new InstantCommand(() -> shooter.adjustVelociy(25.0)).withTimeout(0.1));
+        opController.povDown().whileTrue(new InstantCommand(() -> shooter.adjustVelociy(-25.0)).withTimeout(0.1));
+        // opController.povUp().whileTrue(new InstantCommand(() -> shooter.adjustVoltage(0.1)).withTimeout(0.1));
+        // opController.povDown().whileTrue(new InstantCommand(() -> shooter.adjustVoltage(-0.1)).withTimeout(0.1));
+        opController.povLeft().onTrue(new InstantCommand(() -> shooter.resetVoltageAdjust()));
     }
 
     public Command getAutonomousCommand() {

@@ -7,6 +7,7 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -16,41 +17,61 @@ import frc.lib.drivers.PearadoxTalonFX;
 /** Add your docs here. */
 public class ShooterIOReal implements ShooterIO {
 
-    private PearadoxTalonFX roller1;
-    private PearadoxTalonFX roller2;
+    private PearadoxTalonFX shooter1Leader;
+    private PearadoxTalonFX shooter2Follower;
 
-    private TalonFXConfiguration rollerConfigs;
+    private TalonFXConfiguration shooterConfigs;
+
+    private PearadoxTalonFX transport;
 
     public ShooterIOReal() {
-        roller1 = new PearadoxTalonFX(
-            ShooterConstants.ROLLER_1_CAN_ID,
-            ShooterConstants.NEUTRAL_MODE,
-            ShooterConstants.CURRENT_LIMIT,
-            ShooterConstants.INVERTED);
-        roller2 = new PearadoxTalonFX(
-            ShooterConstants.ROLLER_2_CAN_ID,
-            ShooterConstants.NEUTRAL_MODE,
-            ShooterConstants.CURRENT_LIMIT,
-            ShooterConstants.INVERTED);
+        shooter1Leader = new PearadoxTalonFX(
+            ShooterConstants.SHOOTER_1_CAN_ID,
+            ShooterConstants.rollerConfig()
+        );
+        shooter2Follower = new PearadoxTalonFX(
+            ShooterConstants.SHOOTER_2_CAN_ID,
+            ShooterConstants.rollerConfig()
+        );
 
-        
+        shooterConfigs = new TalonFXConfiguration();
+        shooterConfigs.Slot0 = ShooterConstants.shooterSlot0config();
 
-        rollerConfigs = new TalonFXConfiguration();
-        rollerConfigs.Slot0 = ShooterConstants.get_shooter_config();
+
+        transport = new PearadoxTalonFX(
+            ShooterConstants.TRANSPORT_CAN_ID,
+            ShooterConstants.TRANPORT_NEUTRAL_MODE,
+            ShooterConstants.TRANSPORT_CURRENT_LIMIT,
+            ShooterConstants.TRANSPORT_INVERTED
+        );
     }
 
     public void updateInputs(ShooterIOInputsAutoLogged inputs) {
-        inputs.rollerVelocity = roller1.getVelocity().getValueAsDouble();
+        inputs.shooterVelocity = shooter1Leader.getVelocity().getValueAsDouble();
+        inputs.shooterVoltage = shooter1Leader.getMotorVoltage().getValueAsDouble();
 
-        inputs.statorCurrent = roller1.getStatorCurrent().getValueAsDouble();
-        inputs.supplyCurrent = roller1.getSupplyCurrent().getValueAsDouble();
+        inputs.shooterStatorCurrent = shooter1Leader.getStatorCurrent().getValueAsDouble();
+        inputs.shooterSupplyCurrent = shooter1Leader.getSupplyCurrent().getValueAsDouble();
 
-        inputs.rollerVoltage = roller1.getMotorVoltage().getValueAsDouble();
+        inputs.transportVelocity = transport.getVelocity().getValueAsDouble();
+        inputs.transportVoltage = transport.getMotorVoltage().getValueAsDouble();
+
+        inputs.transportStatorCurrent = transport.getStatorCurrent().getValueAsDouble();
+        inputs.transportSupplyCurrent = transport.getSupplyCurrent().getValueAsDouble();
     }
 
-    public void runVoltage(double voltage) {
-        roller1.setControl(new VoltageOut(voltage));
-        roller2.setControl(new Follower(ShooterConstants.ROLLER_1_CAN_ID, MotorAlignmentValue.Opposed));
+    public void runShooterVoltage(double voltage) {
+        shooter1Leader.setControl(new VoltageOut(voltage));
+        shooter2Follower.setControl(new Follower(ShooterConstants.SHOOTER_1_CAN_ID, MotorAlignmentValue.Opposed));
+    }
+    
+    public void runShooterVelocity(double velocity) {
+        shooter1Leader.setControl(new VelocityVoltage(velocity));
+        shooter2Follower.setControl(new Follower(ShooterConstants.SHOOTER_1_CAN_ID, MotorAlignmentValue.Opposed));
+    }
+
+    public void runTransportVoltage(double voltage) {
+        transport.setVoltage(voltage);
     }
 
 }
