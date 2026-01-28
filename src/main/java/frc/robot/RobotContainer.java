@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.RotateToBump;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -28,6 +27,7 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.util.DriveHelpers;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -169,7 +169,15 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
+    // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
+    
+    drivercontroller.y()
+                    .whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                            drive,
+                            () -> -drivercontroller.getLeftY(),
+                            () -> -drivercontroller.getLeftX(),
+                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
   }
 
   /**
