@@ -45,6 +45,7 @@ public class IntakeIOSim implements IntakeIO{
 
         public void updateInputs(IntakeIOInputsAutoLogged inputs) {
             // update sim
+            // intake pivot sim still needs to be added
             updateSim();
             inputs.rollerVoltage = rollerMotor.getMotorVoltage().getValueAsDouble();
             inputs.rollerVelocity = rollerMotor.getVelocity().getValueAsDouble();

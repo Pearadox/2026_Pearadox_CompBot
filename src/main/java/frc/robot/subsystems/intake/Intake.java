@@ -34,6 +34,7 @@ public class Intake extends SubsystemBase{
         io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + adjust);
         SmarterDashboard.putNumber("Intake/VoltageOut", inputs.rollerVoltage);
 
+        // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!s
         // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage = loggedIntakeRollerVoltage.get(); }
 
         // if (intakeState == IntakeState.INTAKING) {
