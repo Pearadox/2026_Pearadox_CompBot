@@ -10,6 +10,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class DriveHelpers {
+
+    /** 
+     * rotates the robot 45 degrees given current pose
+     * @param robotPoseSupplier
+     * @return new Rotation2d
+     */
      public static Rotation2d findClosestCorner(Supplier<Pose2d> robotPoseSupplier) {
         double currentDegrees = robotPoseSupplier.get().getRotation().getDegrees();
         double[] robotCornersInDegrees = {45, 45 + 90, 45 + 180, 45 + 270};
