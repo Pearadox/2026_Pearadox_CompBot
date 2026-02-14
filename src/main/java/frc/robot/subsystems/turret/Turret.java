@@ -26,15 +26,15 @@ public class Turret extends SubsystemBase {
     }
 
     public void followTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
-        double setpointRads = wrap(robotCentricAngleSupplier.get().getRadians());
-        double setpointRots = setpointRads / TurretConstants.TURRET_P_COEFFICIENT;
+        double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
+        double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
-        double ffVolts = getFF(setpointRads);
+        double ffVolts = getFF(setpointTurretRads);
 
-        io.runPosition(setpointRots, ffVolts);
+        io.runPosition(setpointMotorRots, ffVolts);
 
-        Logger.recordOutput("Turret/Setpoint Degs", Units.radiansToDegrees(setpointRads));
-        Logger.recordOutput("Turret/Setpoint Rots", setpointRots);
+        Logger.recordOutput("Turret/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
+        Logger.recordOutput("Turret/Setpoint Motor Rots", setpointMotorRots);
         Logger.recordOutput("Turret/FF Volts", ffVolts);
     }
 
@@ -54,20 +54,20 @@ public class Turret extends SubsystemBase {
         double current = getTurretAngleRads();
         double[] candidates = new double[] {target - 2 * Math.PI, target, target + 2 * Math.PI};
 
-        double best = target;
+        double bestAngle = target;
         double bestDist = Double.POSITIVE_INFINITY;
 
         for (double c : candidates) {
             if (c > TurretConstants.TURRET_SAFE_MIN && c < TurretConstants.TURRET_SAFE_MAX) {
                 double dist = Math.abs(current - c);
                 if (dist < bestDist) {
-                    best = c;
+                    bestAngle = c;
                     bestDist = dist;
                 }
             }
         }
 
-        return best;
+        return bestAngle;
     }
 
     private double getFF(double setpointRads) {

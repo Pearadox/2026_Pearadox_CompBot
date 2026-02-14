@@ -60,6 +60,8 @@ public final class TurretConstants {
 
         // only apply feedforward if the turret is within 45 degrees of its setpoint
         public static final double FF_ERROR_THRESHOLD = Units.degreesToRadians(45);
+        
         // only apply feedforward if the drivetrain is rotating at a reasonable speed
+        // note: this may not be necessary
         public static final double FF_CHASSIS_ROT_VELOCITY_LIMIT = 1.5 * Math.PI; // rad/s
     }   
