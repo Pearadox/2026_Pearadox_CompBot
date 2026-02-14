@@ -1,0 +1,87 @@
+package frc.robot.subsystems.intake;
+
+import java.util.Map;
+
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+public class IntakeConstants {
+
+    public static enum IntakeState {
+        STOWED,
+        INTAKING,
+        OUTTAKING
+    }
+
+    /** record that maps the intake state to its respective angle and voltage
+     * @param angleRad the angle in radians
+     * @param voltage the voltage in volts
+     */
+    public static record StateConfig(double angleRad, double voltage) {
+        public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP = Map.of(
+            IntakeState.STOWED, new StateConfig(0, 0),
+            IntakeState.INTAKING, new StateConfig(90, 7),
+            IntakeState.OUTTAKING, new StateConfig(90, -3.5)
+        );
+    }
+
+    // roller constants
+    public static final int ROLLER_ID = 35;
+    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
+    public static final int CURRENT_LIMIT = 20;
+    public static final boolean INVERTED = false;
+
+    // pivot constants
+    public static final int PIVOT_ID = 0; // TODO: REPLACE WITH PIVOT ID
+    public static final int GEARING = 0; // TODO: REPLACE WITH ACTUAL GEARING
+    public static final double LENGTH_METERS = 0.2; // TODO: REPLACE WITH ACTUAL LENGTH
+    public static final double MASS_KG = 0.1; // TODO: REPLACE WITH ACTUAL MASS
+
+    // intake sim constants
+    public static final double SIM_STARTING_ANGLE_RADS = 0;
+    public static final double SIM_MIN_ANGLE_RADS = 0;
+    public static final double SIM_MAX_ANGLE_RADS = 180;
+
+    // talonFX config for roller motor
+    public static final TalonFXConfiguration ROLLER_CONFIG = new TalonFXConfiguration();
+    public static final Slot0Configs ROLLER_SLOT0_CONFIGS = ROLLER_CONFIG.Slot0;
+    public static final TalonFXConfiguration getRollerConfigTalonFX() {
+
+            ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+            ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+            ROLLER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+            ROLLER_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
+
+            ROLLER_SLOT0_CONFIGS.kP = 0.1;
+            ROLLER_SLOT0_CONFIGS.kI = 0.0;
+            ROLLER_SLOT0_CONFIGS.kD = 0.0;
+
+            ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+            ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+            return ROLLER_CONFIG;
+        }
+
+    // talonFX config for pivot motor
+    public static final TalonFXConfiguration PIVOT_CONFIG = new TalonFXConfiguration();
+    public static final Slot0Configs PIVOT_SLOT0_CONFIGS = PIVOT_CONFIG.Slot0;
+    public static final TalonFXConfiguration getPivotConfigTalonFX() {
+
+            PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+            PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+            PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+            PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
+
+            PIVOT_SLOT0_CONFIGS.kP = 0.1;
+            PIVOT_SLOT0_CONFIGS.kI = 0.0;
+            PIVOT_SLOT0_CONFIGS.kD = 0.0;
+
+            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+            PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+            return PIVOT_CONFIG;
+        }
+
+}

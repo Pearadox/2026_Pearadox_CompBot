@@ -29,6 +29,8 @@ public final class Constants {
     REPLAY
   }
 
+  public static final double UPDATE_FREQ_SEC = 0.02;
+
   public static final class AlignConstants {
         public static final double ALIGN_STRAFE_KP = 0.02;
         public static final double ALIGN_STRAFE_KI = 0.001;
