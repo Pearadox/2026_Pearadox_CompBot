@@ -7,6 +7,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
+
 public class IntakeConstants {
 
     public static enum IntakeState {
@@ -21,26 +23,27 @@ public class IntakeConstants {
      */
     public static record StateConfig(double angleRad, double voltage) {
         public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP = Map.of(
-            IntakeState.STOWED, new StateConfig(0, 0),
-            IntakeState.INTAKING, new StateConfig(90, 7),
-            IntakeState.OUTTAKING, new StateConfig(90, -3.5)
+            IntakeState.STOWED, new StateConfig(Units.degreesToRadians(90), 0),
+            IntakeState.INTAKING, new StateConfig(Units.degreesToRadians(0), 7),
+            IntakeState.OUTTAKING, new StateConfig(Units.degreesToRadians(0), -3.5)
         );
     }
 
     // roller constants
-    public static final int ROLLER_ID = 35;
+    public static final int ROLLER_1_LEADER_ID = 31;
+    public static final int ROLLER_2_FOLLOWER_ID = 32;
     public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
     public static final int CURRENT_LIMIT = 20;
     public static final boolean INVERTED = false;
 
     // pivot constants
-    public static final int PIVOT_ID = 0; // TODO: REPLACE WITH PIVOT ID
-    public static final int GEARING = 0; // TODO: REPLACE WITH ACTUAL GEARING
+    public static final int PIVOT_ID = 30; // TODO: REPLACE WITH PIVOT ID
+    public static final int GEARING = 1; // TODO: REPLACE WITH ACTUAL GEARING
     public static final double LENGTH_METERS = 0.2; // TODO: REPLACE WITH ACTUAL LENGTH
     public static final double MASS_KG = 0.1; // TODO: REPLACE WITH ACTUAL MASS
 
     // intake sim constants
-    public static final double SIM_STARTING_ANGLE_RADS = 0;
+    public static final double SIM_STARTING_ANGLE_RADS = 90;
     public static final double SIM_MIN_ANGLE_RADS = 0;
     public static final double SIM_MAX_ANGLE_RADS = 180;
 

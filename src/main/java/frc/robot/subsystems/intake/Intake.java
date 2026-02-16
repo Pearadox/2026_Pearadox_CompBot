@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.intake.IntakeConstants.IntakeState;
 import frc.robot.subsystems.intake.IntakeConstants.StateConfig;
@@ -29,12 +30,15 @@ public class Intake extends SubsystemBase{
         io.updateInputs(inputs);
 
         Logger.processInputs("Intake", inputs);
+        MechVisualizer.getInstance().updatePositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleRad());
         
-        SmarterDashboard.putString("Intake/State", intakeState.toString());
+        Logger.recordOutput("Intake/State", intakeState.toString());
         io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + adjust);
-        SmarterDashboard.putNumber("Intake/VoltageOut", inputs.rollerVoltage);
+        io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleRad());
+        Logger.recordOutput("Intake/VoltageOut", inputs.rollerMotorData.appliedVolts());
+        Logger.recordOutput("Intake/Position Degrees", Units.rotationsToDegrees(inputs.pivotMotorData.position()));
 
-        // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!s
+        // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
         // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage = loggedIntakeRollerVoltage.get(); }
 
         // if (intakeState == IntakeState.INTAKING) {
@@ -54,6 +58,10 @@ public class Intake extends SubsystemBase{
 
      public void setOuttaking() {
         intakeState = IntakeState.OUTTAKING;
+     }
+
+     public IntakeState getIntakeState() {
+         return intakeState;
      }
 
 

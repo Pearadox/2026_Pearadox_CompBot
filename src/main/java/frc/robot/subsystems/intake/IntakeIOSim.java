@@ -10,63 +10,70 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.Constants;
 
-public class IntakeIOSim implements IntakeIO{
-    private PearadoxTalonFX rollerMotor;
-    private TalonFXConfiguration rollerConfigs;
-    private TalonFXSimState rollerSimState;
+public class IntakeIOSim extends IntakeIOTalonFX {
 
-    private SingleJointedArmSim rollerSim = new SingleJointedArmSim(
+    private SingleJointedArmSim pivotSim = new SingleJointedArmSim(
         DCMotor.getKrakenX44(1),
         IntakeConstants.GEARING,
         SingleJointedArmSim.estimateMOI(IntakeConstants.LENGTH_METERS, IntakeConstants.MASS_KG),
         IntakeConstants.LENGTH_METERS,
         IntakeConstants.SIM_MIN_ANGLE_RADS,
         IntakeConstants.SIM_MAX_ANGLE_RADS,
-        true,
-        IntakeConstants.SIM_STARTING_ANGLE_RADS,
-         0);
+        false,
+        IntakeConstants.SIM_STARTING_ANGLE_RADS);
 
+    // private PearadoxTalonFX pivotMotor;
+    // private TalonFXConfiguration pivotConfigs;
+    private TalonFXSimState pivotSimState;
 
     public IntakeIOSim() {
-        rollerMotor = new PearadoxTalonFX(IntakeConstants.ROLLER_ID, rollerConfigs);
-        rollerConfigs = new TalonFXConfiguration();
-        rollerConfigs.Slot0 = IntakeConstants.ROLLER_SLOT0_CONFIGS;
-
-        rollerMotor.getConfigurator().apply(rollerConfigs.Slot0);
-        rollerSimState = rollerMotor.getSimState();
-
-         BaseStatusSignal.setUpdateFrequencyForAll(
-                Constants.UPDATE_FREQ_SEC,
-                rollerMotor.getMotorVoltage(),
-                rollerMotor.getVelocity(),
-                rollerMotor.getSupplyCurrent(),
-                rollerMotor.getStatorCurrent());
+        pivotSimState = pivotMotor.getSimState();
     }
 
-        public void updateInputs(IntakeIOInputsAutoLogged inputs) {
-            // update sim
-            // intake pivot sim still needs to be added
-            updateSim();
-            inputs.rollerVoltage = rollerMotor.getMotorVoltage().getValueAsDouble();
-            inputs.rollerVelocity = rollerMotor.getVelocity().getValueAsDouble();
-            inputs.rollerSupplyCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
-            inputs.rollerStatorCurrent = rollerMotor.getStatorCurrent().getValueAsDouble();
 
-        }
+    // public IntakeIOSim() {
+    //     pivotMotor = new PearadoxTalonFX(IntakeConstants.ROLLER_1_LEADER_ID, pivotConfigs);
+    //     pivotConfigs = new TalonFXConfiguration();
+    //     pivotConfigs.Slot0 = IntakeConstants.ROLLER_SLOT0_CONFIGS;
 
-        public void runRollersVolts(double volts) {
-        rollerMotor.setVoltage(volts);
-    }
+    //     pivotMotor.getConfigurator().apply(pivotConfigs.Slot0);
+    //     pivotSimState = pivotMotor.getSimState();
 
-        public void updateSim() {
-            rollerSimState.setSupplyVoltage(12);
-            rollerSim.setInputVoltage(rollerSimState.getMotorVoltage());
+    //      BaseStatusSignal.setUpdateFrequencyForAll(
+    //             Constants.UPDATE_FREQ_SEC,
+    //             pivotMotor.getMotorVoltage(),
+    //             pivotMotor.getVelocity(),
+    //             pivotMotor.getSupplyCurrent(),
+    //             pivotMotor.getStatorCurrent());
+    // }
 
-             rollerSimState.setRawRotorPosition(
-                Units.radiansToRotations(rollerSim.getAngleRads() * IntakeConstants.GEARING));
-            rollerSimState.setRotorVelocity(
-                Units.radiansToRotations(rollerSim.getVelocityRadPerSec()) * IntakeConstants.GEARING);
-            rollerSim.update(Constants.UPDATE_FREQ_SEC);
+        // @Override
+        // public void updateInputs(IntakeIOInputsAutoLogged inputs) {
+        //     update sim
+        //     intake pivot sim still needs to be added
+        //     updateSim();
+        //     inputs.rollerVoltage = pivotMotor.getMotorVoltage().getValueAsDouble();
+        //     inputs.rollerVelocity = pivotMotor.getVelocity().getValueAsDouble();
+        //     inputs.rollerSupplyCurrent = pivotMotor.getSupplyCurrent().getValueAsDouble();
+        //     inputs.rollerStatorCurrent = pivotMotor.getStatorCurrent().getValueAsDouble();
+
+        // }
+
+        // public void runRollersVolts(double volts) {
+        // pivotMotor.setVoltage(volts);
+
+        public void updateInputs(IntakeIOInputs inputs) {
+            super.updateInputs(inputs);
+
+            pivotSimState.setSupplyVoltage(12);
+
+            pivotSim.setInputVoltage(pivotSimState.getMotorVoltage());
+            pivotSim.update(Constants.UPDATE_FREQ_SEC);
+
+             pivotSimState.setRawRotorPosition(
+                Units.radiansToRotations(pivotSim.getAngleRads() * IntakeConstants.GEARING));
+            pivotSimState.setRotorVelocity(
+                Units.radiansToRotations(pivotSim.getVelocityRadPerSec()) * IntakeConstants.GEARING);
         }
 
 
