@@ -1,7 +1,8 @@
 package frc.robot.subsystems.turret;
 
-import frc.robot.util.PearadoxTalonFX.MotorData;
 import org.littletonrobotics.junction.AutoLog;
+
+import frc.lib.drivers.PearadoxTalonFX.MotorData;
 
 public interface TurretIO {
     @AutoLog
