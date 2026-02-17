@@ -1,0 +1,34 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems.launcher;
+
+import org.littletonrobotics.junction.AutoLog;
+
+import frc.robot.util.PearadoxTalonFX.MotorData;
+
+/** Launcher's IO interface */
+public interface LauncherIO {
+
+    @AutoLog
+    public static class LauncherIOInputs {
+        public MotorData launcher1Data = new MotorData();
+        public MotorData launcher2Data = new MotorData();
+
+        public double hoodServoHubVoltage = 0.0;
+        public double hoodServo1PulseWidth = 0.0;
+        public double hoodServo2PulseWidth = 0.0;
+
+        public boolean limitSwitchPressed = false;
+    }
+
+    public void updateInputs(LauncherIOInputsAutoLogged inputs);
+
+    /** @param velocityRPS the rotor velocity setpoint in Rotations per Second */
+    public void runLauncherVelocity(double velocityRPS);
+
+    /** @param isPassing if the robot is in PASSING mode or other modes */
+    public void setHoodAngle(boolean isPassing);
+
+}
