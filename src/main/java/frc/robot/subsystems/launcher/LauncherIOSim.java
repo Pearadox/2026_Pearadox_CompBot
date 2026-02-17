@@ -38,6 +38,9 @@ public class LauncherIOSim implements LauncherIO {
     private PearadoxTalonFX launcher2Follower;
     private TalonFXSimState launcherSimState;
 
+    private VelocityVoltage launcher1Control;
+    private Follower launcher2Control;
+
     private ServoHub hoodServoHub;
     private ServoHubSim hoodServoHubSim;
 
@@ -51,6 +54,17 @@ public class LauncherIOSim implements LauncherIO {
         launcher1Leader = new PearadoxTalonFX(LauncherConstants.LAUNCHER_1_CAN_ID, LauncherConstants.LAUNCHER_MOTOR_CONFIG());
         launcher2Follower = new PearadoxTalonFX(LauncherConstants.LAUNCHER_2_CAN_ID, LauncherConstants.LAUNCHER_MOTOR_CONFIG());
         launcherSimState = launcher1Leader.getSimState();
+
+        launcher1Control = new VelocityVoltage(0);
+        launcher2Control = new Follower(launcher1Leader.getDeviceID(), MotorAlignmentValue.Opposed);
+
+        BaseStatusSignal.setUpdateFrequencyForAll(
+            Constants.UPDATE_FREQ_SEC,
+            launcher1Leader.getVelocity(),
+            launcher1Leader.getMotorVoltage(),
+            launcher2Follower.getVelocity(),
+            launcher2Follower.getMotorVoltage()
+            );
 
         hoodServoHub = new ServoHub(LauncherConstants.HOOD_SERVO_HUB_CAN_ID);
         hoodServoHubSim = new ServoHubSim(hoodServoHub);
@@ -76,13 +90,6 @@ public class LauncherIOSim implements LauncherIO {
         inputs.launcher1Data = launcher1Leader.getData();
         inputs.launcher2Data = launcher2Follower.getData();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(
-            Constants.UPDATE_FREQ_SEC,
-            launcher1Leader.getVelocity(),
-            launcher1Leader.getMotorVoltage(),
-            launcher2Follower.getVelocity(),
-            launcher2Follower.getMotorVoltage()
-            );
         
         inputs.hoodServoHubVoltage = hoodServoHub.getDeviceVoltage();
         inputs.hoodServo1PulseWidth = hoodServo1.getPulseWidth();
@@ -92,26 +99,26 @@ public class LauncherIOSim implements LauncherIO {
     }
 
     public void runLauncherVelocity(double velocityRPS) {
-        launcher1Leader.setControl(new VelocityVoltage(velocityRPS));
-        launcher2Follower.setControl(new Follower(launcher1Leader.getDeviceID(), MotorAlignmentValue.Opposed));
+        launcher1Leader.setControl(launcher1Control.withVelocity(velocityRPS));
+        launcher2Follower.setControl(launcher2Control);
     }
 
     public void setHoodAngle(boolean isPassing) {
         if (isPassing) {
             if (highAngleLimitSwitch.get()) {
-                hoodServo1.setPulseWidth(2500);
-                hoodServo2.setPulseWidth(500);
+                hoodServo1.setPulseWidth(LauncherConstants.SERVO_CLOCKWISE_PULSE_WIDTH);
+                hoodServo2.setPulseWidth(LauncherConstants.SERVO_COUNTER_CLOCKWISE_PULSE_WIDTH);
             } else {
-                hoodServo1.setPulseWidth(1500);
-                hoodServo2.setPulseWidth(1500);
+                hoodServo1.setPulseWidth(LauncherConstants.SERVO_NO_MOVEMENT_PULSE_WIDTH);
+                hoodServo2.setPulseWidth(LauncherConstants.SERVO_NO_MOVEMENT_PULSE_WIDTH);
             }
         } else {
             if (lowAngleLimitSwitch.get()) {
-                hoodServo1.setPulseWidth(500);
-                hoodServo2.setPulseWidth(2500);
+                hoodServo1.setPulseWidth(LauncherConstants.SERVO_COUNTER_CLOCKWISE_PULSE_WIDTH);
+                hoodServo2.setPulseWidth(LauncherConstants.SERVO_CLOCKWISE_PULSE_WIDTH);
             } else {
-                hoodServo1.setPulseWidth(1500);
-                hoodServo2.setPulseWidth(1500);
+                hoodServo1.setPulseWidth(LauncherConstants.SERVO_NO_MOVEMENT_PULSE_WIDTH);
+                hoodServo2.setPulseWidth(LauncherConstants.SERVO_NO_MOVEMENT_PULSE_WIDTH);
             }
         }
     }

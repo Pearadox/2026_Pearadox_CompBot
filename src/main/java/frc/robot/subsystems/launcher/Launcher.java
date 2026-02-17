@@ -4,9 +4,13 @@
 
 package frc.robot.subsystems.launcher;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Launcher extends SubsystemBase {
 	/** Creates a new Launcher. */
@@ -16,7 +20,7 @@ public class Launcher extends SubsystemBase {
 	private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
 	private LauncherState launcherState = LauncherState.SCORING;
-	public static double adjust = 0.0;
+	@Getter @Setter private double adjust = 0.0;
 
 	public Launcher(LauncherIO io) {
 		this.io = io;
@@ -26,6 +30,7 @@ public class Launcher extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		io.updateInputs(inputs);
+		Logger.processInputs("LauncherInputs", inputs);
 		io.setHoodAngle((launcherState == LauncherState.PASSING));
 	}
 	

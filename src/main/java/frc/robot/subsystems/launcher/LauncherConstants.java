@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.launcher;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,15 +21,6 @@ public class LauncherConstants {
         @Getter private final double hoodAngleRads;
 
         private LauncherState(double angle) {hoodAngleRads = angle;}
-    }
-
-    public static record LauncherConfig(double hoodAngleRads) {
-        public static final Map<LauncherState, LauncherConfig> LAUNCHER_CONFIG_MAP = Map.of(
-            LauncherState.OFF, new LauncherConfig(0.0),
-            LauncherState.MANUAL, new LauncherConfig(50.0), // TODO: find
-            LauncherState.SCORING, new LauncherConfig(50.0), // TODO: find
-            LauncherState.PASSING, new LauncherConfig(70.0) // TODO: find
-        );
     }
 
     public static final int LAUNCHER_1_CAN_ID = 21; // TODO: double check
@@ -73,6 +62,10 @@ public class LauncherConstants {
     public static final int HOOD_SERVO_HUB_CAN_ID = 0; // TODO: set
     public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
     public static final ChannelId HOOD_2_ID = ChannelId.kChannelId1; // TODO: set
+
+    public static final int SERVO_COUNTER_CLOCKWISE_PULSE_WIDTH = 500; // TODO: double check
+    public static final int SERVO_CLOCKWISE_PULSE_WIDTH = 2500; // TODO: double check
+    public static final int SERVO_NO_MOVEMENT_PULSE_WIDTH = 1500;
 
     public static final double HOOD_GEARING = 25/12; // TODO: double check
 
