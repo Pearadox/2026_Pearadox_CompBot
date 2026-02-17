@@ -7,7 +7,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import frc.lib.drivers.PearadoxTalonFX;
+import frc.robot.util.PearadoxTalonFX;
 import frc.robot.Constants;
 
 public class IntakeIOSim implements IntakeIO{
