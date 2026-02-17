@@ -4,7 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 
 import edu.wpi.first.math.util.Units;
-import frc.lib.drivers.PearadoxTalonFX;
+import frc.robot.util.PearadoxTalonFX;
 
 public class IntakeIOReal implements IntakeIO {
     private PearadoxTalonFX rollerMotor;
