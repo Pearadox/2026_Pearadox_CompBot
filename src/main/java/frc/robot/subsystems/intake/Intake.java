@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.intake.IntakeConstants.IntakeState;
 import frc.robot.subsystems.intake.IntakeConstants.StateConfig;
 import frc.robot.util.LoggedTunableNumber;
-import frc.robot.util.SmarterDashboard;
 
 public class Intake extends SubsystemBase{
 
@@ -30,13 +29,15 @@ public class Intake extends SubsystemBase{
         io.updateInputs(inputs);
 
         Logger.processInputs("Intake", inputs);
-        MechVisualizer.getInstance().updatePositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleRad());
         
         Logger.recordOutput("Intake/State", intakeState.toString());
         io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + adjust);
-        io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleRad());
+        io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
+        MechVisualizer.getInstance().updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position() / IntakeConstants.GEARING));
+        
+        Logger.recordOutput("Intake/Target Position Degrees", StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
         Logger.recordOutput("Intake/VoltageOut", inputs.rollerMotorData.appliedVolts());
-        Logger.recordOutput("Intake/Position Degrees", Units.rotationsToDegrees(inputs.pivotMotorData.position()));
+        Logger.recordOutput("Intake/Current Position Degrees", Units.rotationsToDegrees(inputs.pivotMotorData.position() / IntakeConstants.GEARING));
 
         // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
         // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage = loggedIntakeRollerVoltage.get(); }

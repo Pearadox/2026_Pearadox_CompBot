@@ -11,7 +11,7 @@ import frc.lib.drivers.PearadoxTalonFX;
 public abstract class IntakeIOTalonFX implements IntakeIO {
     protected final PearadoxTalonFX roller1Leader;
     protected final PearadoxTalonFX roller2Follower;
-    protected PearadoxTalonFX pivotMotor;
+    protected final PearadoxTalonFX pivotMotor;
 
     // private TalonFXConfiguration rollerConfigs;
     // private TalonFXConfiguration pivotConfigs;

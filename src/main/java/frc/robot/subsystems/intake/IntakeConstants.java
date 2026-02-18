@@ -21,11 +21,11 @@ public class IntakeConstants {
      * @param angleRad the angle in radians
      * @param voltage the voltage in volts
      */
-    public static record StateConfig(double angleRad, double voltage) {
+    public static record StateConfig(double angleDeg, double voltage) {
         public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP = Map.of(
-            IntakeState.STOWED, new StateConfig(Units.degreesToRadians(90), 0),
-            IntakeState.INTAKING, new StateConfig(Units.degreesToRadians(0), 7),
-            IntakeState.OUTTAKING, new StateConfig(Units.degreesToRadians(0), -3.5)
+            IntakeState.STOWED, new StateConfig(-90, 0),
+            IntakeState.INTAKING, new StateConfig(0, 7),
+            IntakeState.OUTTAKING, new StateConfig(0, -3.5)
         );
     }
 
@@ -43,9 +43,9 @@ public class IntakeConstants {
     public static final double MASS_KG = 11.246;
 
     // intake sim constants
-    public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(90);
-    public static final double SIM_MIN_ANGLE_RADS = 0;
-    public static final double SIM_MAX_ANGLE_RADS = Units.degreesToRadians(180);
+    public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(0);
+    public static final double SIM_MIN_ANGLE_RADS = Double.NEGATIVE_INFINITY;
+    public static final double SIM_MAX_ANGLE_RADS = Double.POSITIVE_INFINITY;
 
     // talonFX config for roller motor
     public static final TalonFXConfiguration ROLLER_CONFIG = new TalonFXConfiguration();
@@ -81,7 +81,7 @@ public class IntakeConstants {
             PIVOT_SLOT0_CONFIGS.kI = 0.0;
             PIVOT_SLOT0_CONFIGS.kD = 0.0;
 
-            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
             PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
             return PIVOT_CONFIG;

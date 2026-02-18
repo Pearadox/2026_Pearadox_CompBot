@@ -25,7 +25,7 @@ public class MechVisualizer {
             3,
             new Color8Bit(Color.kBeige)));
             
-    private double pivotAngleRads = 0.0;
+    private double pivotAngleDeg = 0.0;
 
     private static final MechVisualizer instance = new MechVisualizer();
 
@@ -40,13 +40,8 @@ public class MechVisualizer {
 
     }
 
-//     public void updateElevatorHeight(double heightMeters) {
-//         this.heightMeters = heightMeters;
-//         elevator2d.setLength(heightMeters + AlignConstants.ELEVATOR_STARTING_HEIGHT);
-//     }
-
-    public void updatePositionDegrees(double radians) {
-        this.pivotAngleRads = radians;
-        intake.setAngle(Units.radiansToDegrees(pivotAngleRads));
+    public void updatePositionDegrees(double degrees) {
+        this.pivotAngleDeg = degrees;
+        intake.setAngle(pivotAngleDeg);
     }
 }
