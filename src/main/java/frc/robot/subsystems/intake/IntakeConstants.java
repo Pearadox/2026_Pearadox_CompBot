@@ -37,15 +37,15 @@ public class IntakeConstants {
     public static final boolean INVERTED = false;
 
     // pivot constants
-    public static final int PIVOT_ID = 30; // TODO: REPLACE WITH PIVOT ID
-    public static final int GEARING = 1; // TODO: REPLACE WITH ACTUAL GEARING
-    public static final double LENGTH_METERS = 0.2; // TODO: REPLACE WITH ACTUAL LENGTH
-    public static final double MASS_KG = 0.1; // TODO: REPLACE WITH ACTUAL MASS
+    public static final int PIVOT_ID = 30;
+    public static final double GEARING = (44.0/12.0) * (60.0/16.0) * (44.0/14.0);
+    public static final double LENGTH_METERS = Units.inchesToMeters(15.114);
+    public static final double MASS_KG = 11.246;
 
     // intake sim constants
-    public static final double SIM_STARTING_ANGLE_RADS = 90;
+    public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(90);
     public static final double SIM_MIN_ANGLE_RADS = 0;
-    public static final double SIM_MAX_ANGLE_RADS = 180;
+    public static final double SIM_MAX_ANGLE_RADS = Units.degreesToRadians(180);
 
     // talonFX config for roller motor
     public static final TalonFXConfiguration ROLLER_CONFIG = new TalonFXConfiguration();
