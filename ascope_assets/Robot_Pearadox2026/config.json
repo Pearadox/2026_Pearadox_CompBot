@@ -1,0 +1,109 @@
+{
+  "name": "Pearadox2026",
+  "sourceUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": 90
+    }
+  ],
+  "position": [0, 0, 0],
+  "cameras": [],
+  "components": [
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [0.134550, 0.143323, 0.0]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [0.1235075, 0.041317, -0.519888]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [-0.024588, 0.0, 0.0]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [-0.205374, 0.0, -0.260350]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [-0.302910, 0.0, -0.646415]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [0.0, 0.0, 0.0]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [0.0, 0.0, 0.0]
+    }
+  ]
+}
