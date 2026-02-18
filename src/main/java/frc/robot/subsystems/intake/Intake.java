@@ -33,11 +33,11 @@ public class Intake extends SubsystemBase{
         Logger.recordOutput("Intake/State", intakeState.toString());
         io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + adjust);
         io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
-        MechVisualizer.getInstance().updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position() / IntakeConstants.GEARING));
+        MechVisualizer.getInstance().updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));
         
         Logger.recordOutput("Intake/Target Position Degrees", StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
         Logger.recordOutput("Intake/VoltageOut", inputs.rollerMotorData.appliedVolts());
-        Logger.recordOutput("Intake/Current Position Degrees", Units.rotationsToDegrees(inputs.pivotMotorData.position() / IntakeConstants.GEARING));
+        Logger.recordOutput("Intake/Current Position Degrees", Units.rotationsToDegrees(inputs.pivotMotorData.position()));
 
         // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
         // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage = loggedIntakeRollerVoltage.get(); }

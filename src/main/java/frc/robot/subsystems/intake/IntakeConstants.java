@@ -23,7 +23,7 @@ public class IntakeConstants {
      */
     public static record StateConfig(double angleDeg, double voltage) {
         public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP = Map.of(
-            IntakeState.STOWED, new StateConfig(-90, 0),
+            IntakeState.STOWED, new StateConfig(90, 0),
             IntakeState.INTAKING, new StateConfig(0, 7),
             IntakeState.OUTTAKING, new StateConfig(0, -3.5)
         );
@@ -77,11 +77,11 @@ public class IntakeConstants {
             PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
             PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
 
-            PIVOT_SLOT0_CONFIGS.kP = 0.1;
+            PIVOT_SLOT0_CONFIGS.kP = 7.1;
             PIVOT_SLOT0_CONFIGS.kI = 0.0;
             PIVOT_SLOT0_CONFIGS.kD = 0.0;
 
-            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
             return PIVOT_CONFIG;

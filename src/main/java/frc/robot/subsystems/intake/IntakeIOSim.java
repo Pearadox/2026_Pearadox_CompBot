@@ -34,7 +34,7 @@ public class IntakeIOSim extends IntakeIOTalonFX {
             pivotSim.update(Constants.UPDATE_FREQ_SEC);
 
              pivotSimState.setRawRotorPosition(
-                Units.radiansToRotations(pivotSim.getAngleRads()) * IntakeConstants.GEARING);
+                Units.radiansToRotations(pivotSim.getAngleRads()));
             pivotSimState.setRotorVelocity(
                 Units.radiansToRotations(pivotSim.getVelocityRadPerSec()) * IntakeConstants.GEARING);
         }
