@@ -77,7 +77,7 @@ public class IntakeConstants {
             PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
             PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
 
-            PIVOT_SLOT0_CONFIGS.kP = 7.1;
+            PIVOT_SLOT0_CONFIGS.kP = 7;
             PIVOT_SLOT0_CONFIGS.kI = 0.0;
             PIVOT_SLOT0_CONFIGS.kD = 0.0;
 
