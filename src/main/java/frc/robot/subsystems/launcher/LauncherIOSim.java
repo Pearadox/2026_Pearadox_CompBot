@@ -18,9 +18,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-
+import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.Constants;
-import frc.robot.util.PearadoxTalonFX;
 
 /** Launcher IO's real implementation */
 public class LauncherIOSim implements LauncherIO {

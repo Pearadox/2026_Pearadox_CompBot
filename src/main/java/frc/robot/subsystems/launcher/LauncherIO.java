@@ -6,7 +6,8 @@ package frc.robot.subsystems.launcher;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import frc.robot.util.PearadoxTalonFX.MotorData;
+import frc.lib.drivers.PearadoxTalonFX.MotorData;
+
 
 /** Launcher's IO interface */
 public interface LauncherIO {
