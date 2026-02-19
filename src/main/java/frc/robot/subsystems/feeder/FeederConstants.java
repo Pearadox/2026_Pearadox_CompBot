@@ -14,7 +14,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 /** Add your docs here. */
 public class FeederConstants {
 
-    public static final int FEEDER_CAN_ID = 23;
+    public static final int FEEDER_CAN_ID = 41;
 
     public static final int FEEDER_CURRENT_LIMIT = 20;
 
