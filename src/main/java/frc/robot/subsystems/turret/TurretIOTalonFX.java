@@ -1,7 +1,8 @@
 package frc.robot.subsystems.turret;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import frc.robot.util.PearadoxTalonFX;
+
+import frc.lib.drivers.PearadoxTalonFX;
 
 public abstract class TurretIOTalonFX implements TurretIO {
     protected final PearadoxTalonFX turretMotor;

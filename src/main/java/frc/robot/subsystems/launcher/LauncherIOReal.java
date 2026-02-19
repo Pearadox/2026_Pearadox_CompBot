@@ -13,9 +13,8 @@ import com.revrobotics.servohub.ServoChannel;
 import com.revrobotics.servohub.ServoHub;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.Constants;
-import frc.robot.util.PearadoxTalonFX;
 
 /** Launcher IO's real implementation */
 public class LauncherIOReal implements LauncherIO {

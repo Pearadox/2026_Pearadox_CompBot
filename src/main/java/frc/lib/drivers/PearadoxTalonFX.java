@@ -1,9 +1,10 @@
-package frc.robot.util;
+package frc.lib.drivers;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants;
+import frc.robot.util.PhoenixUtil;
 
 /**
  * PearadoxTalonFX is a wrapper around the CTRE TalonFX motor controller. It applies configuration,

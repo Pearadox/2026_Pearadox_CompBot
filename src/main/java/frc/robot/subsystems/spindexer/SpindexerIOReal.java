@@ -10,7 +10,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.controller.PIDController;
-import frc.robot.util.PearadoxTalonFX;
+import frc.lib.drivers.PearadoxTalonFX;
 
 public class SpindexerIOReal implements SpindexerIO {
     private PearadoxTalonFX spindexer;
