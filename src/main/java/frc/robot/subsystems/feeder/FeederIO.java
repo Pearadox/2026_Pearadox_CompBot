@@ -16,8 +16,8 @@ public interface FeederIO {
         public MotorData feederData = new MotorData();
     }
 
-    public default void updateInputs(FeederIOInputsAutoLogged inputs) {};
+    public default void updateInputs(FeederIOInputsAutoLogged inputs) {}
 
     /** @param voltage voltage to run the feeder at*/
-    public default void runFeederVoltage(double voltage) {};
+    public default void runFeederVoltage(double voltage) {}
 }
