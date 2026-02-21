@@ -6,12 +6,11 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.climber.ClimberConstants.ClimberState;
 import frc.robot.util.SmarterDashboard;
 
 public class Climber extends SubsystemBase {
-
-    @AutoLogOutput
-    private int climberOffset = 0;
+    ClimberState climberState = ClimberState.RAISED;
 
     private ClimberIO io;
     private final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
@@ -28,20 +27,14 @@ public class Climber extends SubsystemBase {
         SmarterDashboard.putNumber("Climber/VoltageOut", inputs.appliedVolts);
         SmarterDashboard.putNumber("Climber/PositionRots", inputs.positionRots);
 
-        io.runPosition(climberOffset);
+        io.runPosition(climberState.getClimberPositionRotations());
     }
 
-
-    public void climberAdjustUp() {
-        climberOffset += 1;
+    public void climb() {
+        climberState = ClimberState.LOWERED;
     }
 
-    public void climberAdjustDown() {
-        climberOffset -= 1;
+    public void descend() {
+        climberState = ClimberState.RAISED;
     }
-
-    public void zeroClimber() {
-        climberOffset = 0;
-    }
-
 }
