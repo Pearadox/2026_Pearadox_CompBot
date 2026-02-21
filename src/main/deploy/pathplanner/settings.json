@@ -9,8 +9,9 @@
     "Sweeps"
   ],
   "autoFolders": [
-    "Both NZone & AllianZone",
-    "Stays in AllianZone"
+    "Both NZone & AllianZone WIP",
+    "Runnables",
+    "Stays in AllianZone WIP"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

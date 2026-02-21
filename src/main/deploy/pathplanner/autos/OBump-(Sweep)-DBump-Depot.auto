@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Deploy Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OBump-NZone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
           }
         },
         {
@@ -17,15 +29,75 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Deploy Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "NZone-Bump-Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Launch"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launch"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Tiny AllianZone-Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Deploy Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Launch"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launch"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Both NZone & AllianZone",
+  "folder": "Runnables",
   "choreoAuto": false
 }

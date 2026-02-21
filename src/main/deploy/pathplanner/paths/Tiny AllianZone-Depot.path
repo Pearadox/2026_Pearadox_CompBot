@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.218,
-        "y": 4.973
+        "x": 1.429,
+        "y": 5.964
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.441925820256776,
-        "y": 5.619985734664765
+        "x": 0.8249599982237052,
+        "y": 5.978849218514794
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4605420827389435,
-        "y": 5.490599144079885
+        "x": 0.47444444444444445,
+        "y": 5.964
       },
       "prevControl": {
-        "x": 1.4605420827389435,
-        "y": 5.490599144079885
+        "x": 0.7471079564924037,
+        "y": 5.968258948448751
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.34771784232364966,
-      "rotationDegrees": 0.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -47,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "To Alliance Zone",
+  "folder": "To Depot",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

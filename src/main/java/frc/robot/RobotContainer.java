@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -106,7 +108,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-                
+
         feeder = new Feeder(new FeederIOSim());
         intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
@@ -124,13 +126,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-                
+
         feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
         intake = new Intake(new IntakeIO() {});
-        launcher = new Launcher(new LauncherIOSim());  // TODO make blank IO
+        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
         turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
-        
+
         break;
     }
 
@@ -153,18 +155,24 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+    vision =
+        new Vision(
+            drive::addVisionMeasurement,
+            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
-    visualizer = new RobotVisualizer(
-        () -> 0, // TODO: replace with turret angle supplier
-        () -> 0, // TODO: replace with hood angle supplier
-        () -> 0, // TODO: replace with spindexer angle supplier
-        () -> 0, // TODO: replace with intake angle supplier
-        () -> 0  // TODO: replace with climber displacement supplier
-    );
+    visualizer =
+        new RobotVisualizer(
+            () -> 0, // TODO: replace with turret angle supplier
+            () -> 0, // TODO: replace with hood angle supplier
+            () -> 0, // TODO: replace with spindexer angle supplier
+            () -> 0, // TODO: replace with intake angle supplier
+            () -> 0 // TODO: replace with climber displacement supplier
+            );
 
     // Configure the button bindings
     configureButtonBindings();
+    // Register named commands for PathPlanner
+    registerNamedCommands();
   }
 
   /**
@@ -228,5 +236,15 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void registerNamedCommands() {
+    // Feeder Commands
+    NamedCommands.registerCommand("Launch", new InstantCommand(() -> feeder.launch()));
+    NamedCommands.registerCommand("Stop Launch", new InstantCommand(() -> feeder.stopLaunch()));
+
+    // Intake Commands
+    NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
+    NamedCommands.registerCommand("Deploy Intake", new InstantCommand(() -> intake.setDeployed()));
   }
 }

@@ -32,6 +32,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Both NZone & AllianZone",
+  "folder": "Both NZone & AllianZone WIP",
   "choreoAuto": false
 }

@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "DBump-Depot"
@@ -14,6 +20,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Stays in AllianZone",
+  "folder": "Stays in AllianZone WIP",
   "choreoAuto": false
 }
