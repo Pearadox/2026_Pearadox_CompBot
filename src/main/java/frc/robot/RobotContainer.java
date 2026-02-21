@@ -25,10 +25,24 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIOReal;
+import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.MechVisualizer;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.launcher.LauncherIOReal;
+import frc.robot.subsystems.launcher.LauncherIOSim;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
@@ -45,8 +59,12 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Vision vision;
+  private final Feeder feeder;
   private final Intake intake;
+  private final Launcher launcher;
+  private final Spindexer spindexer;
+  private final Turret turret;
+  private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -72,26 +90,13 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        intake =
-            new Intake(new IntakeIO() {});
 
-        // The ModuleIOTalonFXS implementation provides an example implementation for
-        // TalonFXS controller connected to a CANdi with a PWM encoder. The
-        // implementations
-        // of ModuleIOTalonFX, ModuleIOTalonFXS, and ModuleIOSpark (from the Spark
-        // swerve
-        // template) can be freely intermixed to support alternative hardware
-        // arrangements.
-        // Please see the AdvantageKit template documentation for more information:
-        // https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations
-        //
-        // drive =
-        // new Drive(
-        // new GyroIOPigeon2(),
-        // new ModuleIOTalonFXS(TunerConstants.FrontLeft),
-        // new ModuleIOTalonFXS(TunerConstants.FrontRight),
-        // new ModuleIOTalonFXS(TunerConstants.BackLeft),
-        // new ModuleIOTalonFXS(TunerConstants.BackRight));
+        feeder = new Feeder(new FeederIOReal());
+        intake = new Intake(new IntakeIOReal());
+        launcher = new Launcher(new LauncherIOReal());
+        spindexer = new Spindexer(new SpindexerIOReal());
+        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
+
         break;
 
       case SIM:
@@ -103,7 +108,13 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+                
+        feeder = new Feeder(new FeederIOSim());
         intake = new Intake(new IntakeIOSim());
+        launcher = new Launcher(new LauncherIOSim());
+        spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
+        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
+
         break;
 
       default:
@@ -115,7 +126,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+                
+        feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
         intake = new Intake(new IntakeIO() {});
+        launcher = new Launcher(new LauncherIOSim());  // TODO make blank IO
+        spindexer = new Spindexer(new SpindexerIO() {});
+        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
+        
         break;
     }
 
