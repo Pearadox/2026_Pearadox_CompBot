@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DBump-NZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SweepDepotToOutpost"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZone-Bump-AllianZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AllianZone-Depot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

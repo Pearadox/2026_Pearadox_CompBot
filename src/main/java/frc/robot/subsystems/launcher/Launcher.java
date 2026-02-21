@@ -4,59 +4,55 @@
 
 package frc.robot.subsystems.launcher;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import lombok.Getter;
 import lombok.Setter;
+import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
-	/** Creates a new Launcher. */
+  /** Creates a new Launcher. */
+  private final LauncherIO io;
 
-	private final LauncherIO io;	
+  private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-	private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
+  private LauncherState launcherState = LauncherState.SCORING;
+  @Getter @Setter private double adjust = 0.0;
 
-	private LauncherState launcherState = LauncherState.SCORING;
-	@Getter @Setter private double adjust = 0.0;
+  public Launcher(LauncherIO io) {
+    this.io = io;
+  }
 
-	public Launcher(LauncherIO io) {
-		this.io = io;
-	}
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("LauncherInputs", inputs);
+    io.setHoodAngle((launcherState == LauncherState.PASSING));
+  }
 
-	@Override
-	public void periodic() {
-		// This method will be called once per scheduler run
-		io.updateInputs(inputs);
-		Logger.processInputs("LauncherInputs", inputs);
-		io.setHoodAngle((launcherState == LauncherState.PASSING));
-	}
-	
-	/** velocity will be calculated from aim assist command factory */
-	public void setVelocity(double velocityRPS) {
-		io.runLauncherVelocity(velocityRPS + (launcherState == LauncherState.OFF ? 0.0 : adjust));
-	}
+  /** velocity will be calculated from aim assist command factory */
+  public void setVelocity(double velocityRPS) {
+    io.runLauncherVelocity(velocityRPS + (launcherState == LauncherState.OFF ? 0.0 : adjust));
+  }
 
-	public void setOff() {
-		launcherState = LauncherState.OFF;
-	}
-	
-	public void setManual() {
-		launcherState = LauncherState.MANUAL;
-	}
+  public void setOff() {
+    launcherState = LauncherState.OFF;
+  }
 
-	public void setScoring() {
-		launcherState = LauncherState.SCORING;
-	}
+  public void setManual() {
+    launcherState = LauncherState.MANUAL;
+  }
 
-	public void setPassing() {
-		launcherState = LauncherState.PASSING;
-	}
+  public void setScoring() {
+    launcherState = LauncherState.SCORING;
+  }
 
-	public LauncherState getState() {
-		return launcherState;
-	}
+  public void setPassing() {
+    launcherState = LauncherState.PASSING;
+  }
 
+  public LauncherState getState() {
+    return launcherState;
+  }
 }

@@ -5,27 +5,26 @@
 package frc.robot.subsystems.feeder;
 
 import com.ctre.phoenix6.controls.VoltageOut;
-
-import frc.robot.util.PearadoxTalonFX;
+import frc.lib.drivers.PearadoxTalonFX;
 
 /** Add your docs here. */
 public class FeederIOReal implements FeederIO {
 
-    private PearadoxTalonFX feeder;
+  private PearadoxTalonFX feeder;
 
-    private VoltageOut feederControl;
+  private VoltageOut feederControl;
 
-    public FeederIOReal() {
-        feeder = new PearadoxTalonFX(FeederConstants.FEEDER_CAN_ID, FeederConstants.FEEDER_MOTOR_CONFIG());
-        feederControl = new VoltageOut(0.0);
-    }
+  public FeederIOReal() {
+    feeder =
+        new PearadoxTalonFX(FeederConstants.FEEDER_CAN_ID, FeederConstants.FEEDER_MOTOR_CONFIG());
+    feederControl = new VoltageOut(0.0);
+  }
 
-    public void updateInputs(FeederIOInputsAutoLogged inputs) {
-        inputs.feederData = feeder.getData();
-    }
+  public void updateInputs(FeederIOInputsAutoLogged inputs) {
+    inputs.feederData = feeder.getData();
+  }
 
-    public void runFeederVoltage(double voltage) {
-        feeder.setControl(feederControl.withOutput(voltage));
-    }
-
+  public void runFeederVoltage(double voltage) {
+    feeder.setControl(feederControl.withOutput(voltage));
+  }
 }

@@ -4,33 +4,32 @@
 
 package frc.robot.subsystems.feeder;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
 
-	private final FeederIO io;
+  private final FeederIO io;
 
-	private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
+  private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
 
-	/** Creates a new Feeder. */
-	public Feeder(FeederIO io) {
-		this.io = io;
-	}
+  /** Creates a new Feeder. */
+  public Feeder(FeederIO io) {
+    this.io = io;
+  }
 
-	@Override
-	public void periodic() {
-		// This method will be called once per scheduler run
-		io.updateInputs(inputs);
-		Logger.processInputs("FeederInputs", inputs);
-	}
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("FeederInputs", inputs);
+  }
 
-	public void launch() {
-		io.runFeederVoltage(FeederConstants.FEEDER_ACTIVE_VOLTAGE);
-	}
+  public void launch() {
+    io.runFeederVoltage(FeederConstants.FEEDER_ACTIVE_VOLTAGE);
+  }
 
-	public void stopLaunch() {
-		io.runFeederVoltage(0.0);
-	}
+  public void stopLaunch() {
+    io.runFeederVoltage(0.0);
+  }
 }

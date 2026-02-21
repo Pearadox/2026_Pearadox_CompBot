@@ -28,12 +28,10 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.DriveHelpers;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -69,8 +67,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        intake =
-            new Intake(new IntakeIO() {});
+        intake = new Intake(new IntakeIO() {});
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -135,7 +132,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+    vision =
+        new Vision(
+            drive::addVisionMeasurement,
+            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -181,15 +181,16 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
-    
-    drivercontroller.y()
-                    .whileTrue(
-                        DriveCommands.joystickDriveAtAngle(
-                            drive,
-                            () -> -drivercontroller.getLeftY(),
-                            () -> -drivercontroller.getLeftX(),
-                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
-    
+
+    drivercontroller
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
+                () -> DriveHelpers.findClosestCorner(drive::getPose)));
+
     drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
   }

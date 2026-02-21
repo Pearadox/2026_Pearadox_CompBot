@@ -49,12 +49,17 @@
 //     private boolean m_hasAppliedOperatorPerspective = false;
 
 //     /* Swerve requests to apply during SysId characterization */
-//     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-//     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-//     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
-//     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+//     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new
+// SwerveRequest.SysIdSwerveTranslation();
+//     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new
+// SwerveRequest.SysIdSwerveSteerGains();
+//     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new
+// SwerveRequest.SysIdSwerveRotation();
+//     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new
+// SwerveRequest.ApplyRobotSpeeds();
 
-//     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+//     /* SysId routine for characterizing translation. This is used to find PID gains for the drive
+// motors. */
 //     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
 //         new SysIdRoutine.Config(
 //             null,        // Use default ramp rate (1 V/s)
@@ -70,7 +75,8 @@
 //         )
 //     );
 
-//     /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
+//     /* SysId routine for characterizing steer. This is used to find PID gains for the steer
+// motors. */
 //     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
 //         new SysIdRoutine.Config(
 //             null,        // Use default ramp rate (1 V/s)
@@ -89,7 +95,8 @@
 //     /*
 //      * SysId routine for characterizing rotation.
 //      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-//      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+//      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log
+// to SysId.
 //      */
 //     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
 //         new SysIdRoutine.Config(
@@ -186,7 +193,8 @@
 //         Matrix<N3, N1> visionStandardDeviation,
 //         SwerveModuleConstants<?, ?, ?>... modules
 //     ) {
-//         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+//         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation,
+// visionStandardDeviation, modules);
 //         if (Utils.isSimulation()) {
 //             startSimThread();
 //         }
@@ -228,10 +236,12 @@
 //     public void periodic() {
 //         /*
 //          * Periodically try to apply the operator perspective.
-//          * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
+//          * If we haven't applied the operator perspective before, then we should apply it
+// regardless of DS state.
 //          * This allows us to correct the perspective in case the robot code restarts mid-match.
 //          * Otherwise, only check and apply the operator perspective if the DS is disabled.
-//          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
+//          * This ensures driving behavior doesn't change until an explicit disable event occurs
+// during testing.
 //          */
 //         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
 //             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -263,7 +273,8 @@
 //     }
 
 //     /**
-//      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+//      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose
+// estimate
 //      * while still accounting for measurement noise.
 //      *
 //      * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
@@ -271,11 +282,13 @@
 //      */
 //     @Override
 //     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-//         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+//         super.addVisionMeasurement(visionRobotPoseMeters,
+// Utils.fpgaToCurrentTime(timestampSeconds));
 //     }
 
 //     /**
-//      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+//      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose
+// estimate
 //      * while still accounting for measurement noise.
 //      * <p>
 //      * Note that the vision measurement standard deviations passed into this method
@@ -293,7 +306,8 @@
 //         double timestampSeconds,
 //         Matrix<N3, N1> visionMeasurementStdDevs
 //     ) {
-//         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+//         super.addVisionMeasurement(visionRobotPoseMeters,
+// Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
 //     }
 
 //     private void configureAutoBuilder() {
@@ -306,27 +320,32 @@
 //                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
 //                     (speeds, feedforwards) -> setControl(m_pathApplyRobotSpeeds
 //                             .withSpeeds(speeds)
-//                             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-//                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+//
+// .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+//
+// .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
 //                     new PPHolonomicDriveController(
 //                             // PID constants for translation
 //                             new PIDConstants(5, 0, 0), // kP was 10
 //                             // PID constants for rotation
 //                             new PIDConstants(5, 0, 0)), // kP was 7
 //                     config,
-//                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
+//                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
+// case
 //                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
 //                     this // Subsystem for requirements
 //                     );
 //                     PathPlannerLogging.setLogActivePathCallback((activePath) -> {
-//                         Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+//                         Logger.recordOutput("Odometry/Trajectory", activePath.toArray(new
+// Pose2d[activePath.size()]));
 //                     });
 //                     PathPlannerLogging.setLogTargetPoseCallback((targetPose) -> {
 //                         Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
 //                     });
 //         } catch (Exception ex) {
 //             DriverStation.reportError(
-//                     "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
+//                     "Failed to load PathPlanner config and configure AutoBuilder",
+// ex.getStackTrace());
 //         }
 //     }
 // }
