@@ -1,0 +1,19 @@
+2/16/26 cad export
+
+file name	mechanism name	coords in onshape
+model 	= 	stationary	N/A
+model_0 = 	turret		-0.143323 0.134550 0.465931
+model_1 =	launcher hood	-0.041317 0.1235075 0.519888
+model_2 = 	spindexer	0 -0.024588 0
+model_3 =	intake A	. -0.205374 0.260350
+model_4 =	intake B	. -0.302910 0.646415
+model_5 = 	climber		N/A
+model_6 =	bumpers		N/A
+
+feeder (not exported)
+-0.047617 0 0.299225
+
+switch (x, y, z) in onshape coords to:
+(-y, x, z) for the zero in code
+and
+(y, -x, -z) for the zero in the json

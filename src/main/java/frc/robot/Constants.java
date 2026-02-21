@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -49,4 +51,25 @@ public final class Constants {
     public static final double MAX_ROT_VELOCITY = Math.PI * 2; // rad/s
     public static final double MAX_ROT_ACCELERATION = Math.PI * 4; // rad/s^2
   }
+
+  public static final class VisualizerConstants {
+        public static final Translation3d Z0_ZERO = new Translation3d(-0.134550, -0.143323, 0);
+        public static final Translation3d Z1_ZERO = new Translation3d(-0.1235075, -0.041317, 0.519888);
+        public static final Translation3d Z2_ZERO = new Translation3d(0.024588, 0, 0);
+        public static final Translation3d Z3_ZERO = new Translation3d(0.205374, 0, 0.260350);
+        public static final Translation3d Z4_ZERO = new Translation3d(0.302910, 0, 0.646415);
+
+        public static final Translation3d Z1_OFFSET = Z1_ZERO.minus(Z0_ZERO);
+        public static final Translation3d Z4_OFFSET = Z4_ZERO.minus(Z3_ZERO);
+
+        public static final double TURRET_STARTING_ANGLE = Math.PI / 2;
+
+        public static final double HOOD_STARTING_ANGLE = Units.degreesToRadians(61.549451);
+        public static final double HOOD_MIN_ANGLE = Units.degreesToRadians(24.652849);
+        public static final double HOOD_MAX_ANGLE = Units.degreesToRadians(69.652849);
+
+        public static final double INTAKE_STARTING_ANGLE = Math.PI / 2;
+
+        public static final double CLIMBER_MAX_DISPLACEMENT = Units.inchesToMeters(5.875);
+    }
 }

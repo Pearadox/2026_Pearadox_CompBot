@@ -1,0 +1,118 @@
+{
+  "hubs": [
+    {
+      "x": -8,
+      "y": -8,
+      "width": 1296,
+      "height": 736,
+      "state": {
+        "sidebar": {
+          "width": 221,
+          "expanded": [
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/FieldSimulation",
+            "/AdvantageKit/Turret/TurretData",
+            "/RealOutputs",
+            "/RealOutputs/LoggedRobot",
+            "/DriverStation",
+            "/AdvantageKit/Hood/HoodData",
+            "/AdvantageKit/Shooter/ShooterOneData",
+            "/AdvantageKit/RealOutputs/HeldGamePieceManager",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs/RobotVisualizer",
+            "/AdvantageKit/RealOutputs/GamePieceManager"
+          ]
+        },
+        "tabs": {
+          "selected": 1,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "829h1tyw58kkzg7koull64mh81j8lky5",
+              "renderer": "",
+              "controlsHeight": 0
+            },
+            {
+              "type": 3,
+              "title": "Sim Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Pose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "Pearadox2026"
+                    }
+                  },
+                  {
+                    "type": "component",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/RobotVisualizer/Components",
+                    "logType": "Transform3d[]",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/GamePieceManager/Held Fuel",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Fuel"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Fuel",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Fuel"
+                    }
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "ln1lwpda3q415hmlkbdfevdrl6bpgm7o",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  -9.135402345821124,
+                  3.3850384553984147,
+                  0.01203791873482794
+                ],
+                "cameraTarget": [
+                  -2.0521572811967097,
+                  -1.1183763017265376,
+                  0.022394690282314222
+                ]
+              },
+              "controlsHeight": 200
+            },
+            {
+              "type": 8,
+              "title": "Joysticks",
+              "controller": [
+                "Xbox Controller (White)",
+                "Xbox Controller (Blue)",
+                "None",
+                "None",
+                "None",
+                "None"
+              ],
+              "controllerUUID": "brh960mapv74faj42gcgdguofb4r06ni",
+              "renderer": null,
+              "controlsHeight": 85
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "26.0.0"
+}
