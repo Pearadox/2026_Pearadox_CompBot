@@ -9,7 +9,7 @@ import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import frc.robot.util.PearadoxTalonFX;
+import frc.lib.drivers.PearadoxTalonFX;
 
 /** Add your docs here. */
 public class FeederIOSim implements FeederIO {
