@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "NZone-Bump-AllianZone"
+            "pathName": "NZone-OBump-AllianZone"
           }
         },
         {
@@ -32,6 +32,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Both NZone & AllianZone",
   "choreoAuto": false
 }

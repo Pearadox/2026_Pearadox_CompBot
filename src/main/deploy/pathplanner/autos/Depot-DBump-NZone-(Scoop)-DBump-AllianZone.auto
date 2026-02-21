@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OBump-NZone"
+            "pathName": "Depot-DBump-NZone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SweepOutpostToDepot"
+            "pathName": "DepotScoop"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSlowIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZone-DBump-AllianZone"
           }
         }
       ]

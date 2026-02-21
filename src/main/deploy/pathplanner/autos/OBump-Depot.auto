@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OBump-NZone"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SweepOutpostToDepot"
+            "pathName": "OBump-Depot"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Both NZone & AllianZone",
+  "folder": "Stays in AllianZone",
   "choreoAuto": false
 }
