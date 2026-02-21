@@ -48,6 +48,9 @@ public class RobotContainer {
   private final Vision vision;
   private final Intake intake;
 
+  // Visualizer
+  public final RobotVisualizer visualizer;
+
   // Controller
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
   private final CommandXboxController opController = new CommandXboxController(1);
@@ -136,6 +139,14 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+
+    visualizer = new RobotVisualizer(
+        () -> 0, // TODO: replace with turret angle supplier
+        () -> 0, // TODO: replace with hood angle supplier
+        () -> 0, // TODO: replace with spindexer angle supplier
+        () -> 0, // TODO: replace with intake angle supplier
+        () -> 0  // TODO: replace with climber displacement supplier
+    );
 
     // Configure the button bindings
     configureButtonBindings();
