@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
 
@@ -18,6 +19,8 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.pathplanner.lib.commands.FollowPathCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -72,6 +75,9 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+
+    // Pathplanner warm-up command
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
   /** This function is called periodically during all modes. */
@@ -155,5 +161,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    MechVisualizer.getInstance().periodic();
+  }
 }

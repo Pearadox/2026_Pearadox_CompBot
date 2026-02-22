@@ -3,7 +3,7 @@ package frc.robot.subsystems.turret;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import frc.robot.util.PearadoxTalonFX;
+import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.util.PhoenixUtil;
 
 public abstract class TurretIOTalonFX implements TurretIO {
