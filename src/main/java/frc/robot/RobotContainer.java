@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -189,6 +190,16 @@ public class RobotContainer {
                             () -> -drivercontroller.getLeftY(),
                             () -> -drivercontroller.getLeftX(),
                             () -> DriveHelpers.findClosestCorner(drive :: getPose)));
+
+        // Uncomment when ready to run turret SysID routines
+        // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+        // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+        // opController.y().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
   }
 
   /**
