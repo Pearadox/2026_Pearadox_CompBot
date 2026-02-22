@@ -1,6 +1,7 @@
 package frc.robot.subsystems.spindexer;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.spindexer.SpindexerConstants.*;
 import frc.robot.util.SmarterDashboard;
 import org.littletonrobotics.junction.Logger;
@@ -8,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 public class Spindexer extends SubsystemBase {
   private SpindexerIO io;
   private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
+
 
   private SpindexerState spindexerState = SpindexerState.RUNNING;
   public static double adjust = 0;

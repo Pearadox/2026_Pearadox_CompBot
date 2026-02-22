@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,7 +16,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -31,20 +29,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOReal;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.subsystems.launcher.LauncherIOReal;
-import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIO;
-import frc.robot.subsystems.turret.TurretIOReal;
-import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.util.DriveHelpers;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -58,11 +45,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Feeder feeder;
-  private final Intake intake;
-  private final Launcher launcher;
+  //   private final Intake intake;
+  //   private final Launcher launcher;
   private final Spindexer spindexer;
-  private final Turret turret;
-  //   private final Vision vision;
+  //   private final Turret turret;
+  // private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -90,10 +77,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         feeder = new Feeder(new FeederIOReal());
-        intake = new Intake(new IntakeIOReal());
-        launcher = new Launcher(new LauncherIOReal());
+        // intake = new Intake(new IntakeIOReal());
+        // launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
-        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
+        // turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
 
         break;
 
@@ -108,10 +95,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         feeder = new Feeder(new FeederIOSim());
-        intake = new Intake(new IntakeIOSim());
-        launcher = new Launcher(new LauncherIOSim());
+        // intake = new Intake(new IntakeIOSim());
+        // launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
-        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
+        // turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
 
         break;
 
@@ -126,10 +113,10 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
-        intake = new Intake(new IntakeIO() {});
-        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
+        // intake = new Intake(new IntakeIO() {});
+        // launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
-        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
+        // turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
 
         break;
     }
@@ -153,10 +140,11 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    vision =
-        new Vision(
-            drive::addVisionMeasurement,
-            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+    // vision =
+    //     new Vision(
+    //         drive::addVisionMeasurement,
+    //         new VisionIOPhotonVision(VisionConstants.camera0Name,
+    // VisionConstants.robotToCamera0));
 
     visualizer =
         new RobotVisualizer(
@@ -231,13 +219,12 @@ public class RobotContainer {
     // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    
-    
-    drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
 
-    drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
-    drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
+    // drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    // drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
+    // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
 
     drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
     drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
@@ -258,7 +245,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.stopLaunch()));
 
     // Intake Commands
-    NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
-    NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
+    // NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->
+    // intake.setIntaking()));
+    // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
+    // intake.setDeployed()));
   }
 }
