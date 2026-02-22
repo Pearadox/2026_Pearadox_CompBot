@@ -7,7 +7,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -150,11 +153,10 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // vision =
-    //     new Vision(
-    //         drive::addVisionMeasurement,
-    //         new VisionIOPhotonVision(VisionConstants.camera0Name,
-    // VisionConstants.robotToCamera0));
+    vision =
+        new Vision(
+            drive::addVisionMeasurement,
+            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
     visualizer =
         new RobotVisualizer(
@@ -167,6 +169,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    // Register named commands for PathPlanner
+    registerNamedCommands();
   }
 
   /**
@@ -219,6 +223,16 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
+    // Uncomment when ready to run turret SysID routines
+    // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+    // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+    // opController.y().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
+    
     drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
 
@@ -236,5 +250,15 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void registerNamedCommands() {
+    // Feeder Commands
+    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.launch()));
+    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.stopLaunch()));
+
+    // Intake Commands
+    NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
+    NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
   }
 }

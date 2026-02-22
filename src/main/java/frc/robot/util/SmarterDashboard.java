@@ -61,6 +61,11 @@ public class SmarterDashboard {
     SmartDashboard.putString(key, mech2d.toString());
     Logger.recordOutput(key, mech2d);
   }
+  
+  public static <T extends WPISerializable> void putData(String key, T value) {
+    SmartDashboard.putString(key, value.toString());
+    Logger.recordOutput(key, value);
+  }
 
   public static <T extends WPISerializable> void putData(String key, T value, String subsystem) {
     SmartDashboard.putString(key, value.toString());

@@ -19,8 +19,11 @@ public interface LauncherIO {
 
     public double hoodServo1Position = 0.0;
     public double hoodServo2Position = 0.0;
+    
+    public double hoodServo1PulseWidth = 0.0;
+    public double hoodServo2PulseWidth = 0.0;
 
-    public boolean hoodAtASetpoint = false;
+    public boolean limitSwitchPressed = false;
   }
 
   public default void updateInputs(LauncherIOInputsAutoLogged inputs) {}
@@ -37,4 +40,9 @@ public interface LauncherIO {
    * @param angleRads the desired angle of the hood
    */
   public default void setHoodAngleRads(double angleRads) {}
+
+  /**
+   * @param isPassing if the robot is in PASSING mode or other modes
+   */
+  public void setHoodAngle(boolean isPassing);
 }

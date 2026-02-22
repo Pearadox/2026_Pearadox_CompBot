@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.launcher;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
@@ -28,10 +27,10 @@ public class Launcher extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
+    Logger.processInputs("Launcher/Inputs", inputs);
     // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 20 : 40));
     io.setHoodAngleRads(launcherState.getHoodAngleRads());
     Logger.recordOutput("Launcher/State", getState());
-    Logger.processInputs("Launcher/Inputs", inputs);
 
     LauncherVisualizer.getInstance()
         .updateRollerPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
