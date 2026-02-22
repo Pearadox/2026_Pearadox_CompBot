@@ -7,37 +7,31 @@
         {
           "type": "named",
           "data": {
-            "name": "Stop Intaking"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "OBump-NZone"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Set Intaking"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SweepOutpostToDepot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop Intaking"
+            "pathName": "DBump-NZone1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NZone-Bump-Depot"
+            "pathName": "DepotScoop2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DepotSlowIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZone-DBump-AllianZone"
           }
         },
         {
@@ -56,12 +50,6 @@
           "type": "named",
           "data": {
             "name": "Stop Launching"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Set Intaking"
           }
         },
         {
@@ -98,6 +86,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "WIP",
+  "folder": "Runnables",
   "choreoAuto": false
 }

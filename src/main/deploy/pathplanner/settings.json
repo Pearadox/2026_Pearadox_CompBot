@@ -3,15 +3,14 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "Sweeps & Scoops",
     "To Alliance Zone",
     "To Depot",
-    "To Neutral Zone",
-    "Sweeps"
+    "To Neutral Zone"
   ],
   "autoFolders": [
-    "Both NZone & AllianZone WIP",
     "Runnables",
-    "Stays in AllianZone WIP"
+    "WIP"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

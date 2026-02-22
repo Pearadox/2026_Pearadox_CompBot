@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OBump-NZone"
@@ -15,11 +21,17 @@
           "data": {
             "pathName": "SweepOutpostToDepot"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Both NZone & AllianZone WIP",
+  "folder": "WIP",
   "choreoAuto": false
 }

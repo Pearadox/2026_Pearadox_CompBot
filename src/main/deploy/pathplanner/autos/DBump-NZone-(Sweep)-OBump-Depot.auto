@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "DBump-NZone"
+            "pathName": "DBump-NZone2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
           }
         },
         {
@@ -17,21 +29,69 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "NZone-OBump-AllianZone"
+            "name": "Stop Intaking"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "AllianZone-Depot"
+            "pathName": "NZone-OBump-AllianZone2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Launching"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launching"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AllianZone-Depot2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Launching"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launching"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Both NZone & AllianZone WIP",
+  "folder": "WIP",
   "choreoAuto": false
 }

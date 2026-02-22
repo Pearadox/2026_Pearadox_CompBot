@@ -5,15 +5,45 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OBump-Depot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Launching"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launching"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Stays in AllianZone WIP",
+  "folder": "WIP",
   "choreoAuto": false
 }

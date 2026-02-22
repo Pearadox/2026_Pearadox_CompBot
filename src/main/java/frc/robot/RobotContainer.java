@@ -240,11 +240,11 @@ public class RobotContainer {
 
   public void registerNamedCommands() {
     // Feeder Commands
-    NamedCommands.registerCommand("Launch", new InstantCommand(() -> feeder.launch()));
-    NamedCommands.registerCommand("Stop Launch", new InstantCommand(() -> feeder.stopLaunch()));
+    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.launch()));
+    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.stopLaunch()));
 
     // Intake Commands
     NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
-    NamedCommands.registerCommand("Deploy Intake", new InstantCommand(() -> intake.setDeployed()));
+    NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
   }
 }

@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Deploy Intake"
+            "name": "Stop Intaking"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Stop Launch"
+            "name": "Stop Launching"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepotScoop"
+            "pathName": "DepotScoop1"
           }
         },
         {
@@ -67,19 +67,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Deploy Intake"
+            "name": "Stop Intaking"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NZone-DBump-AllianZone"
+            "pathName": "NZone-DBump-AllianZone1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Launch"
+            "name": "Set Launching"
           }
         },
         {

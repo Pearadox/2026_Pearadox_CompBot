@@ -3,48 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.28,
-        "y": 1.053
+        "x": 8.212,
+        "y": 3.002
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.776688888888888,
-        "y": 1.1798111111111114
+        "x": 7.665844444444444,
+        "y": 2.670777777777778
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.7085,
-        "y": 4.083722222222222
+        "x": 5.346666666666668,
+        "y": 2.5830777777777767
       },
       "prevControl": {
-        "x": 8.72798888888889,
-        "y": 3.021577777777777
+        "x": 5.814399999999999,
+        "y": 2.553844444444444
       },
       "nextControl": {
-        "x": 8.688117419664836,
-        "y": 5.194572850488738
+        "x": 4.185419734356459,
+        "y": 2.655655711047163
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.28,
-        "y": 7.134
+        "x": 2.813111111111111,
+        "y": 3.050811111111111
       },
       "prevControl": {
-        "x": 8.874133333333331,
-        "y": 6.6075333333333335
+        "x": 3.4854777777777777,
+        "y": 2.5830777777777767
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,10 +63,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -179.27477570094086
   },
   "reversed": false,
-  "folder": "Sweeps & Scoops",
+  "folder": "To Alliance Zone",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

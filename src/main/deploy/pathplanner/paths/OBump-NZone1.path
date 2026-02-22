@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.28,
-        "y": 1.053
+        "x": 3.515,
+        "y": 2.554
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.776688888888888,
-        "y": 1.1798111111111114
+        "x": 4.469666666666667,
+        "y": 2.8169444444444447
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.7085,
-        "y": 4.083722222222222
+        "x": 6.165200000000001,
+        "y": 1.832755555555556
       },
       "prevControl": {
-        "x": 8.72798888888889,
-        "y": 3.021577777777777
-      },
-      "nextControl": {
-        "x": 8.688117419664836,
-        "y": 5.194572850488738
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.28,
-        "y": 7.134
-      },
-      "prevControl": {
-        "x": 8.874133333333331,
-        "y": 6.6075333333333335
+        "x": 6.058011111111111,
+        "y": 2.358955555555555
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Sweeps & Scoops",
+  "folder": "To Neutral Zone",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
