@@ -32,7 +32,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
@@ -43,11 +42,7 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.DriveHelpers;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,7 +59,7 @@ public class RobotContainer {
   private final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
-  private final Vision vision;
+  //   private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -108,7 +103,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-                
+
         feeder = new Feeder(new FeederIOSim());
         intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
@@ -126,13 +121,13 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-                
+
         feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
         intake = new Intake(new IntakeIO() {});
-        launcher = new Launcher(new LauncherIOSim());  // TODO make blank IO
+        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
         turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
-        
+
         break;
     }
 
@@ -155,15 +150,20 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+    // vision =
+    //     new Vision(
+    //         drive::addVisionMeasurement,
+    //         new VisionIOPhotonVision(VisionConstants.camera0Name,
+    // VisionConstants.robotToCamera0));
 
-    visualizer = new RobotVisualizer(
-        () -> 0, // TODO: replace with turret angle supplier
-        () -> 0, // TODO: replace with hood angle supplier
-        () -> 0, // TODO: replace with spindexer angle supplier
-        () -> 0, // TODO: replace with intake angle supplier
-        () -> 0  // TODO: replace with climber displacement supplier
-    );
+    visualizer =
+        new RobotVisualizer(
+            () -> 0, // TODO: replace with turret angle supplier
+            () -> 0, // TODO: replace with hood angle supplier
+            () -> 0, // TODO: replace with spindexer angle supplier
+            () -> 0, // TODO: replace with intake angle supplier
+            () -> 0 // TODO: replace with climber displacement supplier
+            );
 
     // Configure the button bindings
     configureButtonBindings();
@@ -199,7 +199,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     drivercontroller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -209,17 +209,24 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
-    
-    drivercontroller.y()
-                    .whileTrue(
-                        DriveCommands.joystickDriveAtAngle(
-                            drive,
-                            () -> -drivercontroller.getLeftY(),
-                            () -> -drivercontroller.getLeftX(),
-                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
-    
+
+    drivercontroller
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
+                () -> DriveHelpers.findClosestCorner(drive::getPose)));
+
     drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
+    drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
+
+    drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
+    drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
   }
 
   /**
