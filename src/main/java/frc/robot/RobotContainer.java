@@ -226,8 +226,8 @@ public class RobotContainer {
     // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
     // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
 
-    drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
-    drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
+    // drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
+    // drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
   }
 
   /**
@@ -241,8 +241,8 @@ public class RobotContainer {
 
   public void registerNamedCommands() {
     // Feeder Commands
-    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.launch()));
-    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.stopLaunch()));
+    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.setRunning()));
+    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
 
     // Intake Commands
     // NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->

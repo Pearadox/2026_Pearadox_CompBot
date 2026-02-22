@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.feeder;
 
+import java.util.Map;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -13,6 +15,17 @@ import edu.wpi.first.math.system.plant.DCMotor;
 /** Add your docs here. */
 public class FeederConstants {
 
+  public static enum FeederState {
+    STOPPED,
+    RUNNING
+  }
+
+  public static record StateConfig(double voltage) {
+    public static final Map<FeederState, StateConfig> SPINDEXER_STATE_MAP =
+        Map.of(
+            FeederState.STOPPED, new StateConfig(0),
+            FeederState.RUNNING, new StateConfig(-5.414));
+  }
   public static final int FEEDER_CAN_ID = 41;
 
   public static final int FEEDER_CURRENT_LIMIT = 50;
@@ -41,7 +54,7 @@ public class FeederConstants {
     return FEEDER_CONFIG;
   }
 
-  public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
-
   public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
+
+    public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
 }

@@ -1,7 +1,6 @@
 package frc.robot.subsystems.spindexer;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.spindexer.SpindexerConstants.*;
 import frc.robot.util.SmarterDashboard;
 import org.littletonrobotics.junction.Logger;
