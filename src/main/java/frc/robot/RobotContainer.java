@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -215,16 +216,25 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
+    
+    drivercontroller.y()
+                    .whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                            drive,
+                            () -> -drivercontroller.getLeftY(),
+                            () -> -drivercontroller.getLeftX(),
+                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
 
-    drivercontroller
-        .y()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -drivercontroller.getLeftY(),
-                () -> -drivercontroller.getLeftX(),
-                () -> DriveHelpers.findClosestCorner(drive::getPose)));
+    // Uncomment when ready to run turret SysID routines
+    // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+    // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
 
+    // opController.y().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    
+    
     drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
   }

@@ -53,14 +53,14 @@ public final class Constants {
   }
 
   public static final class VisualizerConstants {
-    public static final Translation3d Z0_ZERO = new Translation3d(-0.134550, -0.143323, 0);
-    public static final Translation3d Z1_ZERO = new Translation3d(-0.1235075, -0.041317, 0.519888);
-    public static final Translation3d Z2_ZERO = new Translation3d(0.024588, 0, 0);
-    public static final Translation3d Z3_ZERO = new Translation3d(0.205374, 0, 0.260350);
-    public static final Translation3d Z4_ZERO = new Translation3d(0.302910, 0, 0.646415);
+        public static final Translation3d MODEL0_ZERO = new Translation3d(-0.134550, -0.143323, 0);
+        public static final Translation3d Z1_ZERO = new Translation3d(-0.1235075, -0.041317, 0.519888);
+        public static final Translation3d MODEL2_ZERO = new Translation3d(0.024588, 0, 0);
+        public static final Translation3d MODEL3_ZERO = new Translation3d(0.205374, 0, 0.260350);
+        public static final Translation3d Z4_ZERO = new Translation3d(0.302910, 0, 0.646415);
 
-    public static final Translation3d Z1_OFFSET = Z1_ZERO.minus(Z0_ZERO);
-    public static final Translation3d Z4_OFFSET = Z4_ZERO.minus(Z3_ZERO);
+        public static final Translation3d MODEL1_OFFSET = Z1_ZERO.minus(MODEL0_ZERO);
+        public static final Translation3d MODEL4_OFFSET = Z4_ZERO.minus(MODEL3_ZERO);
 
     public static final double TURRET_STARTING_ANGLE = Math.PI / 2;
 
@@ -68,7 +68,8 @@ public final class Constants {
     public static final double HOOD_MIN_ANGLE = Units.degreesToRadians(24.652849);
     public static final double HOOD_MAX_ANGLE = Units.degreesToRadians(69.652849);
 
-    public static final double INTAKE_STARTING_ANGLE = Math.PI / 2;
+        public static final double INTAKE_STARTING_ANGLE = Math.PI / 2; // radians
+        public static final double GRAVITY_RAMP_MAX_OFFSET_DEGS = 39; // degrees
 
     public static final double CLIMBER_MAX_DISPLACEMENT = Units.inchesToMeters(5.875);
   }

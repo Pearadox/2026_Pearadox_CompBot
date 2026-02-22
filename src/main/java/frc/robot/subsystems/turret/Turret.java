@@ -1,9 +1,16 @@
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -14,20 +21,61 @@ public class Turret extends SubsystemBase {
 
   private Supplier<ChassisSpeeds> speedsSupplier;
 
-  public Turret(TurretIO io, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
-    this.io = io;
-    this.speedsSupplier = chassisSpeedsSupplier;
-  }
+    private boolean hasZeroed = false;
 
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Turret", inputs);
-  }
+    private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.67);
+    private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
+    private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.05);
+    private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0);
+    private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
+    private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
+    private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.1);
 
-  public void followTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
-    double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
-    double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
+    private final SysIdRoutine sysId;
+
+    public Turret(TurretIO io, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
+        this.io = io;
+        this.speedsSupplier = chassisSpeedsSupplier;
+
+        sysId = new SysIdRoutine(
+                new SysIdRoutine.Config(
+                        Volts.of(0.05).div(Seconds.of(1)), // Ramp rate (V/s)
+                        Volts.of(0.15), // Step voltage
+                        Seconds.of(10), // Timeout
+                        (state) -> SignalLogger.writeString("state", state.toString())),
+                new SysIdRoutine.Mechanism((voltage) -> runVoltage(voltage.in(Volts)), null, this));
+
+        io.setPID(kP.get(), kI.get(), kD.get());
+        io.setFFGains(kS.get(), kV.get(), kA.get());
+    }
+
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Turret", inputs);
+
+        if (!hasZeroed && inputs.cancoderConnected) {
+            io.setPosition((inputs.cancoderPosition / TurretConstants.TURRET_TO_CANCODER_RATIO)
+                    * TurretConstants.TURRET_GEAR_RATIO);
+            hasZeroed = true;
+        }
+
+        if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+            io.setPID(kP.get(), kI.get(), kD.get());
+        }
+        if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
+            io.setFFGains(kS.get(), kV.get(), kA.get());
+        }
+    }
+
+    private void runVoltage(double volts) {
+        io.runVoltage(volts);
+    }
+
+    /** Follows a robot-centric angle. */
+    public void followTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
+        double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
+        double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
     double ffVolts = getFF(setpointTurretRads);
 
@@ -39,10 +87,20 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/FF Volts", ffVolts);
   }
 
-  @AutoLogOutput
-  public double getTurretAngleRads() {
-    return inputs.turretData.position() * TurretConstants.TURRET_P_COEFFICIENT;
-  }
+    /** Returns a command to run a quasistatic test in the specified direction. */
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return sysId.quasistatic(direction);
+    }
+
+    /** Returns a command to run a dynamic test in the specified direction. */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return sysId.dynamic(direction);
+    }
+
+    @AutoLogOutput
+    public double getTurretAngleRads() {
+        return inputs.turretData.position() * TurretConstants.TURRET_P_COEFFICIENT;
+    }
 
   @AutoLogOutput
   public double getTurretAngleDegs() {
@@ -74,14 +132,6 @@ public class Turret extends SubsystemBase {
   private double getFF(double setpointRads) {
     double chassisAngularVelocity = speedsSupplier.get().omegaRadiansPerSecond;
 
-    boolean shouldApplyFF =
-        Math.abs(
-                    Rotation2d.fromRadians(setpointRads)
-                        .minus(Rotation2d.fromRadians(getTurretAngleRads()))
-                        .getRadians())
-                < TurretConstants.FF_ERROR_THRESHOLD
-            && Math.abs(chassisAngularVelocity) < TurretConstants.FF_CHASSIS_ROT_VELOCITY_LIMIT;
-
-    return shouldApplyFF ? chassisAngularVelocity * TurretConstants.K_OMEGA : 0;
-  }
+        return shouldApplyFF ? chassisAngularVelocity * kOmega.get() : 0;
+    }
 }
