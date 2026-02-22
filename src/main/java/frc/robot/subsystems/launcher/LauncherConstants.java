@@ -15,10 +15,10 @@ import lombok.Getter;
 /** Constants for the launcher */
 public class LauncherConstants {
   public static enum LauncherState {
-    OFF(0),
-    MANUAL(50),
-    SCORING(50),
-    PASSING(75); // TODO: find proper hood angles
+    OFF(Units.degreesToRadians(60)),
+    MANUAL(Units.degreesToRadians(40)),
+    SCORING(Units.degreesToRadians(40)),
+    PASSING(Units.degreesToRadians(25)); // TODO: find proper hood angles
 
     @Getter private final double hoodAngleRads;
 
@@ -66,12 +66,16 @@ public class LauncherConstants {
   public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
   public static final ChannelId HOOD_2_ID = ChannelId.kChannelId1; // TODO: set
 
-  public static final int SERVO_COUNTER_CLOCKWISE_PULSE_WIDTH = 500; // TODO: double check
-  public static final int SERVO_CLOCKWISE_PULSE_WIDTH = 2500; // TODO: double check
-  public static final int SERVO_NO_MOVEMENT_PULSE_WIDTH = 1500;
-
   public static final double HOOD_GEARING = 25 / 12; // TODO: double check
 
-  public static final int HIGH_ANGLE_LIMIT_SWITCH_CHANNEL = 0; // TODO: set
-  public static final int LOW_ANGLE_LIMIT_SWITCH_CHANNEL = 0; // TODO: set
+  public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(60.0);
+  public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(20.0);
+
+  public static final double HOOD_1_SETPOINT_PASSING = 0.0; // TODO: set
+  public static final double HOOD_2_SETPOINT_PASSING = 0.0; // TODO: set
+  public static final double HOOD_1_SETPOINT_DEFAULT = 0.0; // TODO: set
+  public static final double HOOD_2_SETPOINT_DEFAULT = 0.0; // TODO: set
+
+  public static final int HOOD_SERVO_MAX_PULSE_WIDTH = 2500;
+  public static final int HOOD_SERVO_MIN_PULSE_WIDTH = 500;
 }

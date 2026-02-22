@@ -8,7 +8,6 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-
   private IntakeIO io;
 
   public IntakeState intakeState = IntakeState.STOWED;

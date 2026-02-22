@@ -20,5 +20,5 @@ public interface FeederIO {
   /**
    * @param voltage voltage to run the feeder at
    */
-  public void runFeederVoltage(double voltage);
+  public default void runFeederVoltage(double voltage) {}
 }

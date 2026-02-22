@@ -3,7 +3,7 @@ package frc.robot.subsystems.turret;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import frc.lib.drivers.PearadoxTalonFX;
+import frc.robot.util.PearadoxTalonFX;
 import frc.robot.util.PhoenixUtil;
 
 public abstract class TurretIOTalonFX implements TurretIO {
@@ -17,10 +17,10 @@ public abstract class TurretIOTalonFX implements TurretIO {
         turretMotor = new PearadoxTalonFX(TurretConstants.TURRET_ID, configs);
     }
 
-  @Override
-  public void updateInputs(TurretIOInputs inputs) {
-    inputs.turretData = turretMotor.getData();
-  }
+    @Override
+    public void updateInputs(TurretIOInputs inputs) {
+        inputs.turretData = turretMotor.getData();
+    }
 
     @Override
     public void runPosition(double setpointRots, double ffVolts) {

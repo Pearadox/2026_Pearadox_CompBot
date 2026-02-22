@@ -10,33 +10,34 @@ import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
 public class RobotVisualizer {
-  private final DoubleSupplier turretYawSupplier;
-  private final DoubleSupplier hoodAngleSupplier;
-  private final DoubleSupplier spindexerYawSupplier;
-  private final DoubleSupplier intakeAngleSupplier;
-  private final DoubleSupplier climberDisplacementSupplier;
+    private final DoubleSupplier turretYawSupplier;
+    private final DoubleSupplier hoodAngleSupplier;
+    private final DoubleSupplier spindexerYawSupplier;
+    private final DoubleSupplier intakeAngleSupplier;
+    private final DoubleSupplier climberDisplacementSupplier;
 
-  @Getter private Transform3d hoodTransform = Transform3d.kZero;
+    @Getter
+    private Transform3d hoodTransform = Transform3d.kZero;
 
-  public RobotVisualizer(
-      DoubleSupplier turretYawSupplier,
-      DoubleSupplier hoodAngleSupplier,
-      DoubleSupplier spindexerYawSupplier,
-      DoubleSupplier intakeAngleSupplier,
-      DoubleSupplier climberDisplacementSupplier) {
-    this.turretYawSupplier = turretYawSupplier;
-    this.hoodAngleSupplier = hoodAngleSupplier;
-    this.spindexerYawSupplier = spindexerYawSupplier;
-    this.intakeAngleSupplier = intakeAngleSupplier;
-    this.climberDisplacementSupplier = climberDisplacementSupplier;
-  }
+    public RobotVisualizer(
+            DoubleSupplier turretYawSupplier,
+            DoubleSupplier hoodAngleSupplier,
+            DoubleSupplier spindexerYawSupplier,
+            DoubleSupplier intakeAngleSupplier,
+            DoubleSupplier climberDisplacementSupplier) {
+        this.turretYawSupplier = turretYawSupplier;
+        this.hoodAngleSupplier = hoodAngleSupplier;
+        this.spindexerYawSupplier = spindexerYawSupplier;
+        this.intakeAngleSupplier = intakeAngleSupplier;
+        this.climberDisplacementSupplier = climberDisplacementSupplier;
+    }
 
-  public void periodic() {
-    double turretYaw = turretYawSupplier.getAsDouble();
-    double hoodPitch = hoodAngleSupplier.getAsDouble();
-    double spindexerYaw = spindexerYawSupplier.getAsDouble();
-    double intakeRoll = intakeAngleSupplier.getAsDouble();
-    double climberDisplacement = climberDisplacementSupplier.getAsDouble();
+    public void periodic() {
+        double turretYaw = turretYawSupplier.getAsDouble();
+        double hoodPitch = hoodAngleSupplier.getAsDouble();
+        double spindexerYaw = spindexerYawSupplier.getAsDouble();
+        double intakeRoll = intakeAngleSupplier.getAsDouble();
+        double climberDisplacement = climberDisplacementSupplier.getAsDouble();
 
         Transform3d turret = new Transform3d(VisualizerConstants.MODEL0_ZERO,
                 new Rotation3d(0, 0, -turretYaw + VisualizerConstants.TURRET_STARTING_ANGLE));
@@ -56,8 +57,8 @@ public class RobotVisualizer {
                 new Transform3d[] { turret, hoodTransform, spindexer, intake, intakeGravityRamp, climber });
     }
 
-  private static double getGravityRampAngle(double intakeAngle) {
-    double intakeAngleDegs = Units.radiansToDegrees(intakeAngle) % 360;
+    private static double getGravityRampAngle(double intakeAngle) {
+        double intakeAngleDegs = Units.radiansToDegrees(intakeAngle) % 360;
 
         // the ramp wants to point downwards (with gravity) but is
         // constrained (with string) from being more than
@@ -65,9 +66,9 @@ public class RobotVisualizer {
         double fieldRelativeAngle = Math.min(
                 intakeAngleDegs - 180 + VisualizerConstants.GRAVITY_RAMP_MAX_OFFSET_DEGS, -90);
 
-    // return an angle relative to the intake
-    // adding 180 bc the CAD was exported with the ramp facing down
-    // and negative of the side of the robot it's on
-    return -(Units.degreesToRadians(fieldRelativeAngle - intakeAngleDegs + 180));
-  }
+        // return an angle relative to the intake
+        // adding 180 bc the CAD was exported with the ramp facing down
+        // and negative of the side of the robot it's on
+        return -(Units.degreesToRadians(fieldRelativeAngle - intakeAngleDegs + 180));
+    }
 }

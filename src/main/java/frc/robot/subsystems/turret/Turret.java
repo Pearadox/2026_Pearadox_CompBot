@@ -16,10 +16,10 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
-  private TurretIO io;
-  private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
+    private TurretIO io;
+    private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
 
-  private Supplier<ChassisSpeeds> speedsSupplier;
+    private Supplier<ChassisSpeeds> speedsSupplier;
 
     private boolean hasZeroed = false;
 
@@ -77,15 +77,14 @@ public class Turret extends SubsystemBase {
         double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
         double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
-    double ffVolts = getFF(setpointTurretRads);
+        double ffVolts = getFF(setpointTurretRads);
 
-    io.runPosition(setpointMotorRots, ffVolts);
+        io.runPosition(setpointMotorRots, ffVolts);
 
-    Logger.recordOutput(
-        "Turret/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
-    Logger.recordOutput("Turret/Setpoint Motor Rots", setpointMotorRots);
-    Logger.recordOutput("Turret/FF Volts", ffVolts);
-  }
+        Logger.recordOutput("Turret/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
+        Logger.recordOutput("Turret/Setpoint Motor Rots", setpointMotorRots);
+        Logger.recordOutput("Turret/FF Volts", ffVolts);
+    }
 
     /** Returns a command to run a quasistatic test in the specified direction. */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -102,35 +101,41 @@ public class Turret extends SubsystemBase {
         return inputs.turretData.position() * TurretConstants.TURRET_P_COEFFICIENT;
     }
 
-  @AutoLogOutput
-  public double getTurretAngleDegs() {
-    return Units.radiansToDegrees(getTurretAngleRads());
-  }
-
-  private double wrap(double target) {
-    target = Math.IEEEremainder(target, 2 * Math.PI);
-
-    double current = getTurretAngleRads();
-    double[] candidates = new double[] {target - 2 * Math.PI, target, target + 2 * Math.PI};
-
-    double bestAngle = target;
-    double bestDist = Double.POSITIVE_INFINITY;
-
-    for (double c : candidates) {
-      if (c > TurretConstants.TURRET_SAFE_MIN && c < TurretConstants.TURRET_SAFE_MAX) {
-        double dist = Math.abs(current - c);
-        if (dist < bestDist) {
-          bestAngle = c;
-          bestDist = dist;
-        }
-      }
+    @AutoLogOutput
+    public double getTurretAngleDegs() {
+        return Units.radiansToDegrees(getTurretAngleRads());
     }
 
-    return bestAngle;
-  }
+    private double wrap(double target) {
+        target = Math.IEEEremainder(target, 2 * Math.PI);
 
-  private double getFF(double setpointRads) {
-    double chassisAngularVelocity = speedsSupplier.get().omegaRadiansPerSecond;
+        double current = getTurretAngleRads();
+        double[] candidates = new double[] {target - 2 * Math.PI, target, target + 2 * Math.PI};
+
+        double bestAngle = target;
+        double bestDist = Double.POSITIVE_INFINITY;
+
+        for (double c : candidates) {
+            if (c > TurretConstants.TURRET_SAFE_MIN && c < TurretConstants.TURRET_SAFE_MAX) {
+                double dist = Math.abs(current - c);
+                if (dist < bestDist) {
+                    bestAngle = c;
+                    bestDist = dist;
+                }
+            }
+        }
+
+        return bestAngle;
+    }
+
+    private double getFF(double setpointRads) {
+        double chassisAngularVelocity = speedsSupplier.get().omegaRadiansPerSecond;
+
+        boolean shouldApplyFF = Math.abs(Rotation2d.fromRadians(setpointRads)
+                                .minus(Rotation2d.fromRadians(getTurretAngleRads()))
+                                .getRadians())
+                        < TurretConstants.FF_ERROR_THRESHOLD
+                && Math.abs(chassisAngularVelocity) < TurretConstants.FF_CHASSIS_ROT_VELOCITY_LIMIT;
 
         return shouldApplyFF ? chassisAngularVelocity * kOmega.get() : 0;
     }

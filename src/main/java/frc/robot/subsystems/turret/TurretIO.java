@@ -1,6 +1,6 @@
 package frc.robot.subsystems.turret;
 
-import frc.lib.drivers.PearadoxTalonFX.MotorData;
+import frc.robot.util.PearadoxTalonFX.MotorData;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface TurretIO {
@@ -12,7 +12,7 @@ public interface TurretIO {
         public boolean cancoderConnected = false;
     }
 
-  default void updateInputs(TurretIOInputs inputs) {}
+    default void updateInputs(TurretIOInputs inputs) {}
 
     default void runPosition(double setpointRots, double ffVolts) {}
 

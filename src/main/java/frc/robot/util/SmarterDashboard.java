@@ -7,6 +7,7 @@ package frc.robot.util;
 import edu.wpi.first.util.WPISerializable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 
 /** Add your docs here. */
 public class SmarterDashboard {
@@ -56,6 +57,11 @@ public class SmarterDashboard {
     Logger.recordOutput(subsystem + "/" + key, value);
   }
 
+  public static <T extends WPISerializable> void putData(String key, LoggedMechanism2d mech2d) {
+    SmartDashboard.putString(key, mech2d.toString());
+    Logger.recordOutput(key, mech2d);
+  }
+  
   public static <T extends WPISerializable> void putData(String key, T value) {
     SmartDashboard.putString(key, value.toString());
     Logger.recordOutput(key, value);

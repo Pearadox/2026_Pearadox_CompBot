@@ -45,9 +45,6 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.DriveHelpers;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -65,7 +62,7 @@ public class RobotContainer {
   private final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
-  private final Vision vision;
+  //   private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -206,7 +203,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     drivercontroller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -216,14 +213,15 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
-    
-    drivercontroller.y()
-                    .whileTrue(
-                        DriveCommands.joystickDriveAtAngle(
-                            drive,
-                            () -> -drivercontroller.getLeftY(),
-                            () -> -drivercontroller.getLeftX(),
-                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
+
+    drivercontroller
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
+                () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
     // Uncomment when ready to run turret SysID routines
     // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -237,6 +235,12 @@ public class RobotContainer {
     
     drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
+    drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
+
+    drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
+    drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
   }
 
   /**
