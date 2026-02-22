@@ -62,15 +62,15 @@ public final class Constants {
         public static final Translation3d MODEL1_OFFSET = Z1_ZERO.minus(MODEL0_ZERO);
         public static final Translation3d MODEL4_OFFSET = Z4_ZERO.minus(MODEL3_ZERO);
 
-        public static final double TURRET_STARTING_ANGLE = Math.PI / 2;
+    public static final double TURRET_STARTING_ANGLE = Math.PI / 2;
 
-        public static final double HOOD_STARTING_ANGLE = Units.degreesToRadians(61.549451);
-        public static final double HOOD_MIN_ANGLE = Units.degreesToRadians(24.652849);
-        public static final double HOOD_MAX_ANGLE = Units.degreesToRadians(69.652849);
+    public static final double HOOD_STARTING_ANGLE = Units.degreesToRadians(61.549451);
+    public static final double HOOD_MIN_ANGLE = Units.degreesToRadians(24.652849);
+    public static final double HOOD_MAX_ANGLE = Units.degreesToRadians(69.652849);
 
         public static final double INTAKE_STARTING_ANGLE = Math.PI / 2; // radians
         public static final double GRAVITY_RAMP_MAX_OFFSET_DEGS = 39; // degrees
 
-        public static final double CLIMBER_MAX_DISPLACEMENT = Units.inchesToMeters(5.875);
-    }
+    public static final double CLIMBER_MAX_DISPLACEMENT = Units.inchesToMeters(5.875);
+  }
 }

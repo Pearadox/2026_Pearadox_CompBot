@@ -17,10 +17,10 @@ public abstract class TurretIOTalonFX implements TurretIO {
         turretMotor = new PearadoxTalonFX(TurretConstants.TURRET_ID, configs);
     }
 
-    @Override
-    public void updateInputs(TurretIOInputs inputs) {
-        inputs.turretData = turretMotor.getData();
-    }
+  @Override
+  public void updateInputs(TurretIOInputs inputs) {
+    inputs.turretData = turretMotor.getData();
+  }
 
     @Override
     public void runPosition(double setpointRots, double ffVolts) {

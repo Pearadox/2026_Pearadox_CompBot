@@ -1,4 +1,3 @@
 package frc.robot.subsystems.spindexer;
-public class SpindexerIOReal extends SpindexerIOTalonFX {
 
-}
+public class SpindexerIOReal extends SpindexerIOTalonFX {}

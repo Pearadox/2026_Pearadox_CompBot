@@ -5,28 +5,25 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import frc.lib.drivers.PearadoxTalonFX;
 
 public abstract class SpindexerIOTalonFX implements SpindexerIO {
-        private PearadoxTalonFX spindexer;
-    private TalonFXConfiguration spindexerConfig;
+  private PearadoxTalonFX spindexer;
+  private TalonFXConfiguration spindexerConfig;
 
-    public SpindexerIOTalonFX() {
-        spindexerConfig = SpindexerConstants.spindexerConfig();
+  public SpindexerIOTalonFX() {
+    spindexerConfig = SpindexerConstants.spindexerConfig();
 
-        spindexer = new PearadoxTalonFX(
-            SpindexerConstants.SPINDEXER_MOTOR_ID,
-            spindexerConfig
-        );
-    }
+    spindexer = new PearadoxTalonFX(SpindexerConstants.SPINDEXER_MOTOR_ID, spindexerConfig);
+  }
 
-    @Override
-    public void updateInputs(SpindexerIOInputsAutoLogged inputs) {
-            inputs.spindexerVelocity = spindexer.getVelocity().getValueAsDouble();
-            inputs.spindexerVoltage = spindexer.getMotorVoltage().getValueAsDouble();
-            inputs.spindexerStatorCurrent = spindexer.getStatorCurrent().getValueAsDouble();
-            inputs.spindexerSupplyCurrent = spindexer.getSupplyCurrent().getValueAsDouble();
-    }
-    
-    @Override
-    public void runSpindexerVoltage(double voltage) {
-        spindexer.setControl(new VoltageOut(voltage));
-    }
+  @Override
+  public void updateInputs(SpindexerIOInputsAutoLogged inputs) {
+    inputs.spindexerVelocity = spindexer.getVelocity().getValueAsDouble();
+    inputs.spindexerVoltage = spindexer.getMotorVoltage().getValueAsDouble();
+    inputs.spindexerStatorCurrent = spindexer.getStatorCurrent().getValueAsDouble();
+    inputs.spindexerSupplyCurrent = spindexer.getSupplyCurrent().getValueAsDouble();
+  }
+
+  @Override
+  public void runSpindexerVoltage(double voltage) {
+    spindexer.setControl(new VoltageOut(voltage));
+  }
 }

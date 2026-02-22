@@ -4,20 +4,21 @@
 
 package frc.robot.subsystems.feeder;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import frc.lib.drivers.PearadoxTalonFX.MotorData;
+import org.littletonrobotics.junction.AutoLog;
 
 /** Interface for Feeder subsystem */
 public interface FeederIO {
 
-    @AutoLog
-    public static class FeederIOInputs {
-        public MotorData feederData = new MotorData();
-    }
+  @AutoLog
+  public static class FeederIOInputs {
+    public MotorData feederData = new MotorData();
+  }
 
-    public default void updateInputs(FeederIOInputsAutoLogged inputs) {}
+  public default void updateInputs(FeederIOInputsAutoLogged inputs) {}
 
-    /** @param voltage voltage to run the feeder at*/
-    public default void runFeederVoltage(double voltage) {}
+  /**
+   * @param voltage voltage to run the feeder at
+   */
+  public void runFeederVoltage(double voltage);
 }
