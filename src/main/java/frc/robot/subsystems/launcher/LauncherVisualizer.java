@@ -22,8 +22,7 @@ public class LauncherVisualizer {
   private LoggedMechanismLigament2d[] wheel = createWheel(40);
 
   private LoggedMechanismLigament2d hood =
-      root.append(
-          new LoggedMechanismLigament2d("Hood", 1, 20, 10, new Color8Bit(Color.kDimGray)));
+      root.append(new LoggedMechanismLigament2d("Hood", 1, 20, 10, new Color8Bit(Color.kDimGray)));
 
   private double previousRollerAngle = 0.0;
   private double rollerAngleDeg = 0.0;

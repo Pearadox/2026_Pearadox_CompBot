@@ -8,32 +8,32 @@ import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
 
 public class TurretIOReal extends TurretIOTalonFX {
-    private final CANcoder absoluteEncoder;
-    private final CANcoderConfiguration cancoderConfigs;
-    private final BaseStatusSignal positionSignal;
+  private final CANcoder absoluteEncoder;
+  private final CANcoderConfiguration cancoderConfigs;
+  private final BaseStatusSignal positionSignal;
 
-    public TurretIOReal() {
-        absoluteEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
+  public TurretIOReal() {
+    absoluteEncoder = new CANcoder(TurretConstants.TURRET_CANCODER_ID);
 
-        cancoderConfigs = new CANcoderConfiguration();
-        cancoderConfigs.MagnetSensor.MagnetOffset = TurretConstants.TURRET_CANCODER_OFFSET_ROTS;
-        cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    cancoderConfigs = new CANcoderConfiguration();
+    cancoderConfigs.MagnetSensor.MagnetOffset = TurretConstants.TURRET_CANCODER_OFFSET_ROTS;
+    cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-        PhoenixUtil.tryUntilOk(5, () -> absoluteEncoder.getConfigurator().apply(cancoderConfigs, 0.25));
+    PhoenixUtil.tryUntilOk(5, () -> absoluteEncoder.getConfigurator().apply(cancoderConfigs, 0.25));
 
-        positionSignal = absoluteEncoder.getAbsolutePosition(false);
-        BaseStatusSignal.setUpdateFrequencyForAll(Constants.LOOP_FREQUENCY, positionSignal);
+    positionSignal = absoluteEncoder.getAbsolutePosition(false);
+    BaseStatusSignal.setUpdateFrequencyForAll(Constants.LOOP_FREQUENCY, positionSignal);
 
-        absoluteEncoder.optimizeBusUtilization();
+    absoluteEncoder.optimizeBusUtilization();
 
-        PhoenixUtil.registerSignals(false, positionSignal);
-    }
+    PhoenixUtil.registerSignals(false, positionSignal);
+  }
 
-    @Override
-    public void updateInputs(TurretIOInputs inputs) {
-        super.updateInputs(inputs);
+  @Override
+  public void updateInputs(TurretIOInputs inputs) {
+    super.updateInputs(inputs);
 
-        inputs.cancoderPosition = positionSignal.getValueAsDouble();
-        inputs.cancoderConnected = BaseStatusSignal.isAllGood(positionSignal);
-    }
+    inputs.cancoderPosition = positionSignal.getValueAsDouble();
+    inputs.cancoderConnected = BaseStatusSignal.isAllGood(positionSignal);
+  }
 }
