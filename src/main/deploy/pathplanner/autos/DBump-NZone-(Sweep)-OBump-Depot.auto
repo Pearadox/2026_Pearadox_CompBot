@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DBump-NZone2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SweepDepotToOutpost"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZone-OBump-AllianZone2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Launching"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launching"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AllianZone-Depot2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Launching"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Launching"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "WIP",
+  "choreoAuto": false
+}

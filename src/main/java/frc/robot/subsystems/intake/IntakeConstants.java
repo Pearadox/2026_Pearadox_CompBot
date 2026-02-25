@@ -11,6 +11,7 @@ public class IntakeConstants {
 
   public static enum IntakeState {
     STOWED,
+    DEPLOYED,
     INTAKING,
     OUTTAKING
   }
@@ -25,6 +26,7 @@ public class IntakeConstants {
     public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
         Map.of(
             IntakeState.STOWED, new StateConfig(90, 0),
+            IntakeState.DEPLOYED, new StateConfig(0, 0),
             IntakeState.INTAKING, new StateConfig(0, 7),
             IntakeState.OUTTAKING, new StateConfig(0, -3.5));
   }

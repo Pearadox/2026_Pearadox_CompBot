@@ -11,6 +11,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.intake.MechVisualizer;
+import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -161,5 +162,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
     MechVisualizer.getInstance().periodic();
+    LauncherVisualizer.getInstance().periodic();
   }
 }

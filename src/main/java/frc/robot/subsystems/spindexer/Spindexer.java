@@ -9,6 +9,7 @@ public class Spindexer extends SubsystemBase {
   private SpindexerIO io;
   private final SpindexerIOInputsAutoLogged inputs = new SpindexerIOInputsAutoLogged();
 
+
   private SpindexerState spindexerState = SpindexerState.RUNNING;
   public static double adjust = 0;
 

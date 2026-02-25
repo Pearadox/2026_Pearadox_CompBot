@@ -1,6 +1,7 @@
 package frc.robot.subsystems.turret;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.Constants;
 
@@ -35,5 +36,10 @@ public class TurretIOSim extends TurretIOTalonFX {
         physicsSim.getAngleRads() / TurretConstants.TURRET_P_COEFFICIENT);
     turretSimState.setRotorVelocity(
         physicsSim.getVelocityRadPerSec() / TurretConstants.TURRET_P_COEFFICIENT);
+
+    inputs.cancoderPosition =
+        Units.radiansToRotations(physicsSim.getAngleRads())
+            / TurretConstants.TURRET_TO_CANCODER_RATIO;
+    inputs.cancoderConnected = true;
   }
 }

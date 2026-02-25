@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -24,7 +25,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.feeder.*;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIOReal;
+import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
@@ -45,7 +48,7 @@ public class RobotContainer {
   //   private final Launcher launcher;
   private final Spindexer spindexer;
   //   private final Turret turret;
-  //   private final Vision vision;
+  // private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -153,6 +156,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    // Register named commands for PathPlanner
+    registerNamedCommands();
   }
 
   /**
@@ -185,7 +190,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     drivercontroller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -205,8 +210,23 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
+    // Uncomment when ready to run turret SysID routines
+    // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+    // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+    // opController.y().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
     // drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
     // drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
+    // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
+
+    // drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
+    // drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
   }
 
   /**
@@ -216,5 +236,17 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void registerNamedCommands() {
+    // Feeder Commands
+    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.setRunning()));
+    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
+
+    // Intake Commands
+    // NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->
+    // intake.setIntaking()));
+    // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
+    // intake.setDeployed()));
   }
 }

@@ -16,7 +16,7 @@ public class SpindexerConstants {
     public static final Map<SpindexerState, StateConfig> SPINDEXER_STATE_MAP =
         Map.of(
             SpindexerState.STOPPED, new StateConfig(0),
-            SpindexerState.RUNNING, new StateConfig(5.0));
+            SpindexerState.RUNNING, new StateConfig(6));
   }
 
   public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration();
