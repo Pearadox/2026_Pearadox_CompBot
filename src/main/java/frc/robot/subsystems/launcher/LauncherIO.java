@@ -4,32 +4,33 @@
 
 package frc.robot.subsystems.launcher;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import frc.lib.drivers.PearadoxTalonFX.MotorData;
-
+import org.littletonrobotics.junction.AutoLog;
 
 /** Launcher's IO interface */
 public interface LauncherIO {
 
-    @AutoLog
-    public static class LauncherIOInputs {
-        public MotorData launcher1Data = new MotorData();
-        public MotorData launcher2Data = new MotorData();
+  @AutoLog
+  public static class LauncherIOInputs {
+    public MotorData launcher1Data = new MotorData();
+    public MotorData launcher2Data = new MotorData();
 
-        public double hoodServoHubVoltage = 0.0;
-        public double hoodServo1PulseWidth = 0.0;
-        public double hoodServo2PulseWidth = 0.0;
+    public double hoodServoHubVoltage = 0.0;
+    public double hoodServo1PulseWidth = 0.0;
+    public double hoodServo2PulseWidth = 0.0;
 
-        public boolean limitSwitchPressed = false;
-    }
+    public boolean limitSwitchPressed = false;
+  }
 
-    public void updateInputs(LauncherIOInputsAutoLogged inputs);
+  public void updateInputs(LauncherIOInputsAutoLogged inputs);
 
-    /** @param velocityRPS the rotor velocity setpoint in Rotations per Second */
-    public void runLauncherVelocity(double velocityRPS);
+  /**
+   * @param velocityRPS the rotor velocity setpoint in Rotations per Second
+   */
+  public void runLauncherVelocity(double velocityRPS);
 
-    /** @param isPassing if the robot is in PASSING mode or other modes */
-    public void setHoodAngle(boolean isPassing);
-
+  /**
+   * @param isPassing if the robot is in PASSING mode or other modes
+   */
+  public void setHoodAngle(boolean isPassing);
 }
