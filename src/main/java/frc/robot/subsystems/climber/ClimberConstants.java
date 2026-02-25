@@ -33,8 +33,7 @@ public class ClimberConstants {
   public static final double CLIMBER_DRUM_RADIUS_METERS = Units.inchesToMeters(0.25);
   public static final double CLIMBER_MAX_HEIGHT_METERS = Units.inchesToMeters(25.0);
   public static final double CLIMBER_MIN_HEIGHT_METERS = Units.inchesToMeters(4.0);
-  public static final double CLIMBER_DRUM_CIRCUMFERENCE =
-      2 * CLIMBER_DRUM_RADIUS_METERS * Math.PI;
+  public static final double CLIMBER_DRUM_CIRCUMFERENCE = 2 * CLIMBER_DRUM_RADIUS_METERS * Math.PI;
 
   public static final TalonFXConfiguration getClimberConfigTalonFX() {
     CLIMBER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
