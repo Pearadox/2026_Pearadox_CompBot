@@ -16,7 +16,7 @@ public class SpindexerConstants {
     public static final Map<SpindexerState, StateConfig> SPINDEXER_STATE_MAP =
         Map.of(
             SpindexerState.STOPPED, new StateConfig(0),
-            SpindexerState.RUNNING, new StateConfig(6));
+            SpindexerState.RUNNING, new StateConfig(8));
   }
 
   public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration();
@@ -24,13 +24,14 @@ public class SpindexerConstants {
 
   public static final int SPINDEXER_MOTOR_ID = 42;
   public static final int LAUNCHER_CURRENT_LIMIT = 20;
+  public static final int SPINDEXER_CURRENT_LIMIT = 40;
 
   public static final TalonFXConfiguration spindexerConfig() {
     SPINDEXER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-    SPINDEXER_CONFIG.CurrentLimits.StatorCurrentLimit = LAUNCHER_CURRENT_LIMIT;
+    SPINDEXER_CONFIG.CurrentLimits.StatorCurrentLimit = SPINDEXER_CURRENT_LIMIT;
 
     SPINDEXER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-    SPINDEXER_CONFIG.CurrentLimits.SupplyCurrentLimit = LAUNCHER_CURRENT_LIMIT;
+    SPINDEXER_CONFIG.CurrentLimits.SupplyCurrentLimit = SPINDEXER_CURRENT_LIMIT;
 
     SPINDEXER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 

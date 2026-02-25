@@ -4,13 +4,14 @@
 
 package frc.robot.subsystems.feeder;
 
-import java.util.Map;
-
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
+import java.util.Map;
 
 /** Add your docs here. */
 public class FeederConstants {
@@ -26,12 +27,15 @@ public class FeederConstants {
             FeederState.STOPPED, new StateConfig(0),
             FeederState.RUNNING, new StateConfig(-5.414));
   }
+
+  // feeder constants
   public static final int FEEDER_CAN_ID = 41;
-
   public static final int FEEDER_CURRENT_LIMIT = 50;
-
   public static final double FEEDER_GEARING =
       11.0 / 24.0; // ratio of teeth on motor to teeth on pulley
+
+  public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
+  public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
 
   public static final TalonFXConfiguration FEEDER_CONFIG = new TalonFXConfiguration();
   public static final Slot0Configs FEEDER_SLOT0_CONFIGS = FEEDER_CONFIG.Slot0;
@@ -54,7 +58,12 @@ public class FeederConstants {
     return FEEDER_CONFIG;
   }
 
-  public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
+  // canRange constants
+  public static final CANrangeConfiguration canRangeConfig = new CANrangeConfiguration();
 
-    public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
+  public static final void getCanRangeConfig() {
+    canRangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 2000;
+    canRangeConfig.ProximityParams.ProximityThreshold = 0.1;
+    canRangeConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
+  }
 }
