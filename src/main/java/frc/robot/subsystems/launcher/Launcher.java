@@ -28,13 +28,13 @@ public class Launcher extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 20 : 40));
+    io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 60 : 0));
     io.setHoodAngleRads(launcherState.getHoodAngleRads());
     Logger.recordOutput("Launcher/State", getState());
     Logger.processInputs("Launcher/Inputs", inputs);
 
     LauncherVisualizer.getInstance()
-        .updateRollerPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
+        .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
     LauncherVisualizer.getInstance()
         .updateHoodPositionDeg(Units.rotationsToDegrees(inputs.hoodServo1Position * 5));
 

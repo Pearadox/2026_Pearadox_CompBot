@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.servohub.ServoChannel.ChannelId;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import lombok.Getter;
 
@@ -34,12 +35,6 @@ public class LauncherConstants {
   public static final double LAUNCHER_GEARING = 1.0;
   public static final double DEFAULT_VELOCITY_SETPOINT_RPS = 60.0;
 
-  public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
-  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.7); // TODO: get weight
-  public static final double ROLLER_CIRCUMFERENCE_METERS = Units.inchesToMeters(4.0 * Math.PI);
-  public static final double LAUNCHER_HEIGHT_METERS =
-      Units.inchesToMeters(22.5); // TODO: double check
-
   public static final TalonFXConfiguration LAUNCHER_CONFIG = new TalonFXConfiguration();
   public static final Slot0Configs LAUNCHER_CONFIG_SLOT0 = LAUNCHER_CONFIG.Slot0;
 
@@ -62,6 +57,17 @@ public class LauncherConstants {
     return LAUNCHER_CONFIG;
   }
 
+  // LAUNCHER SIM
+  public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
+  public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
+  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.7); // TODO: get weight
+  public static final double ROLLER_CIRCUMFERENCE_METERS = Units.inchesToMeters(4.0 * Math.PI);
+  public static final double LAUNCHER_HEIGHT_METERS =
+      Units.inchesToMeters(22.5); // TODO: double check
+  public static final double LAUNCHER_ROLLER_MOI =
+      0.5 * ROLLER_MASS_KG * Math.pow(ROLLER_RADIUS_METERS, 2);
+
+  // SERVO
   public static final int HOOD_SERVO_HUB_CAN_ID = 0; // TODO: set
   public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
   public static final ChannelId HOOD_2_ID = ChannelId.kChannelId1; // TODO: set
@@ -70,11 +76,6 @@ public class LauncherConstants {
 
   public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(60.0);
   public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(20.0);
-
-  public static final double HOOD_1_SETPOINT_PASSING = 0.0; // TODO: set
-  public static final double HOOD_2_SETPOINT_PASSING = 0.0; // TODO: set
-  public static final double HOOD_1_SETPOINT_DEFAULT = 0.0; // TODO: set
-  public static final double HOOD_2_SETPOINT_DEFAULT = 0.0; // TODO: set
 
   public static final int HOOD_SERVO_MAX_PULSE_WIDTH = 2500;
   public static final int HOOD_SERVO_MIN_PULSE_WIDTH = 500;
