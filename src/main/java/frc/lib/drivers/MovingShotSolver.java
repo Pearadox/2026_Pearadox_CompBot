@@ -13,7 +13,6 @@ import frc.robot.Constants.FieldConstants.LinesVertical;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherConstants;
 import frc.robot.util.SmarterDashboard;
-import java.util.Optional;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -21,8 +20,7 @@ public class MovingShotSolver {
 
   private static final double g = 9.81; // gravity constant in m/s^2
 
-  private static Optional<Alliance> allianceOptional = DriverStation.getAlliance();
-  private static Alliance alliance = allianceOptional.get();
+  private static Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
 
   private static double hubXMeters =
       alliance == Alliance.Red ? Hub.topCenterPointRed.getX() : Hub.topCenterPointBlue.getX();
@@ -111,8 +109,8 @@ public class MovingShotSolver {
 
     // Robot-relative turret offset (meters)
 
-    double dxTurretRobotRelative = 0.30; // TODO: find real forward offset
-    double dyTurretRobotRelative = 0.00; // TODO: find real sideways offset
+    double dxTurretRobotRelative = 0.135; // TODO: find real forward offset
+    double dyTurretRobotRelative = -0.14; // TODO: find real sideways offset
 
     // Rotate offset into field coordinates using matrix multiplication done below
 

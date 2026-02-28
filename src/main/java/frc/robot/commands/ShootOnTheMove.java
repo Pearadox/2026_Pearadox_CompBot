@@ -55,7 +55,7 @@ public class ShootOnTheMove extends Command {
     double currentAngle = turretRotationSupplier.get().getDegrees();
     double desiredAngle = desiredRotation.getDegrees();
 
-    double turretRotationError = Math.abs(currentAngle) - Math.abs(desiredAngle);
+    double turretRotationError = currentAngle - desiredAngle;
 
     atDesiredVelocity = debouncer.calculate(Math.abs(shooterVelocityError) < 7.0);
     atDesiredRotation = turretRotationDebouncer.calculate(Math.abs(turretRotationError) < 8.0);
