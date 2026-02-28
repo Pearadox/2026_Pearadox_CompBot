@@ -15,8 +15,8 @@ public final class TurretConstants {
     config.CurrentLimits.StatorCurrentLimitEnable = true;
     config.CurrentLimits.StatorCurrentLimit = 50;
 
-    config.MotionMagic.MotionMagicCruiseVelocity = 20;
-    config.MotionMagic.MotionMagicAcceleration = 75;
+    config.MotionMagic.MotionMagicCruiseVelocity = 67;
+    config.MotionMagic.MotionMagicAcceleration = 300;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -24,15 +24,15 @@ public final class TurretConstants {
     config.Slot0.kS = 0.0;
     config.Slot0.kV = 0.0;
     config.Slot0.kA = 0.0;
-    config.Slot0.kP = 0.01; // 0.67
+    config.Slot0.kP = 0.1;
     config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.0; // 0.05
+    config.Slot0.kD = 0.0;
 
     return config;
   }
 
   public static final int TURRET_ID = 20;
-  public static final double TURRET_GEAR_RATIO = 95. / 10.; // TODO: update
+  public static final double TURRET_GEAR_RATIO = 500. / 9.; // ~55.55:1, (100/9)(50/20)(32/16)
   public static final double TURRET_P_COEFFICIENT = 2 * Math.PI / TURRET_GEAR_RATIO;
 
   public static final double TURRET_STARTING_ANGLE = Units.degreesToRadians(0);
@@ -46,18 +46,21 @@ public final class TurretConstants {
   public static final double TURRET_MASS = Units.lbsToKilograms(16);
   public static final double TURRET_CG_RADIUS = Units.inchesToMeters(3.75);
 
-  // mass ≈ 16 lb, Lzz ≈ 494 in^2 lb
-  // center of mass of turret ≈ 3.75 in from its axis of rotation
-  // I = I_cm + md^2 = 494 + 16(3.75)^2 = 719 in^2 lb ≈ 0.21 kg m^2
-  public static final double TURRET_MOI = 0.21; // TODO: update
+  // mass ≈ 9 lb, Lzz ≈ 218 in^2 lb for the turret in cad
+  // center of mass ≈ 1.67 in from its axis of rotation
+  // I = I_cm + md^2 = 218 + 9(1.67)^2 = 243 in^2 lb ≈ 0.071 kg m^2
+  // irl the turret weighed 4.56 kg (>10 lbs), so rounded up to 0.08
+  public static final double TURRET_MOI = 0.08;
 
   public static final DCMotor TURRET_MOTOR = DCMotor.getKrakenX60(1);
 
   // feedforward term: adds a voltage to the turret as the chassis rotates
-  public static final double K_OMEGA = 0.1; // volts per radian per second
+  //   public static final double K_OMEGA = 0.2; // volts per radian per second
 
   // only apply feedforward if the turret is within 45 degrees of its setpoint
-  public static final double FF_ERROR_THRESHOLD = Units.degreesToRadians(45);
+  // this prevents FF from working against the turret while it "wraps"
+  // its angle (changing the setpoint by +/-360 and thus error)
+  public static final double FF_ERROR_THRESHOLD = Units.degreesToRadians(90);
 
   // only apply feedforward if the drivetrain is rotating at a reasonable speed
   // note: this may not be necessary
@@ -65,5 +68,6 @@ public final class TurretConstants {
 
   public static final int TURRET_CANCODER_ID = 25;
   public static final int TURRET_CANCODER_OFFSET_ROTS = 0; // TODO
-  public static final double TURRET_TO_CANCODER_RATIO = 3.0; // 3 turret rots : 1 cancoder rot
+
+  public static final double TURRET_TO_CANCODER_RATIO = 1. / 3.;
 }

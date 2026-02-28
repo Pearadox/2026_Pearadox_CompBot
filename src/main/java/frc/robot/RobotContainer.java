@@ -32,6 +32,10 @@ import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.util.DriveHelpers;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -48,7 +52,7 @@ public class RobotContainer {
   //   private final Intake intake;
   //   private final Launcher launcher;
   private final Spindexer spindexer;
-  //   private final Turret turret;
+  private final Turret turret;
   // private final Vision vision;
 
   // Visualizer
@@ -80,7 +84,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIOReal());
         // launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
-        // turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
+        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
 
         break;
 
@@ -98,7 +102,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIOSim());
         // launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
-        // turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
+        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
 
         break;
 
@@ -116,7 +120,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIO() {});
         // launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
-        // turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
+        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
 
         break;
     }
@@ -148,7 +152,7 @@ public class RobotContainer {
 
     visualizer =
         new RobotVisualizer(
-            () -> 0, // TODO: replace with turret angle supplier
+            turret::getTurretAngleRads,
             () -> 0, // TODO: replace with hood angle supplier
             () -> 0, // TODO: replace with spindexer angle supplier
             () -> 0, // TODO: replace with intake angle supplier

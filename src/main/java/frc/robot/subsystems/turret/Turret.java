@@ -23,13 +23,17 @@ public class Turret extends SubsystemBase {
 
   private boolean hasZeroed = false;
 
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.67);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.1); // 4, 5
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.05);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0); // 0, 0.05
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
-  private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.1);
+  private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
+  private final LoggedTunableNumber mmCruiseVel =
+      new LoggedTunableNumber("Turret/mmCruiseVel", 67); // 67, 80
+  private final LoggedTunableNumber mmAcceleration =
+      new LoggedTunableNumber("Turret/mmAcc", 300); // 300, 275
 
   private final SysIdRoutine sysId;
 
@@ -48,6 +52,7 @@ public class Turret extends SubsystemBase {
 
     io.setPID(kP.get(), kI.get(), kD.get());
     io.setFFGains(kS.get(), kV.get(), kA.get());
+    io.setMotionMagicLimits(mmCruiseVel.get(), mmAcceleration.get());
   }
 
   @Override
@@ -57,7 +62,7 @@ public class Turret extends SubsystemBase {
 
     if (!hasZeroed && inputs.cancoderConnected) {
       io.setPosition(
-          (inputs.cancoderPosition / TurretConstants.TURRET_TO_CANCODER_RATIO)
+          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
               * TurretConstants.TURRET_GEAR_RATIO);
       hasZeroed = true;
     }
@@ -65,8 +70,13 @@ public class Turret extends SubsystemBase {
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
       io.setPID(kP.get(), kI.get(), kD.get());
     }
+
     if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
       io.setFFGains(kS.get(), kV.get(), kA.get());
+    }
+
+    if (mmCruiseVel.hasChanged(hashCode()) || mmAcceleration.hasChanged(hashCode())) {
+      io.setMotionMagicLimits(mmCruiseVel.get(), mmAcceleration.get());
     }
   }
 
@@ -97,6 +107,15 @@ public class Turret extends SubsystemBase {
   /** Returns a command to run a dynamic test in the specified direction. */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return sysId.dynamic(direction);
+  }
+
+  /** Zeroes the turret */
+  public void requestZero() {
+    if (inputs.cancoderConnected) {
+      io.setPosition(
+          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
+              * TurretConstants.TURRET_GEAR_RATIO);
+    }
   }
 
   @AutoLogOutput
