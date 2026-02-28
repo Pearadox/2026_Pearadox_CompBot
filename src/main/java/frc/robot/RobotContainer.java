@@ -16,9 +16,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.drivers.MovingShotSolver;
+import frc.lib.drivers.MovingShotSolver.ShotSolution;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -29,6 +33,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.launcher.LauncherIOReal;
+import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
@@ -36,24 +43,21 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Feeder feeder;
   //   private final Intake intake;
-  //   private final Launcher launcher;
+  private final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
-  // private final Vision vision;
+  private final Vision vision;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -64,6 +68,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private static ShotSolution shotSolution = new ShotSolution(0., 0, new Rotation2d(), false);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -82,9 +88,11 @@ public class RobotContainer {
 
         feeder = new Feeder(new FeederIOReal());
         // intake = new Intake(new IntakeIOReal());
-        // launcher = new Launcher(new LauncherIOReal());
+        launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
         turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
+        vision = new Vision(drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
 
         break;
 
@@ -97,12 +105,14 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
+                
 
         feeder = new Feeder(new FeederIOSim());
         // intake = new Intake(new IntakeIOSim());
-        // launcher = new Launcher(new LauncherIOSim());
+        launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
         turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
+        vision = new Vision(drive::addVisionMeasurement);
 
         break;
 
@@ -118,9 +128,10 @@ public class RobotContainer {
 
         feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
         // intake = new Intake(new IntakeIO() {});
-        // launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
+        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
         turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
+        vision = new Vision(drive::addVisionMeasurement);
 
         break;
     }
@@ -215,6 +226,15 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
+
+    drivercontroller
+        .rightBumper()
+        .whileTrue(
+            Commands.parallel(
+                Commands.run(() -> setShotSolution(MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds))),
+                new RunCommand(() -> turret.followFieldCentricTarget(shotSolution::getTurretAngleRot2d)),
+                new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d)));
+
     // Uncomment when ready to run turret SysID routines
     // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
     // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
@@ -253,5 +273,13 @@ public class RobotContainer {
     // intake.setIntaking()));
     // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
     // intake.setDeployed()));
+  }
+
+  public void setShotSolution(ShotSolution sol) {
+    shotSolution = sol;
+  }
+
+  public static ShotSolution getShotSolution() {
+    return shotSolution;
   }
 }

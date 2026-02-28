@@ -6,6 +6,7 @@ package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,9 @@ public class Launcher extends SubsystemBase {
   /** Creates a new Launcher. */
   private final LauncherIO io;
 
-  private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
+  public final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-  private LauncherState launcherState = LauncherState.SCORING;
+  private static LauncherState launcherState = LauncherState.SCORING;
   @Getter @Setter private double adjust = 0.0;
 
   public Launcher(LauncherIO io) {
@@ -28,23 +29,24 @@ public class Launcher extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Launcher/Inputs", inputs);
-    // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 20 : 40));
+    // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 60 : 0));
     io.setHoodAngleRads(launcherState.getHoodAngleRads());
     Logger.recordOutput("Launcher/State", getState());
 
     LauncherVisualizer.getInstance()
-        .updateRollerPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
+        .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
     LauncherVisualizer.getInstance()
-        .updateHoodPositionDeg(Units.rotationsToDegrees(inputs.hoodServo1Position * 5));
+        .updateHoodPositionDeg(Units.rotationsToDegrees(LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
 
     Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
     Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
     Logger.recordOutput(
         "Hood/Current-Angle",
-        inputs.hoodServo1Position
-            * 5
+        LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
             / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
+
+    setVelocity(RobotContainer.getShotSolution().getShooterSpeedRPS());
+    
   }
 
   /** velocity will be calculated from aim assist command factory */
@@ -68,7 +70,7 @@ public class Launcher extends SubsystemBase {
     launcherState = LauncherState.PASSING;
   }
 
-  public LauncherState getState() {
+  public static LauncherState getState() {
     return launcherState;
   }
 }

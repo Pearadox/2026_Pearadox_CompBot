@@ -6,18 +6,17 @@ package frc.robot.subsystems.launcher;
 
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.revrobotics.servohub.ServoHubSim;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants;
 
 /** Launcher IO's real implementation */
 public class LauncherIOSim extends LauncherIOTalonFX {
   private SingleJointedArmSim launcherPhysicsSim =
       new SingleJointedArmSim(
-          DCMotor.getKrakenX60(1),
+          LauncherConstants.ROLLER_MOTOR,
           LauncherConstants.LAUNCHER_GEARING,
-          SingleJointedArmSim.estimateMOI(
-              LauncherConstants.ROLLER_RADIUS_METERS, LauncherConstants.ROLLER_MASS_KG),
+          LauncherConstants.LAUNCHER_ROLLER_MOI,
           LauncherConstants.ROLLER_RADIUS_METERS,
           Double.NEGATIVE_INFINITY,
           Double.POSITIVE_INFINITY,
@@ -35,6 +34,7 @@ public class LauncherIOSim extends LauncherIOTalonFX {
 
   public void updateInputs(LauncherIOInputsAutoLogged inputs) {
     super.updateInputs(inputs);
+
     updateSim();
   }
 
@@ -47,6 +47,7 @@ public class LauncherIOSim extends LauncherIOTalonFX {
     launcherSimState.setRotorVelocity(
         Units.radiansPerSecondToRotationsPerMinute(launcherPhysicsSim.getVelocityRadPerSec()) / 60);
 
-    launcherPhysicsSim.update(0.02);
+    launcherPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
+    hoodServoHubSim.setServoVoltage(12);
   }
 }

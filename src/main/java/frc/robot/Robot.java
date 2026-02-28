@@ -8,12 +8,19 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
+import lombok.Getter;
+
+import java.util.Optional;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -30,6 +37,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  @Getter private static Alliance alliance;
 
   public Robot() {
     // Record metadata
@@ -110,7 +118,15 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+    if(allianceOptional.isPresent()) {
+      alliance = allianceOptional.get();
+    }
+    else {
+      alliance = Alliance.Blue;
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -164,4 +180,5 @@ public class Robot extends LoggedRobot {
     MechVisualizer.getInstance().periodic();
     LauncherVisualizer.getInstance().periodic();
   }
+
 }

@@ -20,6 +20,7 @@ public class Turret extends SubsystemBase {
   private final TurretIOInputsAutoLogged inputs = new TurretIOInputsAutoLogged();
 
   private Supplier<ChassisSpeeds> speedsSupplier;
+  private Supplier<Rotation2d> robotRotationSupplier;
 
   private boolean hasZeroed = false;
 
@@ -37,9 +38,10 @@ public class Turret extends SubsystemBase {
 
   private final SysIdRoutine sysId;
 
-  public Turret(TurretIO io, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
+  public Turret(TurretIO io, Supplier<ChassisSpeeds> chassisSpeedsSupplier, Supplier<Rotation2d> robotRotationSupplier) {
     this.io = io;
     this.speedsSupplier = chassisSpeedsSupplier;
+    this.robotRotationSupplier = robotRotationSupplier;
 
     sysId =
         new SysIdRoutine(
@@ -85,7 +87,7 @@ public class Turret extends SubsystemBase {
   }
 
   /** Follows a robot-centric angle. */
-  public void followTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
+  public void followRobotCentricTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
     double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
     double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
@@ -97,6 +99,22 @@ public class Turret extends SubsystemBase {
         "Turret/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
     Logger.recordOutput("Turret/Setpoint Motor Rots", setpointMotorRots);
     Logger.recordOutput("Turret/FF Volts", ffVolts);
+  }
+
+  public void followFieldCentricTarget(Supplier<Rotation2d> desiredFieldCentricAngleSupplier) {
+
+    double setpointTurretRads = wrap(desiredFieldCentricAngleSupplier.get().getRadians() - robotRotationSupplier.get().getRadians());
+    double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
+
+    double ffVolts = getFF(setpointTurretRads);
+
+    io.runPosition(setpointMotorRots, ffVolts);
+
+    Logger.recordOutput(
+        "Turret/SOTM/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
+    Logger.recordOutput("Turret/SOTM/Setpoint Motor Rots", setpointMotorRots);
+    Logger.recordOutput("Turret/SOTM/FF Volts", ffVolts);
+
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -126,6 +144,16 @@ public class Turret extends SubsystemBase {
   @AutoLogOutput
   public double getTurretAngleDegs() {
     return Units.radiansToDegrees(getTurretAngleRads());
+  }
+
+  @AutoLogOutput
+  public Rotation2d getRobotRelativeTurretAngleRotation2d() {
+    return new Rotation2d(getTurretAngleRads());
+  }
+
+  @AutoLogOutput
+  public Rotation2d getFieldRelativeTurretAngleRotation2d() {
+    return getRobotRelativeTurretAngleRotation2d().plus(robotRotationSupplier.get());
   }
 
   private double wrap(double target) {
