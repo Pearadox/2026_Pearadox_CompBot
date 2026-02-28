@@ -23,4 +23,6 @@ public interface TurretIO {
   default void setPID(double kP, double kI, double kD) {}
 
   default void setFFGains(double kS, double kV, double kA) {}
+
+  default void setMotionMagicLimits(double mmCruiseVel, double mmAcceleration) {}
 }

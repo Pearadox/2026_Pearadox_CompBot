@@ -27,7 +27,8 @@ public class ShootOnTheMove extends Command {
   private boolean atDesiredRotation = false;
   private boolean readyToShoot = false;
 
-  public ShootOnTheMove(Launcher launcher, Feeder feeder, Supplier<Rotation2d> turretRotationSupplier) {
+  public ShootOnTheMove(
+      Launcher launcher, Feeder feeder, Supplier<Rotation2d> turretRotationSupplier) {
     this.turretRotationSupplier = turretRotationSupplier;
     this.launcher = launcher;
     this.feeder = feeder;
@@ -50,7 +51,7 @@ public class ShootOnTheMove extends Command {
     double desiredVelocity = RobotContainer.getShotSolution().getShooterSpeedRPS();
     Rotation2d desiredRotation = RobotContainer.getShotSolution().getTurretAngleRot2d();
 
-    double shooterVelocityError =  launcher.inputs.launcher1Data.velocity() - desiredVelocity;
+    double shooterVelocityError = launcher.inputs.launcher1Data.velocity() - desiredVelocity;
 
     double currentAngle = turretRotationSupplier.get().getDegrees();
     double desiredAngle = desiredRotation.getDegrees();

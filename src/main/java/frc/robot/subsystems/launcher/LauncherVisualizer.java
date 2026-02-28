@@ -28,12 +28,13 @@ public class LauncherVisualizer {
           new Color8Bit(Color.kGoldenrod));
 
   private LoggedMechanismLigament2d hood =
-      root.append(new LoggedMechanismLigament2d(
-      "Hood", 
-      1,
-      LauncherConstants.HOOD_MIN_ANGLE_RADS,
-      LauncherConstants.SIM_LINE_WIDTH,
-      new Color8Bit(Color.kDimGray)));
+      root.append(
+          new LoggedMechanismLigament2d(
+              "Hood",
+              1,
+              LauncherConstants.HOOD_MIN_ANGLE_RADS,
+              LauncherConstants.SIM_LINE_WIDTH,
+              new Color8Bit(Color.kDimGray)));
 
   private double previousRollerAngle = 0.0;
   private double rollerAngleDeg = 0.0;

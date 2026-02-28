@@ -55,4 +55,12 @@ public abstract class TurretIOTalonFX implements TurretIO {
 
     PhoenixUtil.tryUntilOk(5, () -> turretMotor.getConfigurator().apply(configs));
   }
+
+  @Override
+  public void setMotionMagicLimits(double mmCruiseVel, double mmAcceleration) {
+    configs.MotionMagic.MotionMagicCruiseVelocity = mmCruiseVel;
+    configs.MotionMagic.MotionMagicAcceleration = mmAcceleration;
+
+    PhoenixUtil.tryUntilOk(5, () -> turretMotor.getConfigurator().apply(configs));
+  }
 }

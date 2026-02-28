@@ -56,7 +56,7 @@ public class LauncherConstants {
     LAUNCHER_CONFIG_SLOT0.kV = 0.1;
     return LAUNCHER_CONFIG;
   }
-  
+
   // SERVO
   public static final int HOOD_SERVO_HUB_CAN_ID = 0; // TODO: set
   public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
@@ -73,9 +73,7 @@ public class LauncherConstants {
   public static final double SERVO_POSITION_TO_ROTATIONS_CONVERSION = 5;
   public static final double SERVO_POSITION_TO_PW_CONVERSION = 2000;
   public static final double SERVO_ROTATIONS_TO_PW_CONVERSION = 400;
-  
-  
-  
+
   public static final double pulseWidthtoAngularPosition(int pulseWidth) {
     return (pulseWidth - SERVO_MIN_PULSE_WIDTH) / SERVO_POSITION_TO_PW_CONVERSION;
   }
@@ -85,7 +83,8 @@ public class LauncherConstants {
   }
 
   public static final int angularPositiontoPulseWidth(double angularPosition) {
-    return (int) (angularPosition * SERVO_POSITION_TO_PW_CONVERSION) + LauncherConstants.SERVO_MIN_PULSE_WIDTH;
+    return (int) (angularPosition * SERVO_POSITION_TO_PW_CONVERSION)
+        + LauncherConstants.SERVO_MIN_PULSE_WIDTH;
   }
 
   public static final double angularPositiontoRotations(double angularPosition) {
@@ -99,7 +98,7 @@ public class LauncherConstants {
   public static final double rotationstoAngularPosition(double rotations) {
     return rotations / SERVO_POSITION_TO_ROTATIONS_CONVERSION;
   }
-  
+
   // SIM
   public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
   public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
