@@ -5,7 +5,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import frc.lib.drivers.PearadoxTalonFX;
 
 public abstract class SpindexerIOTalonFX implements SpindexerIO {
-  private PearadoxTalonFX spindexer;
+  protected PearadoxTalonFX spindexer;
   private TalonFXConfiguration spindexerConfig;
 
   public SpindexerIOTalonFX() {
@@ -16,10 +16,7 @@ public abstract class SpindexerIOTalonFX implements SpindexerIO {
 
   @Override
   public void updateInputs(SpindexerIOInputsAutoLogged inputs) {
-    inputs.spindexerVelocity = spindexer.getVelocity().getValueAsDouble();
-    inputs.spindexerVoltage = spindexer.getMotorVoltage().getValueAsDouble();
-    inputs.spindexerStatorCurrent = spindexer.getStatorCurrent().getValueAsDouble();
-    inputs.spindexerSupplyCurrent = spindexer.getSupplyCurrent().getValueAsDouble();
+    inputs.spindexerMotorData = spindexer.getData();
   }
 
   @Override

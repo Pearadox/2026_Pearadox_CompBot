@@ -21,10 +21,12 @@ public class Spindexer extends SubsystemBase {
     io.updateInputs(inputs);
 
     Logger.processInputs("Spindexer", inputs);
-    SmarterDashboard.putNumber("Spindexer/Voltage", inputs.spindexerVoltage);
-    SmarterDashboard.putNumber("Spindexer/Velocity", inputs.spindexerVelocity);
-    SmarterDashboard.putNumber("Spindexer/StatorCurrent", inputs.spindexerStatorCurrent);
-    SmarterDashboard.putNumber("Spindexer/SupplyCurrent", inputs.spindexerSupplyCurrent);
+    SmarterDashboard.putNumber("Spindexer/Voltage", inputs.spindexerMotorData.appliedVolts());
+    SmarterDashboard.putNumber("Spindexer/Velocity", inputs.spindexerMotorData.velocity());
+    SmarterDashboard.putNumber(
+        "Spindexer/StatorCurrent", inputs.spindexerMotorData.statorCurrent());
+    SmarterDashboard.putNumber(
+        "Spindexer/SupplyCurrent", inputs.spindexerMotorData.supplyCurrent());
 
     io.runSpindexerVoltage(StateConfig.SPINDEXER_STATE_MAP.get(spindexerState).voltage());
   }
