@@ -37,7 +37,7 @@ public class ShootOnTheMove extends Command {
   @Override
   public void initialize() {
 
-    if (RobotContainer.getShotSolution().getIsInsideNeutralZone()) {
+    if (RobotContainer.getShotSolution().isInsideNeutralZone) {
       launcher.setPassing();
     } else {
       launcher.setScoring();
