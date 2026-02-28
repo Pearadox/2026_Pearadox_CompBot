@@ -17,6 +17,7 @@ public class Feeder extends SubsystemBase {
   private final FeederIO io;
   private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
   private FeederState feederState = FeederState.RUNNING;
+  private FeederState feederState = FeederState.RUNNING;
 
   private final CANrange canRange = new CANrange(4);
   private Debouncer canRangeDebouncer = new Debouncer(0.125, DebounceType.kFalling);
@@ -39,6 +40,7 @@ public class Feeder extends SubsystemBase {
     Logger.recordOutput("Feeder/CanRange/Number of Fuel", getFuelCount());
     io.runFeederVoltage(StateConfig.SPINDEXER_STATE_MAP.get(feederState).voltage());
   }
+
 
   public void setStopped() {
     feederState = FeederState.STOPPED;

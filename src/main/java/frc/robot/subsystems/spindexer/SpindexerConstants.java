@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.util.Units;
 import java.util.Map;
 
 public class SpindexerConstants {
@@ -25,6 +26,12 @@ public class SpindexerConstants {
   public static final int SPINDEXER_MOTOR_ID = 42;
   public static final int LAUNCHER_CURRENT_LIMIT = 20;
   public static final int SPINDEXER_CURRENT_LIMIT = 40;
+
+  public static final double SPINDEXER_GEARING = 1.0 / 15.0;
+  public static final double SPINDEXER_RADIUS_METERS = Units.inchesToMeters(4);
+  public static final double SPINDEXER_MASS_KG = Units.lbsToKilograms(5);
+  public static final double SPINDEXER_MOI =
+      0.5 * SPINDEXER_MASS_KG * Math.pow(SPINDEXER_RADIUS_METERS, 2);
 
   public static final TalonFXConfiguration spindexerConfig() {
     SPINDEXER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
