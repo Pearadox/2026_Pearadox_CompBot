@@ -52,14 +52,21 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Observed shooter underperformance due to velocity transfer inefficiencies.
 - Introduced empirical scaling factor(s) (multiplying by a constant) to correct shooter speed in the real-world, drastically improving performance.
 - Experienced inconsistent hopper & agitator transfer to feeder on the MVR (making it difficult to test rapid fuel shots or observe shooter kickback)
-- After analyzing videos, the primary factor behind missed shots seemed to not be the robot's translational speed, but rather its acceleration.
+- After analyzing videos, the primary factor behind missed shots seemed to not be the robot's translational speed, but rather its **acceleration**.
 - Noticed that shooter wasn't spinning up to desired velocity fast enough when strafing at higher speeds, so we added a constant to the applied velocity which fixed most of the issue (i.e. setting shooter velocity to desired velocity + 5 rps)
-- Tested bang-bang velocity control for faster shooter spin-up (meaning full power if too slow and zero power if too fast).
+- Tested bang-bang velocity control for potentially faster shooter spin-up (meaning full power if too slow and zero power if too fast).
 - Identified oscillation issues near setpoint with the bang-bang approach.
 - Robot seemed to battery drain power much quicker at higher shooter velocities (an issue we also had in 2024)
 
 ### Week 5-6:
-TODO  (interpolation methods vs physics calculations maybe?)
+- Replaced ````VelocityVoltage```` with ````VelocityTorqueCurrentFOC```` for  launcher velocity control, which decreased spin-up time, power usage, fuel kickback, and improved overall controllability
+- Increased robot rotation kP (on MVR) to ensure faster rotation towards desired target
+- Tranferred MVR SOTM code to Competition Bot code and cleaned up any errors (due to addition of real turret and slightly different subsystem code/methods)
+- Changed Newton's Method ToF initial guess to be based on distance with the following formula: 
+
+    $   
+    t_{guess} = t_{lowerBound} + \frac{distance \ to \ target}{max \ distance} * ({t_{upperBound} - t_{lowerBound}})
+    $
 
 ### Overall Takeaways:
 - Physics models provide strong starting points but often require empirical correction.
