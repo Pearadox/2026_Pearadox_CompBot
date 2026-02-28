@@ -15,10 +15,13 @@ import org.littletonrobotics.junction.Logger;
 public class Feeder extends SubsystemBase {
 
   private final FeederIO io;
-  private final CANrange canRange = new CANrange(4);
   private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
-  private Debouncer canRangeDebouncer = new Debouncer(0.125, DebounceType.kFalling);
   private FeederState feederState = FeederState.RUNNING;
+
+  private final CANrange canRange = new CANrange(4);
+  private Debouncer canRangeDebouncer = new Debouncer(0.125, DebounceType.kFalling);
+  private int fuelCount = 0;
+  private boolean lastDetected = false;
 
   /** Creates a new Feeder. */
   public Feeder(FeederIO io) {
@@ -31,8 +34,9 @@ public class Feeder extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("FeederInputs", inputs);
-    Logger.recordOutput("Feeder/CanRange Distance", canRange.getDistance().getValueAsDouble());
-    Logger.recordOutput("Feeder/CanRange FuelIsDetected", canRange.getIsDetected().getValue());
+    Logger.recordOutput("Feeder/CanRange/Distance from Fuel", canRangeGetDistanceMeters());
+    Logger.recordOutput("Feeder/CanRange/FuelIsDetected", isDetectedDebounced());
+    Logger.recordOutput("Feeder/CanRange/Number of Fuel", getFuelCount());
     io.runFeederVoltage(StateConfig.SPINDEXER_STATE_MAP.get(feederState).voltage());
   }
 
@@ -46,6 +50,22 @@ public class Feeder extends SubsystemBase {
 
   public boolean isDetectedDebounced() {
     return canRangeDebouncer.calculate(canRange.getIsDetected().getValue());
+  }
+
+  public double canRangeGetDistanceMeters() {
+    return canRange.getDistance().getValueAsDouble();
+  }
+
+  public void updateFuelCount() {
+    boolean isDetectedDebounced = isDetectedDebounced();
+    if (isDetectedDebounced && !lastDetected) {
+      fuelCount++;
+    }
+    lastDetected = isDetectedDebounced;
+  }
+
+  public int getFuelCount() {
+    return fuelCount;
   }
 
   // public void launch() {
