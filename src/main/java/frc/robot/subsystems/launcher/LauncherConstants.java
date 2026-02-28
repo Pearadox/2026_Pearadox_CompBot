@@ -56,17 +56,7 @@ public class LauncherConstants {
     LAUNCHER_CONFIG_SLOT0.kV = 0.1;
     return LAUNCHER_CONFIG;
   }
-
-  // LAUNCHER SIM
-  public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
-  public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
-  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.7); // TODO: get weight
-  public static final double ROLLER_CIRCUMFERENCE_METERS = Units.inchesToMeters(4.0 * Math.PI);
-  public static final double LAUNCHER_HEIGHT_METERS =
-      Units.inchesToMeters(22.5); // TODO: double check
-  public static final double LAUNCHER_ROLLER_MOI =
-      0.5 * ROLLER_MASS_KG * Math.pow(ROLLER_RADIUS_METERS, 2);
-
+  
   // SERVO
   public static final int HOOD_SERVO_HUB_CAN_ID = 0; // TODO: set
   public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
@@ -77,6 +67,48 @@ public class LauncherConstants {
   public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(60.0);
   public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(20.0);
 
-  public static final int HOOD_SERVO_MAX_PULSE_WIDTH = 2500;
-  public static final int HOOD_SERVO_MIN_PULSE_WIDTH = 500;
+  public static final int SERVO_MAX_PULSE_WIDTH = 2500;
+  public static final int SERVO_MIN_PULSE_WIDTH = 500;
+
+  public static final double SERVO_POSITION_TO_ROTATIONS_CONVERSION = 5;
+  public static final double SERVO_POSITION_TO_PW_CONVERSION = 2000;
+  public static final double SERVO_ROTATIONS_TO_PW_CONVERSION = 400;
+  
+  
+  
+  public static final double pulseWidthtoAngularPosition(int pulseWidth) {
+    return (pulseWidth - SERVO_MIN_PULSE_WIDTH) / SERVO_POSITION_TO_PW_CONVERSION;
+  }
+
+  public static final double pulseWidthtoRotations(int pulseWidth) {
+    return (pulseWidth - SERVO_MIN_PULSE_WIDTH) / SERVO_ROTATIONS_TO_PW_CONVERSION;
+  }
+
+  public static final int angularPositiontoPulseWidth(double angularPosition) {
+    return (int) (angularPosition * SERVO_POSITION_TO_PW_CONVERSION) + LauncherConstants.SERVO_MIN_PULSE_WIDTH;
+  }
+
+  public static final double angularPositiontoRotations(double angularPosition) {
+    return angularPosition * SERVO_POSITION_TO_ROTATIONS_CONVERSION;
+  }
+
+  public static final int rotationstoPulseWidth(double rotations) {
+    return (int) (rotations * SERVO_ROTATIONS_TO_PW_CONVERSION) + SERVO_MIN_PULSE_WIDTH;
+  }
+
+  public static final double rotationstoAngularPosition(double rotations) {
+    return rotations / SERVO_POSITION_TO_ROTATIONS_CONVERSION;
+  }
+  
+  // SIM
+  public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
+  public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
+  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.7); // TODO: get weight
+  public static final double ROLLER_CIRCUMFERENCE_METERS = Units.inchesToMeters(4.0 * Math.PI);
+  public static final double LAUNCHER_HEIGHT_METERS =
+      Units.inchesToMeters(22.5); // TODO: double check
+  public static final double LAUNCHER_ROLLER_MOI =
+      0.5 * ROLLER_MASS_KG * Math.pow(ROLLER_RADIUS_METERS, 2);
+  public static final int ROLLER_SEGMENT_COUNT = 60;
+  public static final int SIM_LINE_WIDTH = 5;
 }

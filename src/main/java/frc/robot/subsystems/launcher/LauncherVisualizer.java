@@ -20,14 +20,20 @@ public class LauncherVisualizer {
   private final CircleSim flywheelSim =
       new CircleSim(
           root,
-          60,
-          0.2,
+          LauncherConstants.ROLLER_SEGMENT_COUNT,
+          LauncherConstants.ROLLER_RADIUS_METERS,
+          LauncherConstants.SIM_LINE_WIDTH,
           new Color8Bit(Color.kDarkSlateGray),
           new Color8Bit(Color.kSeaGreen),
           new Color8Bit(Color.kGoldenrod));
 
   private LoggedMechanismLigament2d hood =
-      root.append(new LoggedMechanismLigament2d("Hood", 1, 20, 10, new Color8Bit(Color.kDimGray)));
+      root.append(new LoggedMechanismLigament2d(
+      "Hood", 
+      1,
+      LauncherConstants.HOOD_MIN_ANGLE_RADS,
+      LauncherConstants.SIM_LINE_WIDTH,
+      new Color8Bit(Color.kDimGray)));
 
   private double previousRollerAngle = 0.0;
   private double rollerAngleDeg = 0.0;

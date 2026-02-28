@@ -37,6 +37,7 @@ public class CircleSim {
       LoggedMechanismRoot2d root,
       int segmentCount,
       double radius,
+      int lineWidth,
       Color8Bit staticColor,
       Color8Bit activeColor,
       Color8Bit visibilityColor) {
@@ -56,14 +57,18 @@ public class CircleSim {
                   this.root.getName() + " segment " + (i + 1),
                   radius,
                   360 * (i + 1) / circle.length,
-                  6,
+                  lineWidth,
                   this.staticColor));
     }
 
     circle[circle.length - 1] =
         this.root.append(
             new LoggedMechanismLigament2d(
-                this.root.getName() + " visibility segment", radius, 0, 6, this.visibilityColor));
+                this.root.getName() + " visibility segment",
+                radius,
+                0,
+                lineWidth,
+                this.visibilityColor));
   }
 
   /**
@@ -83,7 +88,7 @@ public class CircleSim {
   public void updateAngleDeg(double newAngleDeg, double previousAngleDeg) {
     for (int i = 0; i < circle.length - 1; i++) {
       circle[i].setAngle(newAngleDeg + 360 / circle.length * (i + 1));
-      if (Math.abs(newAngleDeg - previousAngleDeg) < 5) {
+      if (previousAngleDeg == newAngleDeg) {
         circle[i].setColor(staticColor);
       } else {
         circle[i].setColor(activeColor);
