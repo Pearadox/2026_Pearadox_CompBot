@@ -28,7 +28,7 @@ public class SpindexerConstants {
 
   public static final double SPINDEXER_GEARING = 1.0 / 15.0;
   public static final double SPINDEXER_RADIUS_METERS = Units.inchesToMeters(4);
-  public static final double SPINDEXER_MASS_KG = Units.lbsToKilograms(7);
+  public static final double SPINDEXER_MASS_KG = Units.lbsToKilograms(5);
   public static final double SPINDEXER_MOI =
       0.5 * SPINDEXER_MASS_KG * Math.pow(SPINDEXER_RADIUS_METERS, 2);
 
