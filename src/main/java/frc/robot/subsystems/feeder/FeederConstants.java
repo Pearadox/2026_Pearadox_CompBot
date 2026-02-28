@@ -8,41 +8,53 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.system.plant.DCMotor;
+import java.util.Map;
 
 /** Add your docs here. */
 public class FeederConstants {
 
-    public static final int FEEDER_CAN_ID = 41;
+  public static enum FeederState {
+    STOPPED,
+    RUNNING
+  }
 
-    public static final int FEEDER_CURRENT_LIMIT = 20;
+  public static record StateConfig(double voltage) {
+    public static final Map<FeederState, StateConfig> SPINDEXER_STATE_MAP =
+        Map.of(
+            FeederState.STOPPED, new StateConfig(0),
+            FeederState.RUNNING, new StateConfig(-5.414));
+  }
 
-    public static final double FEEDER_GEARING = 11.0 / 24.0; // ratio of teeth on motor to teeth on pulley
+  public static final int FEEDER_CAN_ID = 41;
 
-    public static final TalonFXConfiguration FEEDER_CONFIG = new TalonFXConfiguration();
-    public static final Slot0Configs FEEDER_SLOT0_CONFIGS = FEEDER_CONFIG.Slot0;
+  public static final int FEEDER_CURRENT_LIMIT = 50;
 
-    public static final TalonFXConfiguration FEEDER_MOTOR_CONFIG() {
-        FEEDER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-        FEEDER_CONFIG.CurrentLimits.StatorCurrentLimit = FEEDER_CURRENT_LIMIT;
+  public static final double FEEDER_GEARING =
+      11.0 / 24.0; // ratio of teeth on motor to teeth on pulley
 
-        FEEDER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-        FEEDER_CONFIG.CurrentLimits.SupplyCurrentLimit = FEEDER_CURRENT_LIMIT;
+  public static final TalonFXConfiguration FEEDER_CONFIG = new TalonFXConfiguration();
+  public static final Slot0Configs FEEDER_SLOT0_CONFIGS = FEEDER_CONFIG.Slot0;
 
-        FEEDER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        FEEDER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+  public static final TalonFXConfiguration FEEDER_MOTOR_CONFIG() {
+    FEEDER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+    FEEDER_CONFIG.CurrentLimits.StatorCurrentLimit = FEEDER_CURRENT_LIMIT;
 
-        FEEDER_SLOT0_CONFIGS.kP = 0.1;
-        FEEDER_SLOT0_CONFIGS.kI = 0.0;
-        FEEDER_SLOT0_CONFIGS.kD = 0.0;
-        FEEDER_SLOT0_CONFIGS.kV = 0.0;
+    FEEDER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+    FEEDER_CONFIG.CurrentLimits.SupplyCurrentLimit = FEEDER_CURRENT_LIMIT;
 
-        return FEEDER_CONFIG;
-    }
+    FEEDER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    FEEDER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    public static final double FEEDER_ACTIVE_VOLTAGE = 5.414;
+    FEEDER_SLOT0_CONFIGS.kP = 0.1;
+    FEEDER_SLOT0_CONFIGS.kI = 0.0;
+    FEEDER_SLOT0_CONFIGS.kD = 0.0;
+    FEEDER_SLOT0_CONFIGS.kV = 0.0;
 
-    public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
+    return FEEDER_CONFIG;
+  }
 
+  public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
+
+  public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
 }

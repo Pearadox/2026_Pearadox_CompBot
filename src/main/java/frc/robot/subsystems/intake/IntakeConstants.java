@@ -1,90 +1,93 @@
 package frc.robot.subsystems.intake;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.util.Units;
+import java.util.Map;
 
 public class IntakeConstants {
 
-    public static enum IntakeState {
-        STOWED,
-        INTAKING,
-        OUTTAKING
-    }
+  public static enum IntakeState {
+    STOWED,
+    DEPLOYED,
+    INTAKING,
+    OUTTAKING
+  }
 
-    /** record that maps the intake state to its respective angle and voltage
-     * @param angleRad the angle in radians
-     * @param voltage the voltage in volts
-     */
-    public static record StateConfig(double angleDeg, double voltage) {
-        public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP = Map.of(
+  /**
+   * record that maps the intake state to its respective angle and voltage
+   *
+   * @param angleRad the angle in radians
+   * @param voltage the voltage in volts
+   */
+  public static record StateConfig(double angleDeg, double voltage) {
+    public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
+        Map.of(
             IntakeState.STOWED, new StateConfig(90, 0),
+            IntakeState.DEPLOYED, new StateConfig(0, 0),
             IntakeState.INTAKING, new StateConfig(0, 7),
-            IntakeState.OUTTAKING, new StateConfig(0, -3.5)
-        );
-    }
+            IntakeState.OUTTAKING, new StateConfig(0, -3.5));
+  }
 
-    // roller constants
-    public static final int ROLLER_1_LEADER_ID = 31;
-    public static final int ROLLER_2_FOLLOWER_ID = 32;
-    public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
-    public static final int CURRENT_LIMIT = 20;
-    public static final boolean INVERTED = false;
+  // roller constants
+  public static final int ROLLER_1_LEADER_ID = 31;
+  public static final int ROLLER_2_FOLLOWER_ID = 32;
+  public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
+  public static final int CURRENT_LIMIT = 20;
+  public static final boolean INVERTED = false;
 
-    // pivot constants
-    public static final int PIVOT_ID = 30;
-    public static final double GEARING = (44.0/12.0) * (60.0/16.0) * (44.0/14.0);
-    public static final double LENGTH_METERS = Units.inchesToMeters(15.114);
-    public static final double MASS_KG = 11.246;
+  // pivot constants
+  public static final int PIVOT_ID = 30;
+  public static final double GEARING = (44.0 / 12.0) * (60.0 / 16.0) * (44.0 / 14.0);
+  public static final double LENGTH_METERS = Units.inchesToMeters(15.114);
+  public static final double MASS_KG = 11.246;
 
-    // intake sim constants
-    public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(0);
-    public static final double SIM_MIN_ANGLE_RADS = Double.NEGATIVE_INFINITY;
-    public static final double SIM_MAX_ANGLE_RADS = Double.POSITIVE_INFINITY;
+  // intake sim constants
+  public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(0);
+  public static final double SIM_MIN_ANGLE_RADS = Double.NEGATIVE_INFINITY;
+  public static final double SIM_MAX_ANGLE_RADS = Double.POSITIVE_INFINITY;
 
-    // talonFX config for roller motor
-    public static final TalonFXConfiguration ROLLER_CONFIG = new TalonFXConfiguration();
-    public static final Slot0Configs ROLLER_SLOT0_CONFIGS = ROLLER_CONFIG.Slot0;
-    public static final TalonFXConfiguration getRollerConfigTalonFX() {
+  // talonFX config for roller motor
+  public static final TalonFXConfiguration ROLLER_CONFIG = new TalonFXConfiguration();
+  public static final Slot0Configs ROLLER_SLOT0_CONFIGS = ROLLER_CONFIG.Slot0;
 
-            ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-            ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
-            ROLLER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-            ROLLER_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
+  public static final TalonFXConfiguration getRollerConfigTalonFX() {
 
-            ROLLER_SLOT0_CONFIGS.kP = 0.1;
-            ROLLER_SLOT0_CONFIGS.kI = 0.0;
-            ROLLER_SLOT0_CONFIGS.kD = 0.0;
+    ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+    ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+    ROLLER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+    ROLLER_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
 
-            ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    ROLLER_SLOT0_CONFIGS.kP = 0.1;
+    ROLLER_SLOT0_CONFIGS.kI = 0.0;
+    ROLLER_SLOT0_CONFIGS.kD = 0.0;
 
-            return ROLLER_CONFIG;
-        }
+    ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // talonFX config for pivot motor
-    public static final TalonFXConfiguration PIVOT_CONFIG = new TalonFXConfiguration();
-    public static final Slot0Configs PIVOT_SLOT0_CONFIGS = PIVOT_CONFIG.Slot0;
-    public static final TalonFXConfiguration getPivotConfigTalonFX() {
+    return ROLLER_CONFIG;
+  }
 
-            PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-            PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
-            PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-            PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
+  // talonFX config for pivot motor
+  public static final TalonFXConfiguration PIVOT_CONFIG = new TalonFXConfiguration();
+  public static final Slot0Configs PIVOT_SLOT0_CONFIGS = PIVOT_CONFIG.Slot0;
 
-            PIVOT_SLOT0_CONFIGS.kP = 7;
-            PIVOT_SLOT0_CONFIGS.kI = 0.0;
-            PIVOT_SLOT0_CONFIGS.kD = 0.0;
+  public static final TalonFXConfiguration getPivotConfigTalonFX() {
 
-            PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+    PIVOT_CONFIG.CurrentLimits.SupplyCurrentLimit = 20;
+    PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+    PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
 
-            return PIVOT_CONFIG;
-        }
+    PIVOT_SLOT0_CONFIGS.kP = 7;
+    PIVOT_SLOT0_CONFIGS.kI = 0.0;
+    PIVOT_SLOT0_CONFIGS.kD = 0.0;
 
+    PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    return PIVOT_CONFIG;
+  }
 }

@@ -7,11 +7,19 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.intake.MechVisualizer;
+import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
+import lombok.Getter;
+
+import java.util.Optional;
 
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -29,6 +37,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
+  @Getter private static Alliance alliance;
 
   public Robot() {
     // Record metadata
@@ -73,15 +82,18 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+
+    // Pathplanner warm-up command
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-        // Refresh all Phoenix signals
-      LoggedTracer.reset();
-      PhoenixUtil.refreshAll();
-      LoggedTracer.record("PhoenixRefresh");
+    // Refresh all Phoenix signals
+    LoggedTracer.reset();
+    PhoenixUtil.refreshAll();
+    LoggedTracer.record("PhoenixRefresh");
 
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
@@ -96,6 +108,8 @@ public class Robot extends LoggedRobot {
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
+
+    robotContainer.visualizer.periodic();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -104,7 +118,15 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+    if(allianceOptional.isPresent()) {
+      alliance = allianceOptional.get();
+    }
+    else {
+      alliance = Alliance.Blue;
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -156,5 +178,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationPeriodic() {
     MechVisualizer.getInstance().periodic();
+    LauncherVisualizer.getInstance().periodic();
   }
+
 }

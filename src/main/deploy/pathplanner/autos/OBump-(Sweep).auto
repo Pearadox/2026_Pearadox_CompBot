@@ -1,0 +1,37 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OBump-NZone"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SweepOutpostToDepot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "WIP",
+  "choreoAuto": false
+}

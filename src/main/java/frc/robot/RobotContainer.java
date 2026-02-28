@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,9 +16,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.drivers.MovingShotSolver;
+import frc.lib.drivers.MovingShotSolver.ShotSolution;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -25,28 +30,37 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.MechVisualizer;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIOReal;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.launcher.LauncherIOReal;
+import frc.robot.subsystems.launcher.LauncherIOSim;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOReal;
+import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final Feeder feeder;
+  //   private final Intake intake;
+  private final Launcher launcher;
+  private final Spindexer spindexer;
+  private final Turret turret;
   private final Vision vision;
-  private final Intake intake;
+
+  // Visualizer
+  public final RobotVisualizer visualizer;
 
   // Controller
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
@@ -54,6 +68,8 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private static ShotSolution shotSolution = new ShotSolution(0., 0, new Rotation2d(), false);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -69,26 +85,15 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.FrontRight),
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
-        intake =
-            new Intake(new IntakeIO() {});
 
-        // The ModuleIOTalonFXS implementation provides an example implementation for
-        // TalonFXS controller connected to a CANdi with a PWM encoder. The
-        // implementations
-        // of ModuleIOTalonFX, ModuleIOTalonFXS, and ModuleIOSpark (from the Spark
-        // swerve
-        // template) can be freely intermixed to support alternative hardware
-        // arrangements.
-        // Please see the AdvantageKit template documentation for more information:
-        // https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations
-        //
-        // drive =
-        // new Drive(
-        // new GyroIOPigeon2(),
-        // new ModuleIOTalonFXS(TunerConstants.FrontLeft),
-        // new ModuleIOTalonFXS(TunerConstants.FrontRight),
-        // new ModuleIOTalonFXS(TunerConstants.BackLeft),
-        // new ModuleIOTalonFXS(TunerConstants.BackRight));
+        feeder = new Feeder(new FeederIOReal());
+        // intake = new Intake(new IntakeIOReal());
+        launcher = new Launcher(new LauncherIOReal());
+        spindexer = new Spindexer(new SpindexerIOReal());
+        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
+        vision = new Vision(drive::addVisionMeasurement,
+                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
+
         break;
 
       case SIM:
@@ -100,7 +105,15 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-        intake = new Intake(new IntakeIOSim());
+                
+
+        feeder = new Feeder(new FeederIOSim());
+        // intake = new Intake(new IntakeIOSim());
+        launcher = new Launcher(new LauncherIOSim());
+        spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
+        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
+        vision = new Vision(drive::addVisionMeasurement);
+
         break;
 
       default:
@@ -112,7 +125,14 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        intake = new Intake(new IntakeIO() {});
+
+        feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
+        // intake = new Intake(new IntakeIO() {});
+        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
+        spindexer = new Spindexer(new SpindexerIO() {});
+        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
+        vision = new Vision(drive::addVisionMeasurement);
+
         break;
     }
 
@@ -135,10 +155,25 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    vision = new Vision(drive::addVisionMeasurement, new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+    // vision =
+    //     new Vision(
+    //         drive::addVisionMeasurement,
+    //         new VisionIOPhotonVision(VisionConstants.camera0Name,
+    // VisionConstants.robotToCamera0));
+
+    visualizer =
+        new RobotVisualizer(
+            () -> 0, // TODO: replace with turret angle supplier
+            () -> 0, // TODO: replace with hood angle supplier
+            () -> 0, // TODO: replace with spindexer angle supplier
+            () -> 0, // TODO: replace with intake angle supplier
+            () -> 0 // TODO: replace with climber displacement supplier
+            );
 
     // Configure the button bindings
     configureButtonBindings();
+    // Register named commands for PathPlanner
+    registerNamedCommands();
   }
 
   /**
@@ -171,7 +206,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     drivercontroller
-        .b()
+        .start()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -181,17 +216,42 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
-    
-    drivercontroller.y()
-                    .whileTrue(
-                        DriveCommands.joystickDriveAtAngle(
-                            drive,
-                            () -> -drivercontroller.getLeftY(),
-                            () -> -drivercontroller.getLeftX(),
-                            () -> DriveHelpers.findClosestCorner(drive :: getPose)));
-    
-    drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    drivercontroller
+        .y()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
+                () -> DriveHelpers.findClosestCorner(drive::getPose)));
+
+
+    drivercontroller
+        .rightBumper()
+        .whileTrue(
+            Commands.parallel(
+                Commands.run(() -> setShotSolution(MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds))),
+                new RunCommand(() -> turret.followFieldCentricTarget(shotSolution::getTurretAngleRot2d)),
+                new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d)));
+
+    // Uncomment when ready to run turret SysID routines
+    // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
+    // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
+
+    // opController.y().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // opController.a().whileTrue(turret.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    // drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    // drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+
+    // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
+    // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
+
+    // drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
+    // drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
   }
 
   /**
@@ -201,5 +261,25 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void registerNamedCommands() {
+    // Feeder Commands
+    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.setRunning()));
+    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
+
+    // Intake Commands
+    // NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->
+    // intake.setIntaking()));
+    // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
+    // intake.setDeployed()));
+  }
+
+  public void setShotSolution(ShotSolution sol) {
+    shotSolution = sol;
+  }
+
+  public static ShotSolution getShotSolution() {
+    return shotSolution;
   }
 }
