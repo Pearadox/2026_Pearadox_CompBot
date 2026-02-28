@@ -6,6 +6,7 @@ package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,9 @@ public class Launcher extends SubsystemBase {
   /** Creates a new Launcher. */
   private final LauncherIO io;
 
-  private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
+  public final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-  private LauncherState launcherState = LauncherState.SCORING;
+  private static LauncherState launcherState = LauncherState.SCORING;
   @Getter @Setter private double adjust = 0.0;
 
   public Launcher(LauncherIO io) {
@@ -45,6 +46,9 @@ public class Launcher extends SubsystemBase {
         inputs.hoodServo1Position
             * 5
             / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
+
+    setVelocity(RobotContainer.getShotSolution().getShooterSpeedRPS());
+    
   }
 
   /** velocity will be calculated from aim assist command factory */
@@ -68,7 +72,7 @@ public class Launcher extends SubsystemBase {
     launcherState = LauncherState.PASSING;
   }
 
-  public LauncherState getState() {
+  public static LauncherState getState() {
     return launcherState;
   }
 }

@@ -25,6 +25,10 @@ public class LauncherConstants {
     private LauncherState(double angle) {
       hoodAngleRads = angle;
     }
+
+    public double getHoodAngleRads() {
+      return hoodAngleRads;
+    }
   }
 
   public static final int LAUNCHER_1_CAN_ID = 21; // TODO: double check
