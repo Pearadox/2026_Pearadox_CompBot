@@ -8,7 +8,6 @@ import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-
   private IntakeIO io;
 
   public IntakeState intakeState = IntakeState.STOWED;
@@ -55,6 +54,10 @@ public class Intake extends SubsystemBase {
 
   public void setStowed() {
     intakeState = IntakeState.STOWED;
+  }
+
+  public void setDeployed() {
+    intakeState = IntakeState.DEPLOYED; // rollers aren't running; intake is deployed
   }
 
   public void setIntaking() {

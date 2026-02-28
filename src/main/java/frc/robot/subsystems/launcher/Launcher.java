@@ -31,7 +31,6 @@ public class Launcher extends SubsystemBase {
     // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 60 : 0));
     io.setHoodAngleRads(launcherState.getHoodAngleRads());
     Logger.recordOutput("Launcher/State", getState());
-    Logger.processInputs("Launcher/Inputs", inputs);
 
     LauncherVisualizer.getInstance()
         .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));

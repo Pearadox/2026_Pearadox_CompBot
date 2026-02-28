@@ -5,13 +5,15 @@
 package frc.robot.subsystems.feeder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.feeder.FeederConstants.FeederState;
+import frc.robot.subsystems.feeder.FeederConstants.StateConfig;
 import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
 
   private final FeederIO io;
-
   private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
+  private FeederState feederState = FeederState.RUNNING;
 
   /** Creates a new Feeder. */
   public Feeder(FeederIO io) {
@@ -23,13 +25,22 @@ public class Feeder extends SubsystemBase {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
     Logger.processInputs("FeederInputs", inputs);
+    io.runFeederVoltage(StateConfig.SPINDEXER_STATE_MAP.get(feederState).voltage());
   }
 
-  public void launch() {
-    io.runFeederVoltage(FeederConstants.FEEDER_ACTIVE_VOLTAGE);
+  public void setStopped() {
+    feederState = FeederState.STOPPED;
   }
 
-  public void stopLaunch() {
-    io.runFeederVoltage(0.0);
+  public void setRunning() {
+    feederState = FeederState.RUNNING;
   }
+
+  // public void launch() {
+  //   io.runFeederVoltage(FeederConstants.FEEDER_ACTIVE_VOLTAGE);
+  // }
+
+  // public void stopLaunch() {
+  //   io.runFeederVoltage(0.0);
+  // }
 }
