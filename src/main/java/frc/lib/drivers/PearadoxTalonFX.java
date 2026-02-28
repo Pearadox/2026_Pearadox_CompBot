@@ -14,11 +14,6 @@ public class PearadoxTalonFX extends TalonFX {
 
   private final BaseStatusSignal[] telemetrySignals;
 
-  public static final double LOOP_PERIOD = 0.02; // 20ms
-  public static final double LOOP_FREQUENCY = 1.0 / LOOP_PERIOD; // 50Hz
-  public static final double NOMINAL_VOLTAGE = 12; // V
-  public static final double g = 9.79267; // m/s^2 in Pearland
-
   /**
    * Constructs a new PearadoxTalonFX with the specified device ID and configuration.
    *

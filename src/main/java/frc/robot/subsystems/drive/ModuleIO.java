@@ -12,7 +12,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ModuleIO {
   @AutoLog
-  public static class ModuleIOInputs {
+  static class ModuleIOInputs {
     public boolean driveConnected = false;
     public double drivePositionRad = 0.0;
     public double driveVelocityRadPerSec = 0.0;
@@ -22,7 +22,6 @@ public interface ModuleIO {
     public boolean turnConnected = false;
     public boolean turnEncoderConnected = false;
     public Rotation2d turnAbsolutePosition = Rotation2d.kZero;
-    public Rotation2d turnPosition = Rotation2d.kZero;
     public double turnVelocityRadPerSec = 0.0;
     public double turnAppliedVolts = 0.0;
     public double turnCurrentAmps = 0.0;
@@ -33,17 +32,17 @@ public interface ModuleIO {
   }
 
   /** Updates the set of loggable inputs. */
-  public default void updateInputs(ModuleIOInputs inputs) {}
+  default void updateInputs(ModuleIOInputs inputs) {}
 
   /** Run the drive motor at the specified open loop value. */
-  public default void setDriveOpenLoop(double output) {}
+  default void setDriveOpenLoop(double output) {}
 
   /** Run the turn motor at the specified open loop value. */
-  public default void setTurnOpenLoop(double output) {}
+  default void setTurnOpenLoop(double output) {}
 
   /** Run the drive motor at the specified velocity. */
-  public default void setDriveVelocity(double velocityRadPerSec) {}
+  default void setDriveVelocity(double velocityRadPerSec) {}
 
   /** Run the turn motor to the specified rotation. */
-  public default void setTurnPosition(Rotation2d rotation) {}
+  default void setTurnPosition(Rotation2d rotation) {}
 }
