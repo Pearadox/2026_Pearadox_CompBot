@@ -15,34 +15,26 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Used Newton's Method
  and kinematics to estimate the Time-of-Flight (airtime) for the fuel based on the robot's translational velocity and distance to the target from Limelight odometry updates:
 
-    $
-    \textbf{1: Initialize “Estimate" for ToF} \\
-    t_0 = 1.0 \ s
-    $
+    $\textbf{1: Initialize “Estimate" for ToF} \\
+    t_0 = 1.0 \ s$
     
-    $
-    \textbf{2. Define functions } f(t) \text{ (vertical error),} \ v_x, v_y, v_z \  \text{(shooter velocity components)} \\
+    $\textbf{2. Define functions } f(t) \text{ (vertical error),} \ v_x, v_y, v_z \  \text{(shooter velocity components)} \\
     \begin{aligned}
     v_x(t) &= \frac{D_x}{t} - v_{x,\text{robot}} \\
     v_y(t) &= \frac{D_y}{t} - v_{y,\text{robot}} \\
     v_h(t) &= \sqrt{v_x(t)^2 + v_y(t)^2} \\
     v_z(t) &= v_h(t)\,\tan(\theta) \\
     f(t) &= v_z(t)\,t - \tfrac{1}{2} g t^2 - (Hub_H - Shooter_H)
-    \end{aligned}
-    $
+    \end{aligned}$
 
-    $
-    \textbf{3: Approximate the derivative numerically} \\
+    $\textbf{3: Approximate the derivative numerically} \\
     \begin{aligned}
     \Delta t &= 10^{-4} \ s, \\
     f'(t) &\approx \frac{f(t + \Delta t) - f(t)}{\Delta t}
-    \end{aligned}
-    $
+    \end{aligned}$
 
-    $
-    \textbf{4: Newton's Method (then repeat steps 2-4 (n) times with new ToF)} \\
-    t_{n+1} = t_n - \frac{f(t_n)}{f'(t_n)}
-    $
+    $\textbf{4: Newton's Method (then repeat steps 2-4 (n) times with new ToF)} \\
+    t_{n+1} = t_n - \frac{f(t_n)}{f'(t_n)}$
 
  
 - Derived required field-relative shooter launch velocities (vx, vy, vz) that compensate for translational robot motion, then computed total shooter wheel speed and a field-relative turret angle to “lead” the target.
@@ -66,9 +58,7 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Decided to vary shooter speed and keep hood static (using only two hood angle setpoints for shooting vs passing) since velocity control with the krakens is more reliable, consistent, accurate, and faster overall
 - Changed Newton's Method ToF initial guess to be based on distance with the following formula: 
 
-    $   
-    t_{guess} = t_{lowerBound} + \frac{distance \ to \ target}{max \ distance} * ({t_{upperBound} - t_{lowerBound}})
-    $
+    $t_{guess} = t_{lowerBound} + \frac{distance \ to \ target}{max \ distance} * ({t_{upperBound} - t_{lowerBound}})$
 
 ### Overall Takeaways:
 - Physics models provide strong starting points but often require empirical correction.
