@@ -28,22 +28,20 @@ public class Launcher extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    Logger.processInputs("Launcher/Inputs", inputs);
-    // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 20 : 40));
+    // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 60 : 0));
     io.setHoodAngleRads(launcherState.getHoodAngleRads());
     Logger.recordOutput("Launcher/State", getState());
 
     LauncherVisualizer.getInstance()
-        .updateRollerPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
+        .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
     LauncherVisualizer.getInstance()
-        .updateHoodPositionDeg(Units.rotationsToDegrees(inputs.hoodServo1Position * 5));
+        .updateHoodPositionDeg(Units.rotationsToDegrees(LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
 
     Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
     Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
     Logger.recordOutput(
         "Hood/Current-Angle",
-        inputs.hoodServo1Position
-            * 5
+        LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
             / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
   }
 

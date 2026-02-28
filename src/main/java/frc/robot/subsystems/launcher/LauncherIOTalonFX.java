@@ -55,8 +55,8 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
 
     inputs.hoodServoHubVoltage = hoodServoHub.getDeviceVoltage();
 
-    inputs.hoodServo1Position = pulseWidthtoAngularPosition(hoodServo1.getPulseWidth());
-    inputs.hoodServo2Position = pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
+    inputs.hoodServo1Position = LauncherConstants.pulseWidthtoAngularPosition(hoodServo1.getPulseWidth());
+    inputs.hoodServo2Position = LauncherConstants.pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
   }
 
   public void runLauncherVelocity(double velocityRPS) {
@@ -72,20 +72,12 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
       double angularPosition =
           (Units.radiansToRotations(angleRadsFromMinimum) * LauncherConstants.HOOD_GEARING) / 5;
 
-      hoodServo1.setPulseWidth(angularPositiontoPulseWidth(angularPosition));
+      hoodServo1.setPulseWidth(LauncherConstants.angularPositiontoPulseWidth(angularPosition));
       hoodServo2.setPulseWidth(
-          LauncherConstants.HOOD_SERVO_MAX_PULSE_WIDTH
-              - angularPositiontoPulseWidth(angularPosition));
+          LauncherConstants.SERVO_MAX_PULSE_WIDTH
+              - LauncherConstants.angularPositiontoPulseWidth(angularPosition));
     } else {
       Logger.recordOutput("HoodAngleOutOfRange", angleRads);
     }
-  }
-
-  public double pulseWidthtoAngularPosition(int pulseWidth) {
-    return (pulseWidth - 500) / 2000;
-  }
-
-  public int angularPositiontoPulseWidth(double angularPosition) {
-    return (int) (angularPosition * 2000) + 500;
   }
 }
