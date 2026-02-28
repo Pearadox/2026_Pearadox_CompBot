@@ -53,7 +53,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Feeder feeder;
-  //   private final Intake intake;
+  // private final Intake intake;
   private final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
@@ -90,8 +90,10 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIOReal());
         launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
-        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds);
-        vision = new Vision(drive::addVisionMeasurement,
+        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
+        vision =
+            new Vision(
+                drive::addVisionMeasurement,
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
 
         break;
@@ -105,13 +107,12 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.FrontRight),
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
-                
 
         feeder = new Feeder(new FeederIOSim());
         // intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
-        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds);
+        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
         vision = new Vision(drive::addVisionMeasurement);
 
         break;
@@ -130,7 +131,7 @@ public class RobotContainer {
         // intake = new Intake(new IntakeIO() {});
         launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
-        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds);
+        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
         vision = new Vision(drive::addVisionMeasurement);
 
         break;
@@ -156,9 +157,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // vision =
-    //     new Vision(
-    //         drive::addVisionMeasurement,
-    //         new VisionIOPhotonVision(VisionConstants.camera0Name,
+    // new Vision(
+    // drive::addVisionMeasurement,
+    // new VisionIOPhotonVision(VisionConstants.camera0Name,
     // VisionConstants.robotToCamera0));
 
     visualizer =
@@ -226,14 +227,10 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
-
     drivercontroller
         .rightBumper()
         .whileTrue(
-            Commands.parallel(
-                Commands.run(() -> setShotSolution(MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds))),
-                new RunCommand(() -> turret.followFieldCentricTarget(shotSolution::getTurretAngleRot2d)),
-                new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d)));
+            new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d));
 
     // Uncomment when ready to run turret SysID routines
     // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -244,14 +241,31 @@ public class RobotContainer {
     // opController.b().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kForward));
     // opController.x().whileTrue(turret.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    // drivercontroller.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    // drivercontroller.x().whileFalse(new InstantCommand(() -> intake.setStowed()));
+    opController.a().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
+    opController.b().onTrue(new InstantCommand(() -> turret.goToPlus180(), turret));
+    opController.x().onTrue(new InstantCommand(() -> turret.goToMinus180(), turret));
+    opController
+        .y()
+        .onTrue(
+            new RunCommand(
+                () -> {
+                  setShotSolution(MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds));
+                  turret.followFieldCentricTarget(shotSolution::getTurretAngleRot2d);
+                },
+                turret));
+
+    // drivercontroller.x().whileTrue(new InstantCommand(() ->
+    // intake.setIntaking()));
+    // drivercontroller.x().whileFalse(new InstantCommand(() ->
+    // intake.setStowed()));
 
     // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
     // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
 
-    // drivercontroller.rightBumper().whileTrue(new InstantCommand(() -> feeder.launch()));
-    // drivercontroller.rightBumper().onFalse(new InstantCommand(() -> feeder.stopLaunch()));
+    // drivercontroller.rightBumper().whileTrue(new InstantCommand(() ->
+    // feeder.launch()));
+    // drivercontroller.rightBumper().onFalse(new InstantCommand(() ->
+    // feeder.stopLaunch()));
   }
 
   /**

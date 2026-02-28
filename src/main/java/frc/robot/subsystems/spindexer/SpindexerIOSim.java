@@ -38,11 +38,12 @@ public class SpindexerIOSim extends SpindexerIOTalonFX {
   public void updateSim() {
     spindexerSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     spindexerPhysicsSim.setInputVoltage(spindexerSimState.getMotorVoltage());
-    
+
     spindexerPhysicsSim.update(0.02);
-    
+
     spindexerSimState.setRotorVelocity(
-        Units.radiansPerSecondToRotationsPerMinute(spindexerPhysicsSim.getVelocityRadPerSec()) / 60);
+        Units.radiansPerSecondToRotationsPerMinute(spindexerPhysicsSim.getVelocityRadPerSec())
+            / 60);
     spindexerSimState.setRawRotorPosition(
         Units.radiansToRotations(spindexerPhysicsSim.getAngleRads()));
   }

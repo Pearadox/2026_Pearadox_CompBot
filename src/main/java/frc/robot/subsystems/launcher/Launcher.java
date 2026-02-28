@@ -36,7 +36,9 @@ public class Launcher extends SubsystemBase {
     LauncherVisualizer.getInstance()
         .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
     LauncherVisualizer.getInstance()
-        .updateHoodPositionDeg(Units.rotationsToDegrees(LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
+        .updateHoodPositionDeg(
+            Units.rotationsToDegrees(
+                LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
 
     Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
     Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
@@ -46,7 +48,6 @@ public class Launcher extends SubsystemBase {
             / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
     setVelocity(RobotContainer.getShotSolution().getShooterSpeedRPS());
-    
   }
 
   /** velocity will be calculated from aim assist command factory */

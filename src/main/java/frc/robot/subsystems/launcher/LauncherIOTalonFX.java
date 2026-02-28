@@ -55,8 +55,10 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
 
     inputs.hoodServoHubVoltage = hoodServoHub.getDeviceVoltage();
 
-    inputs.hoodServo1Position = LauncherConstants.pulseWidthtoAngularPosition(hoodServo1.getPulseWidth());
-    inputs.hoodServo2Position = LauncherConstants.pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
+    inputs.hoodServo1Position =
+        LauncherConstants.pulseWidthtoAngularPosition(hoodServo1.getPulseWidth());
+    inputs.hoodServo2Position =
+        LauncherConstants.pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
   }
 
   public void runLauncherVelocity(double velocityRPS) {

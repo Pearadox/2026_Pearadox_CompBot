@@ -24,21 +24,22 @@ public class Turret extends SubsystemBase {
 
   private boolean hasZeroed = false;
 
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.1); // 4, 5
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.1); // 4
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0); // 0, 0.05
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0); // 0
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
   private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
-  private final LoggedTunableNumber mmCruiseVel =
-      new LoggedTunableNumber("Turret/mmCruiseVel", 67); // 67, 80
-  private final LoggedTunableNumber mmAcceleration =
-      new LoggedTunableNumber("Turret/mmAcc", 300); // 300, 275
+  private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 75);
+  private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 325);
 
   private final SysIdRoutine sysId;
 
-  public Turret(TurretIO io, Supplier<ChassisSpeeds> chassisSpeedsSupplier, Supplier<Rotation2d> robotRotationSupplier) {
+  public Turret(
+      TurretIO io,
+      Supplier<ChassisSpeeds> chassisSpeedsSupplier,
+      Supplier<Rotation2d> robotRotationSupplier) {
     this.io = io;
     this.speedsSupplier = chassisSpeedsSupplier;
     this.robotRotationSupplier = robotRotationSupplier;
@@ -82,10 +83,6 @@ public class Turret extends SubsystemBase {
     }
   }
 
-  private void runVoltage(double volts) {
-    io.runVoltage(volts);
-  }
-
   /** Follows a robot-centric angle. */
   public void followRobotCentricTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
     double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
@@ -101,20 +98,34 @@ public class Turret extends SubsystemBase {
     Logger.recordOutput("Turret/FF Volts", ffVolts);
   }
 
-  public void followFieldCentricTarget(Supplier<Rotation2d> desiredFieldCentricAngleSupplier) {
+  public void followFieldCentricTarget(Supplier<Rotation2d> fieldCentricAngleSupplier) {
+    followRobotCentricTarget(
+        () ->
+            robotRotationSupplier
+                .get()
+                .minus(fieldCentricAngleSupplier.get())
+                .plus(Rotation2d.k180deg));
+  }
 
-    double setpointTurretRads = wrap(desiredFieldCentricAngleSupplier.get().getRadians() - robotRotationSupplier.get().getRadians());
-    double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
+  public void goToZero() {
+    io.runPosition(0, 0);
+  }
 
-    double ffVolts = getFF(setpointTurretRads);
+  public void goToPlus180() {
+    io.runPosition(Math.PI / TurretConstants.TURRET_P_COEFFICIENT, 0);
+  }
 
-    io.runPosition(setpointMotorRots, ffVolts);
+  public void goToMinus180() {
+    io.runPosition(-Math.PI / TurretConstants.TURRET_P_COEFFICIENT, 0);
+  }
 
-    Logger.recordOutput(
-        "Turret/SOTM/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
-    Logger.recordOutput("Turret/SOTM/Setpoint Motor Rots", setpointMotorRots);
-    Logger.recordOutput("Turret/SOTM/FF Volts", ffVolts);
-
+  /** Zeroes the turret */
+  public void requestZero() {
+    if (inputs.cancoderConnected) {
+      io.setPosition(
+          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
+              * TurretConstants.TURRET_GEAR_RATIO);
+    }
   }
 
   /** Returns a command to run a quasistatic test in the specified direction. */
@@ -127,13 +138,8 @@ public class Turret extends SubsystemBase {
     return sysId.dynamic(direction);
   }
 
-  /** Zeroes the turret */
-  public void requestZero() {
-    if (inputs.cancoderConnected) {
-      io.setPosition(
-          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
-              * TurretConstants.TURRET_GEAR_RATIO);
-    }
+  private void runVoltage(double volts) {
+    io.runVoltage(volts);
   }
 
   @AutoLogOutput

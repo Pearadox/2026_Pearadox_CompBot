@@ -8,7 +8,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,10 +16,8 @@ import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
-import lombok.Getter;
-
 import java.util.Optional;
-
+import lombok.Getter;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -120,10 +117,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
-    if(allianceOptional.isPresent()) {
+    if (allianceOptional.isPresent()) {
       alliance = allianceOptional.get();
-    }
-    else {
+    } else {
       alliance = Alliance.Blue;
     }
   }
@@ -180,5 +176,4 @@ public class Robot extends LoggedRobot {
     MechVisualizer.getInstance().periodic();
     LauncherVisualizer.getInstance().periodic();
   }
-
 }
