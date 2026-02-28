@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -28,6 +29,8 @@ public final class Constants {
   public static final double LOOP_FREQUENCY = 1.0 / LOOP_PERIOD; // 50Hz
   public static final double NOMINAL_VOLTAGE = 12; // V
   public static final double g = 9.79267; // m/s^2 in Pearland
+
+  public static final Pose2d SIM_STARTING_POSE = new Pose2d(14.77, 5.414, Rotation2d.kCW_90deg);
 
   public static enum Mode {
     /** Running on a real robot. */

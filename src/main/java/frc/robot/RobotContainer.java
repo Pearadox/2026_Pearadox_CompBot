@@ -10,7 +10,9 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,26 +29,35 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOSim;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.launcher.Launcher;
+import frc.robot.subsystems.launcher.LauncherIO;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIOFake;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
@@ -58,6 +69,8 @@ public class RobotContainer {
   private final Spindexer spindexer;
   private final Turret turret;
   private final Vision vision;
+
+  private SwerveDriveSimulation driveSimulation = null;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -81,10 +94,11 @@ public class RobotContainer {
         drive =
             new Drive(
                 new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
+                new ModuleIOTalonFXReal(TunerConstants.FrontRight),
+                new ModuleIOTalonFXReal(TunerConstants.BackLeft),
+                new ModuleIOTalonFXReal(TunerConstants.BackRight),
+                (pose) -> {});
 
         feeder = new Feeder(new FeederIOReal());
         // intake = new Intake(new IntakeIOReal());
@@ -93,27 +107,38 @@ public class RobotContainer {
         turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
         vision =
             new Vision(
-                drive::addVisionMeasurement,
+                drive::accept,
                 new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation));
 
         break;
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        var arena = new Arena2026Rebuilt(false);
+        arena.setEfficiencyMode(true);
+        SimulatedArena.overrideInstance(arena);
+
+        driveSimulation =
+            new SwerveDriveSimulation(Drive.mapleSimConfig, Constants.SIM_STARTING_POSE);
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+
         drive =
             new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(TunerConstants.FrontLeft),
-                new ModuleIOSim(TunerConstants.FrontRight),
-                new ModuleIOSim(TunerConstants.BackLeft),
-                new ModuleIOSim(TunerConstants.BackRight));
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOTalonFXSim(TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                new ModuleIOTalonFXSim(TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                new ModuleIOTalonFXSim(TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                new ModuleIOTalonFXSim(TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
 
         feeder = new Feeder(new FeederIOSim());
         // intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
-        spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
+        spindexer = new Spindexer(new SpindexerIOSim() {});
         turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
-        vision = new Vision(drive::addVisionMeasurement);
+        vision =
+            new Vision(
+                drive::accept, new VisionIOFake(driveSimulation::getSimulatedDriveTrainPose));
 
         break;
 
@@ -125,14 +150,15 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                (pose) -> {});
 
-        feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
+        feeder = new Feeder(new FeederIO() {});
         // intake = new Intake(new IntakeIO() {});
-        launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
+        launcher = new Launcher(new LauncherIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
         turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
-        vision = new Vision(drive::addVisionMeasurement);
+        vision = new Vision(drive::accept);
 
         break;
     }
@@ -175,6 +201,8 @@ public class RobotContainer {
     configureButtonBindings();
     // Register named commands for PathPlanner
     registerNamedCommands();
+
+    DriverStation.silenceJoystickConnectionWarning(Robot.isSimulation());
   }
 
   /**
@@ -205,16 +233,18 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     drivercontroller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    drivercontroller
-        .start()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), Rotation2d.kZero)),
-                    drive)
-                .ignoringDisable(true));
+    // Reset gyro to 0° when Start button is pressed
+    final Runnable resetGyro =
+        Constants.currentMode == Constants.Mode.SIM
+            ? () ->
+                drive.setPose(
+                    driveSimulation
+                        .getSimulatedDriveTrainPose()) // reset odometry to actual robot pose during
+            // simulation
+            : () ->
+                drive.setPose(
+                    new Pose2d(drive.getPose().getTranslation(), new Rotation2d())); // zero gyro
+    drivercontroller.start().onTrue(Commands.runOnce(resetGyro, drive).ignoringDisable(true));
 
     // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
 
@@ -287,6 +317,23 @@ public class RobotContainer {
     // intake.setIntaking()));
     // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
     // intake.setDeployed()));
+  }
+
+  public void resetSimulationField() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    drive.setPose(Constants.SIM_STARTING_POSE);
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void updateSimulation() {
+    if (Constants.currentMode != Constants.Mode.SIM) return;
+
+    SimulatedArena.getInstance().simulationPeriodic();
+    Logger.recordOutput(
+        "FieldSimulation/Pose", new Pose3d(driveSimulation.getSimulatedDriveTrainPose()));
+    Logger.recordOutput(
+        "FieldSimulation/Fuel", SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
   }
 
   public void setShotSolution(ShotSolution sol) {
