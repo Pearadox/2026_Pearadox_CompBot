@@ -11,6 +11,7 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Decided to initially implement a physics-based projectile model.
 - Learned from team 6907's GOATSim to "lead" the robot's shots towards a different "target" to account for its translational velocity: https://team-6907.github.io/u2026_Shooting_Visualizer/
 - Team built a Minimum Viable Robot (MVR) early in the season with a static shooter to allow programmers to experiment with shoot on the move methods (easy translation to turret — instead of setting the robot's heading to the desired turret angle, we’ll rotate the turret itself)
+- Chose to utilize field localization from Limelight odometry for aiming and shooting into hub because the Limelight will be static (i.e. not moving), meaning may not see the hub if robot is turned to a certain orientation
 - Used Newton's Method
  and kinematics to estimate the Time-of-Flight (airtime) for the fuel based on the robot's translational velocity and distance to the target from Limelight odometry updates:
 
@@ -62,6 +63,7 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Replaced ````VelocityVoltage```` with ````VelocityTorqueCurrentFOC```` for  launcher velocity control, which decreased spin-up time, power usage, fuel kickback, and improved overall controllability
 - Increased robot rotation kP (on MVR) to ensure faster rotation towards desired target
 - Tranferred MVR SOTM code to Competition Bot code and cleaned up any errors (due to addition of real turret and slightly different subsystem code/methods)
+- Decided to vary shooter speed and keep hood static (using only two hood angle setpoints for shooting vs passing) since velocity control with the krakens is more reliable, consistent, accurate, and faster overall
 - Changed Newton's Method ToF initial guess to be based on distance with the following formula: 
 
     $   
