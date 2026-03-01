@@ -66,7 +66,7 @@ public final class TurretConstants {
   // note: this may not be necessary
   public static final double FF_CHASSIS_ROT_VELOCITY_LIMIT = 1.5 * Math.PI; // rad/s
 
-  public static final int TURRET_CANCODER_ID = 25;
+  public static final int TURRET_CANCODER_ID = 26;
   public static final int TURRET_CANCODER_OFFSET_ROTS = 0; // TODO
 
   public static final double TURRET_TO_CANCODER_RATIO = 1. / 3.;

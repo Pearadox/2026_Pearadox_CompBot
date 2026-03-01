@@ -25,17 +25,17 @@ public class IntakeConstants {
   public static record StateConfig(double angleDeg, double voltage) {
     public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
         Map.of(
-            IntakeState.STOWED, new StateConfig(90, 0),
-            IntakeState.DEPLOYED, new StateConfig(0, 0),
-            IntakeState.INTAKING, new StateConfig(0, 7),
-            IntakeState.OUTTAKING, new StateConfig(0, -3.5));
+            IntakeState.STOWED, new StateConfig(0, 0),
+            IntakeState.DEPLOYED, new StateConfig(90, 0),
+            IntakeState.INTAKING, new StateConfig(90, 3),
+            IntakeState.OUTTAKING, new StateConfig(90, -3.5));
   }
 
   // roller constants
   public static final int ROLLER_1_LEADER_ID = 31;
   public static final int ROLLER_2_FOLLOWER_ID = 32;
   public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
-  public static final int CURRENT_LIMIT = 20;
+  public static final int CURRENT_LIMIT = 50;
   public static final boolean INVERTED = false;
 
   // pivot constants
@@ -65,7 +65,7 @@ public class IntakeConstants {
     ROLLER_SLOT0_CONFIGS.kD = 0.0;
 
     ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     return ROLLER_CONFIG;
   }
@@ -81,7 +81,7 @@ public class IntakeConstants {
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = 20;
 
-    PIVOT_SLOT0_CONFIGS.kP = 7;
+    PIVOT_SLOT0_CONFIGS.kP = 0.3;
     PIVOT_SLOT0_CONFIGS.kI = 0.0;
     PIVOT_SLOT0_CONFIGS.kD = 0.0;
 

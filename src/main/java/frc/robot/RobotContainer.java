@@ -33,6 +33,10 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
@@ -53,7 +57,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Feeder feeder;
-  // private final Intake intake;
+  private final Intake intake;
   private final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
@@ -87,7 +91,7 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
         feeder = new Feeder(new FeederIOReal());
-        // intake = new Intake(new IntakeIOReal());
+        intake = new Intake(new IntakeIOReal());
         launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
         turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
@@ -109,7 +113,7 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackRight));
 
         feeder = new Feeder(new FeederIOSim());
-        // intake = new Intake(new IntakeIOSim());
+        intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIO() {}); // TODO: make spindexer sim
         turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
@@ -128,7 +132,7 @@ public class RobotContainer {
                 new ModuleIO() {});
 
         feeder = new Feeder(new FeederIOSim() {}); // TODO make blank IO
-        // intake = new Intake(new IntakeIO() {});
+        intake = new Intake(new IntakeIO() {});
         launcher = new Launcher(new LauncherIOSim()); // TODO make blank IO
         spindexer = new Spindexer(new SpindexerIO() {});
         turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
@@ -254,10 +258,8 @@ public class RobotContainer {
                 },
                 turret));
 
-    // drivercontroller.x().whileTrue(new InstantCommand(() ->
-    // intake.setIntaking()));
-    // drivercontroller.x().whileFalse(new InstantCommand(() ->
-    // intake.setStowed()));
+    opController.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    opController.x().whileFalse(new InstantCommand(() -> intake.setDeployed()));
 
     // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
     // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));

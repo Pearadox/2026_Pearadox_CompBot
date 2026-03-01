@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private IntakeIO io;
 
-  public IntakeState intakeState = IntakeState.STOWED;
+  public IntakeState intakeState = IntakeState.DEPLOYED;
   public static double adjust = 0;
 
   public Intake(IntakeIO io) {
@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput("Intake/VoltageOut", inputs.rollerMotorData.appliedVolts());
     Logger.recordOutput(
         "Intake/Current Position Degrees",
-        Units.rotationsToDegrees(inputs.pivotMotorData.position()));
+        Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING);
 
     // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
     // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage =
