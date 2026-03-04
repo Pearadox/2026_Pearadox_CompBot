@@ -6,7 +6,6 @@ package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,7 +46,7 @@ public class Launcher extends SubsystemBase {
         LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
             / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
-    setVelocity(RobotContainer.getShotSolution().getShooterSpeedRPS());
+    setVelocity(40);
   }
 
   /** velocity will be calculated from aim assist command factory */

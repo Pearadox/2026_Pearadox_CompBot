@@ -19,7 +19,7 @@ Throughout the course of the season, there have been some key lessons, ideas, an
     \textbf{1: Initialize “Estimate" for ToF} \\
     t_0 = 1.0 \ s
     $
-    
+
     $
     \textbf{2. Define functions } f(t) \text{ (vertical error),} \ v_x, v_y, v_z \  \text{(shooter velocity components)} \\
     \begin{aligned}
@@ -44,7 +44,7 @@ Throughout the course of the season, there have been some key lessons, ideas, an
     t_{n+1} = t_n - \frac{f(t_n)}{f'(t_n)}
     $
 
- 
+
 - Derived required field-relative shooter launch velocities (vx, vy, vz) that compensate for translational robot motion, then computed total shooter wheel speed and a field-relative turret angle to “lead” the target.
 - Output a "ShotSolution" containing time-of-flight, scaled shooter speed, and turret angle, while logging intermediate values for debugging and visualization.
 
@@ -64,9 +64,9 @@ Throughout the course of the season, there have been some key lessons, ideas, an
 - Increased robot rotation kP (on MVR) to ensure faster rotation towards desired target
 - Tranferred MVR SOTM code to Competition Bot code and cleaned up any errors (due to addition of real turret and slightly different subsystem code/methods)
 - Decided to vary shooter speed and keep hood static (using only two hood angle setpoints for shooting vs passing) since velocity control with the krakens is more reliable, consistent, accurate, and faster overall
-- Changed Newton's Method ToF initial guess to be based on distance with the following formula: 
+- Changed Newton's Method ToF initial guess to be based on distance with the following formula:
 
-    $   
+    $
     t_{guess} = t_{lowerBound} + \frac{distance \ to \ target}{max \ distance} * ({t_{upperBound} - t_{lowerBound}})
     $
 

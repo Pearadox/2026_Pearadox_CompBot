@@ -13,6 +13,7 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   protected final PearadoxTalonFX pivotMotor;
   protected final PositionVoltage pivotPositionVoltage;
   protected final VoltageOut rollerVoltage;
+  protected final Follower followerRequest;
 
   // private TalonFXConfiguration rollerConfigs;
   // private TalonFXConfiguration pivotConfigs;
@@ -32,14 +33,14 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
         new PearadoxTalonFX(IntakeConstants.PIVOT_ID, IntakeConstants.getPivotConfigTalonFX());
     pivotPositionVoltage = new PositionVoltage(0);
     rollerVoltage = new VoltageOut(0);
-    roller2Follower.setControl(
-        new Follower(IntakeConstants.ROLLER_1_LEADER_ID, MotorAlignmentValue.Opposed));
+    followerRequest = new Follower(IntakeConstants.ROLLER_1_LEADER_ID, MotorAlignmentValue.Opposed);
+    roller2Follower.setControl(followerRequest);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
     inputs.rollerMotorData = roller1Leader.getData();
-    inputs.rollerMotorData = roller2Follower.getData();
+    inputs.roller2MotorData = roller2Follower.getData();
 
     inputs.pivotMotorData = pivotMotor.getData();
   }
@@ -47,11 +48,15 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   @Override
   public void runRollersVolts(double volts) {
     roller1Leader.setControl(rollerVoltage.withOutput(volts));
+
+    roller2Follower.setControl(followerRequest);
   }
 
   @Override
   public void runPositionDegrees(double degrees) {
-    pivotMotor.setControl(pivotPositionVoltage.withPosition(Units.degreesToRotations(degrees)));
+    pivotMotor.setControl(
+        pivotPositionVoltage.withPosition(
+            Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
     // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
   }
 }

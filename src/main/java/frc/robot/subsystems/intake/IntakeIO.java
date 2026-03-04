@@ -7,6 +7,7 @@ public interface IntakeIO {
   @AutoLog
   public static class IntakeIOInputs {
     public MotorData rollerMotorData = new MotorData();
+    public MotorData roller2MotorData = new MotorData();
     public MotorData pivotMotorData = new MotorData();
   }
 

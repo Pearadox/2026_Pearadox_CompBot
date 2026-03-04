@@ -33,6 +33,8 @@ public class Turret extends SubsystemBase {
   private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
   private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 75);
   private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 325);
+  private final LoggedTunableNumber testSetpoint =
+      new LoggedTunableNumber("Turret/test Setpoint", 90);
 
   private final SysIdRoutine sysId;
 
@@ -112,11 +114,13 @@ public class Turret extends SubsystemBase {
   }
 
   public void goToPlus180() {
-    io.runPosition(Math.PI / TurretConstants.TURRET_P_COEFFICIENT, 0);
+    io.runPosition(
+        Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   public void goToMinus180() {
-    io.runPosition(-Math.PI / TurretConstants.TURRET_P_COEFFICIENT, 0);
+    io.runPosition(
+        -Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   /** Zeroes the turret */
