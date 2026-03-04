@@ -34,9 +34,6 @@ public class IntakeConstants {
   // roller constants
   public static final int ROLLER_1_LEADER_ID = 31;
   public static final int ROLLER_2_FOLLOWER_ID = 32;
-  public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
-  public static final int CURRENT_LIMIT = 50;
-  public static final boolean INVERTED = false;
 
   // pivot constants
   public static final int PIVOT_ID = 30;
