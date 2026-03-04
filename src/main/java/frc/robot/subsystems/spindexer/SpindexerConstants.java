@@ -17,14 +17,15 @@ public class SpindexerConstants {
     public static final Map<SpindexerState, StateConfig> SPINDEXER_STATE_MAP =
         Map.of(
             SpindexerState.STOPPED, new StateConfig(0),
-            SpindexerState.RUNNING, new StateConfig(7.5));
+            SpindexerState.RUNNING, new StateConfig(8));
   }
 
   public static final TalonFXConfiguration SPINDEXER_CONFIG = new TalonFXConfiguration();
   public static final Slot0Configs SPINDEXER_SLOT0_CONFIGS = SPINDEXER_CONFIG.Slot0;
 
   public static final int SPINDEXER_MOTOR_ID = 42;
-  public static final int SPINDEXER_CURRENT_LIMIT = 60;
+  public static final int LAUNCHER_CURRENT_LIMIT = 20;
+  public static final int SPINDEXER_CURRENT_LIMIT = 40;
 
   public static final double SPINDEXER_GEARING = 1.0 / 15.0;
   public static final double SPINDEXER_RADIUS_METERS = Units.inchesToMeters(4);
