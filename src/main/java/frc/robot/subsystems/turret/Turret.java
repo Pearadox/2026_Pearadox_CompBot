@@ -24,15 +24,15 @@ public class Turret extends SubsystemBase {
 
   private boolean hasZeroed = false;
 
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 0.1); // 4
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 6.7); // 4
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0); // 0
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
   private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
-  private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 75);
-  private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 325);
+  private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 85);
+  private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 450);
   private final LoggedTunableNumber testSetpoint =
       new LoggedTunableNumber("Turret/test Setpoint", 90);
 
@@ -111,6 +111,11 @@ public class Turret extends SubsystemBase {
 
   public void goToZero() {
     io.runPosition(0, 0);
+  }
+
+  public void goToPlus90() {
+    io.runPosition(
+        Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   public void goToPlus180() {

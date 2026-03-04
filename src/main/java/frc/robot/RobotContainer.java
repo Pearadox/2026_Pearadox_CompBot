@@ -249,7 +249,7 @@ public class RobotContainer {
 
     opController.a().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
     opController.b().onTrue(new InstantCommand(() -> turret.goToPlus180(), turret));
-    opController.x().onTrue(new InstantCommand(() -> turret.goToMinus180(), turret));
+    // opController.x().onTrue(new InstantCommand(() -> turret.goToMinus180(), turret));
     opController
         .y()
         .onTrue(
