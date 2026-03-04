@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.math.util.Units;
@@ -14,6 +16,8 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   protected final PositionVoltage pivotPositionVoltage;
   protected final VoltageOut rollerVoltage;
   protected final Follower followerRequest;
+  // protected final TorqueCurrentFOC torqueCurrentFOC;
+  protected final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC;
 
   // private TalonFXConfiguration rollerConfigs;
   // private TalonFXConfiguration pivotConfigs;
@@ -32,6 +36,9 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
     pivotMotor =
         new PearadoxTalonFX(IntakeConstants.PIVOT_ID, IntakeConstants.getPivotConfigTalonFX());
     pivotPositionVoltage = new PositionVoltage(0);
+    // torqueCurrentFOC = new TorqueCurrentFOC(0);
+    velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+
     rollerVoltage = new VoltageOut(0);
     followerRequest = new Follower(IntakeConstants.ROLLER_1_LEADER_ID, MotorAlignmentValue.Opposed);
     roller2Follower.setControl(followerRequest);
@@ -45,9 +52,18 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
     inputs.pivotMotorData = pivotMotor.getData();
   }
 
+  // @Override
+  // public void runRollersAmps(double amps) {
+  //   // roller1Leader.setControl(rollerVoltage.withOutput(volts));
+  //   roller1Leader.setControl(velocityTorqueCurrentFOC.withOutput(amps).withMaxAbsDutyCycle(0.7));
+
+  //   roller2Follower.setControl(followerRequest);
+  // }
+
   @Override
-  public void runRollersVolts(double volts) {
-    roller1Leader.setControl(rollerVoltage.withOutput(volts));
+  public void runRollersVelocityTorqueCurrentFOC(double velocity) {
+    // roller1Leader.setControl(rollerVoltage.withOutput(volts));
+    roller1Leader.setControl(velocityTorqueCurrentFOC.withVelocity(velocity));
 
     roller2Follower.setControl(followerRequest);
   }

@@ -66,9 +66,9 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("Turret", inputs);
 
     if (!hasZeroed && inputs.cancoderConnected) {
-      io.setPosition(
-          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
-              * TurretConstants.TURRET_GEAR_RATIO);
+      // io.setPosition(
+      //     (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
+      //         * TurretConstants.TURRET_GEAR_RATIO);
       hasZeroed = true;
     }
 
@@ -92,7 +92,7 @@ public class Turret extends SubsystemBase {
 
     double ffVolts = getFF(setpointTurretRads);
 
-    io.runPosition(setpointMotorRots, ffVolts);
+    // io.runPosition(setpointMotorRots, ffVolts);
 
     Logger.recordOutput(
         "Turret/Setpoint Turret Degrees", Units.radiansToDegrees(setpointTurretRads));
@@ -110,30 +110,30 @@ public class Turret extends SubsystemBase {
   }
 
   public void goToZero() {
-    io.runPosition(0, 0);
+    // io.runPosition(0, 0);
   }
 
   public void goToPlus90() {
-    io.runPosition(
-        Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
+    // io.runPosition(
+    //     Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   public void goToPlus180() {
-    io.runPosition(
-        Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
+    // io.runPosition(
+    //     Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   public void goToMinus180() {
-    io.runPosition(
-        -Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
+    // io.runPosition(
+    //     -Units.degreesToRadians(testSetpoint.get()) / TurretConstants.TURRET_P_COEFFICIENT, 0);
   }
 
   /** Zeroes the turret */
   public void requestZero() {
     if (inputs.cancoderConnected) {
-      io.setPosition(
-          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
-              * TurretConstants.TURRET_GEAR_RATIO);
+      // io.setPosition(
+      //     (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
+      //         * TurretConstants.TURRET_GEAR_RATIO);
     }
   }
 

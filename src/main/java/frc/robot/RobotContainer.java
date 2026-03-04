@@ -260,8 +260,9 @@ public class RobotContainer {
                 },
                 turret));
 
-    opController.x().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    opController.x().whileFalse(new InstantCommand(() -> intake.setDeployed()));
+    // opController.povLeft().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setStowed()));
 
     // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
     // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));

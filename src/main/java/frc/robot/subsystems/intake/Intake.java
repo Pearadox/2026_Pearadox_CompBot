@@ -22,6 +22,9 @@ public class Intake extends SubsystemBase {
   private static LoggedTunableNumber loggedIntakeRollerVoltage =
       new LoggedTunableNumber("Intake/Voltage", 4.0);
 
+  private static LoggedTunableNumber loggedIntakeStatorCurrent =
+      new LoggedTunableNumber("Intake/StatorCurrent", 60.0);
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
@@ -29,7 +32,9 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
 
     Logger.recordOutput("Intake/State", intakeState.toString());
-    io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + adjust);
+
+    io.runRollersAmps(loggedIntakeStatorCurrent.get());
+
     io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
     MechVisualizer.getInstance()
         .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));

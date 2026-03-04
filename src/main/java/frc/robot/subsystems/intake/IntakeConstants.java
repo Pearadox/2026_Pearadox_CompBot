@@ -56,9 +56,9 @@ public class IntakeConstants {
   public static final TalonFXConfiguration getRollerConfigTalonFX() {
 
     ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-    ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+    ROLLER_CONFIG.CurrentLimits.SupplyCurrentLimit = 60;
     ROLLER_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-    ROLLER_CONFIG.CurrentLimits.StatorCurrentLimit = 40;
+    ROLLER_CONFIG.CurrentLimits.StatorCurrentLimit = 60;
 
     ROLLER_SLOT0_CONFIGS.kP = 0.1;
     ROLLER_SLOT0_CONFIGS.kI = 0.0;
