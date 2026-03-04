@@ -236,6 +236,8 @@ public class RobotContainer {
         .whileTrue(
             new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d));
 
+    // drivercontroller.leftBumper().whileTrue(new RunCommand(() -> launcher.setVelocity(40)));
+
     // Uncomment when ready to run turret SysID routines
     // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
     // opController.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));

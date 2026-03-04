@@ -31,7 +31,7 @@ public class FeederConstants {
   public static final int FEEDER_CURRENT_LIMIT = 50;
 
   public static final double FEEDER_GEARING =
-      11.0 / 24.0; // ratio of teeth on motor to teeth on pulley
+      12.0 / 20.0; // ratio of teeth on motor to teeth on pulley (originally 11/24)
 
   public static final TalonFXConfiguration FEEDER_CONFIG = new TalonFXConfiguration();
   public static final Slot0Configs FEEDER_SLOT0_CONFIGS = FEEDER_CONFIG.Slot0;

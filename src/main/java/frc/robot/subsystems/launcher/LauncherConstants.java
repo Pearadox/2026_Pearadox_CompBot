@@ -31,7 +31,7 @@ public class LauncherConstants {
   public static final int LAUNCHER_1_CAN_ID = 21; // TODO: double check
   public static final int LAUNCHER_2_CAN_ID = 22; // TODO: double check
 
-  public static final double LAUNCHER_CURRENT_LIMIT = 20.0;
+  public static final double LAUNCHER_CURRENT_LIMIT = 40.0;
   public static final double LAUNCHER_GEARING = 1.0;
   public static final double DEFAULT_VELOCITY_SETPOINT_RPS = 60.0;
 
@@ -47,7 +47,7 @@ public class LauncherConstants {
 
     LAUNCHER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     LAUNCHER_CONFIG_SLOT0.kP = 0.1;
     LAUNCHER_CONFIG_SLOT0.kI = 0.0;
