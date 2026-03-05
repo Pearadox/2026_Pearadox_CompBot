@@ -24,9 +24,13 @@ public abstract class FeederIOTalonFX implements FeederIO {
         new PearadoxTalonFX(FeederConstants.FEEDER_CAN_ID, FeederConstants.FEEDER_MOTOR_CONFIG());
     feederControl = new VoltageOut(0.0);
 
-    canRange = new CANrange(FeederConstants.CANRANGE_CAN_ID);
+    try { 
+      canRange = new CANrange(FeederConstants.CANRANGE_CAN_ID);
 
-    canRange.getConfigurator().apply(CAN_RANGE_CONFIG);
+      canRange.getConfigurator().apply(CAN_RANGE_CONFIG);
+    } catch (Exception e) {
+      System.out.println("creation of canRange failed, look at exception message that follows \n" + e);
+    }
   }
 
   @Override
