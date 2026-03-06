@@ -36,14 +36,7 @@ public class ShootOnTheMove extends Command {
   }
 
   @Override
-  public void initialize() {
-
-    if (RobotContainer.getShotSolution().isInsideNeutralZone) {
-      launcher.setPassing();
-    } else {
-      launcher.setScoring();
-    }
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
@@ -51,7 +44,7 @@ public class ShootOnTheMove extends Command {
     double desiredVelocity = RobotContainer.getShotSolution().getShooterSpeedRPS();
     Rotation2d desiredRotation = RobotContainer.getShotSolution().getTurretAngleRot2d();
 
-    double shooterVelocityError = launcher.inputs.launcher1Data.velocity() - desiredVelocity;
+    double shooterVelocityError = launcher.getLauncherVelocity() - desiredVelocity;
 
     double currentAngle = turretRotationSupplier.get().getDegrees();
     double desiredAngle = desiredRotation.getDegrees();
