@@ -15,7 +15,7 @@ public class Launcher extends SubsystemBase {
   /** Creates a new Launcher. */
   private final LauncherIO io;
 
-  public final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
+  private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
   private static LauncherState launcherState = LauncherState.SCORING;
 
@@ -37,6 +37,8 @@ public class Launcher extends SubsystemBase {
     io.updateInputs(inputs);
     // io.runLauncherVelocity((launcherState == LauncherState.SCORING ? 60 : 0));
     // io.setHoodAngleRads(launcherState.getHoodAngleRads());
+    Logger.processInputs("Launcher", inputs);
+
     Logger.recordOutput("Launcher/State", getState());
 
     double desiredVelocity = 0;
@@ -59,8 +61,10 @@ public class Launcher extends SubsystemBase {
       desiredVelocity = fullyManualInitialVelocity;
     }
 
-    if (Math.abs(desiredVelocity + rpsAdjust) > 3.0) {
-      setVelocity(desiredVelocity + rpsAdjust);
+    double launcherRPS = Math.abs(desiredVelocity + rpsAdjust);
+
+    if (launcherRPS > LauncherConstants.SHOOTER_VELOCITY_DEADBAND) {
+      setVelocity(Math.min(launcherRPS, LauncherConstants.SHOOTER_MAX_VELOCITY));
     } else {
       turnLauncherOff();
     }
@@ -84,6 +88,10 @@ public class Launcher extends SubsystemBase {
   /** velocity will be calculated from aim assist command factory */
   public void setVelocity(double velocityRPS) {
     io.runLauncherVelocity(velocityRPS);
+  }
+
+  public double getLauncherVelocity() {
+    return inputs.launcher1Data.velocity();
   }
 
   public void turnLauncherOff() {

@@ -31,6 +31,9 @@ public class LauncherConstants {
   public static final int LAUNCHER_1_CAN_ID = 21; // TODO: double check
   public static final int LAUNCHER_2_CAN_ID = 22; // TODO: double check
 
+  public static final double SHOOTER_VELOCITY_DEADBAND = 3.0; // in rps
+  public static final double SHOOTER_MAX_VELOCITY = 100.0; // in rps
+
   public static final int LAUNCHER_SUPPLY_CURRENT_LIMIT = 40; // changed to match the breaker
   public static final int LAUNCHER_STATOR_CURRENT_LIMIT =
       35; // originally 40 on 3/3/2026 during testing

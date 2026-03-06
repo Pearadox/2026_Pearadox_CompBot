@@ -113,6 +113,10 @@ public class Robot extends LoggedRobot {
     alliance = allianceOptional.orElse(Alliance.Blue);
 
     isHubCurrentlyActive = isHubActive();
+
+    Logger.recordOutput("Robot/isHubActive", isHubCurrentlyActive);
+    Logger.recordOutput("Robot/ScoringMode", RobotContainer.getScoringMode());
+
   }
 
   /** This function is called once when the robot is disabled. */
