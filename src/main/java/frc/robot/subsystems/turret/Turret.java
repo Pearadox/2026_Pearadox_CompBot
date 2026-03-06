@@ -28,7 +28,7 @@ public class Turret extends SubsystemBase {
 
   private double turretRotationAdjust = 0;
 
-  public void adjustRotation(double adj) {
+  public void adjustRotationBy(double adj) {
     turretRotationAdjust += adj;
   }
 
@@ -94,18 +94,20 @@ public class Turret extends SubsystemBase {
 
     ScoringMode currentScoringMode = RobotContainer.getScoringMode();
 
-    if(currentScoringMode == ScoringMode.FULLY_AUTO || currentScoringMode == ScoringMode.PARTIAL_AUTO) {
+    if (currentScoringMode == ScoringMode.FULLY_AUTO
+        || currentScoringMode == ScoringMode.PARTIAL_AUTO
+        || currentScoringMode == ScoringMode.PASSING) {
 
-        followFieldCentricTarget(() -> 
-              RobotContainer.getShotSolution().getTurretAngleRot2d().plus(new Rotation2d(turretRotationAdjust)));
+      followFieldCentricTarget(
+          () ->
+              RobotContainer.getShotSolution()
+                  .getTurretAngleRot2d()
+                  .plus(new Rotation2d(turretRotationAdjust)));
 
-    }
+    } else if (currentScoringMode == ScoringMode.FULLY_MANUAL) {
 
-    else if(currentScoringMode == ScoringMode.FULLY_MANUAL) {
-
-        followFieldCentricTarget(() -> 
-              getFieldRelativeTurretAngleRotation2d().plus(new Rotation2d(turretRotationAdjust)));
-
+      followFieldCentricTarget(
+          () -> getFieldRelativeTurretAngleRotation2d().plus(new Rotation2d(turretRotationAdjust)));
     }
   }
 

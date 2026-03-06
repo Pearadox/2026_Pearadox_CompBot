@@ -21,7 +21,7 @@ public class Launcher extends SubsystemBase {
 
   private double rpsAdjust = 0.0;
 
-  public void adjustRPS(double adj) {
+  public void adjustRPSBy(double adj) {
     rpsAdjust += adj;
   }
 
@@ -42,25 +42,28 @@ public class Launcher extends SubsystemBase {
     double desiredVelocity = 0;
     ScoringMode currentScoringMode = RobotContainer.getScoringMode();
 
-    if(currentScoringMode == ScoringMode.FULLY_AUTO) {
+    if (currentScoringMode == ScoringMode.FULLY_AUTO) {
 
-        desiredVelocity = RobotContainer.getShotSolution().getShooterSpeedRPS();
+      desiredVelocity = RobotContainer.getShotSolution().getShooterSpeedRPS();
 
+    } else if (currentScoringMode == ScoringMode.PARTIAL_AUTO || currentScoringMode == ScoringMode.PASSING) {
+
+      desiredVelocity =
+          RobotContainer.getShouldSOTM()
+              ? RobotContainer.getShotSolution().getShooterSpeedRPS()
+              : 0;
+
+    } else if (currentScoringMode == ScoringMode.FULLY_MANUAL) {
+
+      desiredVelocity = fullyManualInitialVelocity;
     }
-    else if(currentScoringMode == ScoringMode.PARTIAL_AUTO) {
 
-        desiredVelocity = RobotContainer.getShouldSOTM() ? RobotContainer.getShotSolution().getShooterSpeedRPS() : 0;
-
+    if (Math.abs(desiredVelocity + rpsAdjust) > 1.0) {
+      setVelocity(desiredVelocity + rpsAdjust);
     }
-
-    else if(currentScoringMode == ScoringMode.FULLY_MANUAL) {
-
-        desiredVelocity = fullyManualInitialVelocity;
-
+    else {
+      turnLauncherOff();
     }
-
-    if(Math.abs(desiredVelocity + rpsAdjust) > 1.0) setVelocity(desiredVelocity + rpsAdjust);
-    else turnLauncherOff();
 
     LauncherVisualizer.getInstance()
         .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
@@ -76,7 +79,6 @@ public class Launcher extends SubsystemBase {
     //     LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
     //         / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
-    // setVelocity(67);
   }
 
   /** velocity will be calculated from aim assist command factory */

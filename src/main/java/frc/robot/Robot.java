@@ -35,6 +35,7 @@ public class Robot extends LoggedRobot {
   private Command autonomousCommand;
   private RobotContainer robotContainer;
   @Getter private static Alliance alliance;
+  @Getter private static boolean isHubCurrentlyActive = true;
 
   public Robot() {
     // Record metadata
@@ -106,7 +107,14 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
 
+    
     robotContainer.visualizer.periodic();
+
+    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
+    alliance = allianceOptional.orElse(Alliance.Blue);
+
+    isHubCurrentlyActive = isHubActive();
+
   }
 
   /** This function is called once when the robot is disabled. */
@@ -115,14 +123,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-    Optional<Alliance> allianceOptional = DriverStation.getAlliance();
-    if (allianceOptional.isPresent()) {
-      alliance = allianceOptional.get();
-    } else {
-      alliance = Alliance.Blue;
-    }
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -149,6 +150,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    
   }
 
   /** This function is called periodically during operator control. */
@@ -175,5 +178,47 @@ public class Robot extends LoggedRobot {
   public void simulationPeriodic() {
     MechVisualizer.getInstance().periodic();
     LauncherVisualizer.getInstance().periodic();
+  }
+
+  public boolean isHubActive() {
+
+    if (DriverStation.isAutonomousEnabled()) {
+      return true;
+    }
+
+    if (!DriverStation.isTeleopEnabled()) {
+      return false;
+    }
+
+    double matchTime = DriverStation.getMatchTime();
+    String gameData = DriverStation.getGameSpecificMessage();
+    
+    if (gameData.isEmpty()) { //assume hub is active, as its likely early in teleop.
+      return true;
+    }
+    
+    boolean redInactiveFirst = false;
+    switch (gameData.charAt(0)) {
+      case 'R' -> redInactiveFirst = true;
+      case 'B' -> redInactiveFirst = false;
+      default -> {
+        // If we have invalid game data, assume hub is active.
+        return true;
+      }
+    }
+
+    Alliance currentAlliance = alliance != null ? alliance : Alliance.Blue;
+
+    boolean shift1Active = switch (currentAlliance) {
+      case Red -> !redInactiveFirst;
+      case Blue -> redInactiveFirst;
+    };
+
+    if (matchTime > 130) return true;
+    if (matchTime > 105) return shift1Active;
+    if (matchTime > 80)  return !shift1Active;
+    if (matchTime > 55)  return shift1Active;
+    if (matchTime > 30)  return !shift1Active;
+    return true;
   }
 }
