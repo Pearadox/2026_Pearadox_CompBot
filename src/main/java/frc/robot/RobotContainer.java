@@ -36,6 +36,7 @@ import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeConstants;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
@@ -203,6 +204,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    //Driver Bindings
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
@@ -224,7 +227,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     drivercontroller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when start button is pressed
     drivercontroller
         .start()
         .onTrue(
@@ -235,8 +238,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // drivercontroller.y().whileTrue(new RotateToBump(drive, drive:: getPose));
-
+    // Drive at a 45° for going over the bump
     drivercontroller
         .y()
         .whileTrue(
@@ -250,8 +252,6 @@ public class RobotContainer {
     //     .rightBumper()
     //     .whileTrue(
     //         new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d));
-
-    // drivercontroller.leftBumper().whileTrue(new RunCommand(() -> launcher.setVelocity(40)));
 
     // Uncomment when ready to run turret SysID routines
     // opController.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
@@ -285,6 +285,12 @@ public class RobotContainer {
     shouldShootOnTheMoveTrigger.whileTrue(
         new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d));
 
+    // driverController.leftBumper().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setStowed()));
+
+    
+    // Op Bindings
     opController.a().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.FULLY_AUTO)));
     opController.x().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.PARTIAL_AUTO)));
     opController.y().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.FULLY_MANUAL)));
@@ -298,6 +304,10 @@ public class RobotContainer {
 
     opController.povUp().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(+0.05)));
     opController.povDown().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(-0.05)));
+
+    Trigger intakeAdjust = new Trigger(() -> Math.abs(opController.getLeftY()) > 0.9);
+    intakeAdjust.whileTrue(new RunCommand(() -> intake.adjustPivotAngleBy(
+        Math.signum(-opController.getLeftY()) * IntakeConstants.OP_ADJUST_INCREMENT_DEGREES)));
 
     // opController.a().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
     // opController.b().onTrue(new InstantCommand(() -> turret.goToPlus180(), turret));
@@ -313,10 +323,6 @@ public class RobotContainer {
     //               turret.followFieldCentricTarget(shotSolution::getTurretAngleRot2d);
     //             },
     //             turret));
-
-    // opController.povLeft().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setDeployed()));
-    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setStowed()));
 
     // drivercontroller.y().onTrue(new InstantCommand(() -> launcher.setPassing()));
     // drivercontroller.a().onTrue(new InstantCommand(() -> launcher.setScoring()));
@@ -342,10 +348,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
 
     // Intake Commands
-    // NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->
-    // intake.setIntaking()));
-    // NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
-    // intake.setDeployed()));
+    NamedCommands.registerCommand("Set Intaking", new InstantCommand(() ->
+    intake.setIntaking()));
+    NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() ->
+    intake.setDeployed()));
   }
 
   public void setShotSolution(ShotSolution sol) {

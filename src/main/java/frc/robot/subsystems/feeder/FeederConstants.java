@@ -36,7 +36,7 @@ public class FeederConstants {
       35; // originally 40 on 3/3/2026 during testing
 
   public static final double FEEDER_GEARING =
-      12.0 / 20.0; // ratio of teeth on motor to teeth on pulley (originally 11/24)
+      12.0 / 48.0; // ratio of teeth on motor to teeth on pulley (originally 11/24 -> (12/20))
 
   public static final DCMotor FEEDER_MOTOR = DCMotor.getKrakenX60(1);
   public static final double FEEDER_ACTIVE_VOLTAGE = -5.414;
