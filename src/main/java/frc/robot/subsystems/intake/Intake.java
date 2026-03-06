@@ -11,7 +11,12 @@ public class Intake extends SubsystemBase {
   private IntakeIO io;
 
   public IntakeState intakeState = IntakeState.DEPLOYED;
-  public static double adjust = 0;
+
+  public static double pivotDegreesAdjust = 0.0;
+
+  public void adjustPivotAngleBy(double adj) {
+    pivotDegreesAdjust += adj;
+  }
 
   public Intake(IntakeIO io) {
     this.io = io;
@@ -36,7 +41,7 @@ public class Intake extends SubsystemBase {
 
     io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
 
-    io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
+    io.runPositionDegrees(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust);
     MechVisualizer.getInstance()
         .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));
 
@@ -78,11 +83,4 @@ public class Intake extends SubsystemBase {
     return intakeState;
   }
 
-  public void adjustSpeed(double adjustBy) {
-    adjust += adjustBy;
-  }
-
-  public void resetAdjust() {
-    adjust = 0;
-  }
 }

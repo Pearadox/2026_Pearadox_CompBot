@@ -48,6 +48,8 @@ public class IntakeConstants {
   public static final double GEARING = (44.0 / 12.0) * (60.0 / 16.0) * (44.0 / 14.0);
   public static final double LENGTH_METERS = Units.inchesToMeters(15.114);
   public static final double MASS_KG = 11.246;
+  
+  public static final double OP_ADJUST_INCREMENT_DEGREES = 2;
 
   // intake sim constants
   public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(0);

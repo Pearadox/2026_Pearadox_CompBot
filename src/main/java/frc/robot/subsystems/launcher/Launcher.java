@@ -58,7 +58,7 @@ public class Launcher extends SubsystemBase {
 
     } else if (currentScoringMode == ScoringMode.FULLY_MANUAL) {
 
-      desiredVelocity = fullyManualInitialVelocity;
+      desiredVelocity = fullyManualInitialVelocity + rpsAdjust;
     }
 
     double launcherRPS = Math.abs(desiredVelocity + rpsAdjust);
