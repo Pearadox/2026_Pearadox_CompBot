@@ -298,7 +298,6 @@ public class RobotContainer {
                 .andThen(new WaitCommand(1))
                 .andThen((new InstantCommand(() -> spindexer.setRunning()))));
 
-
     opController
         .rightBumper()
         .onFalse(
