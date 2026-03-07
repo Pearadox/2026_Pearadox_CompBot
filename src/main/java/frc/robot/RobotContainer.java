@@ -369,11 +369,21 @@ public class RobotContainer {
 
   public void registerNamedCommands() {
     // Feeder Commands
-    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.setRunning()));
-    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
+    NamedCommands.registerCommand(
+        "Set Launching",
+        new InstantCommand(() -> launcher.setScoring())
+            .andThen(new WaitCommand(0.2))
+            .andThen(new InstantCommand(() -> feeder.setRunning()))
+            .andThen(new WaitCommand(0.2))
+            .andThen((new InstantCommand(() -> spindexer.setRunning()))));
+    NamedCommands.registerCommand(
+        "Stop Launching",
+        new InstantCommand(() -> launcher.setOff()) // THIS IS WRONG!!!
+            .andThen(new InstantCommand(() -> feeder.setStopped()))
+            .andThen((new InstantCommand(() -> spindexer.setStopped()))));
 
     // Intake Commands
-    NamedCommands.registerCommand("a", new InstantCommand(() -> intake.setIntaking()));
+    NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
   }

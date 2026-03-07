@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Stop Intaking"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OutpostScoop1"
@@ -19,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "a"
+            "name": "Set Intaking"
           }
         },
         {
@@ -29,15 +35,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Stow Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "NZone-OBump-AllianZone1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow Intake"
           }
         },
         {
