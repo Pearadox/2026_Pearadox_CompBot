@@ -82,10 +82,10 @@ public class ShootOnTheMove extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    feeder.setStopped();
-    atDesiredVelocity = false;
-    atDesiredRotation = false;
-    readyToShoot = false;
+    // feeder.setStopped();
+    // atDesiredVelocity = false;
+    // atDesiredRotation = false;
+    // readyToShoot = false;
   }
 
   @Override

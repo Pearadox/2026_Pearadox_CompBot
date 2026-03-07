@@ -284,10 +284,6 @@ public class RobotContainer {
 
     shouldShootOnTheMoveTrigger.whileTrue(
         Commands.parallel(
-            Commands.run(
-                () ->
-                    setShotSolution(
-                        MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds))),
             DriveCommands.joystickDriveAtAngle(
                 drive,
                 () -> -drivercontroller.getLeftY() * 0.8,

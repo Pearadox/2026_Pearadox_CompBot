@@ -110,7 +110,7 @@ public class Robot extends LoggedRobot {
     robotContainer.visualizer.periodic();
 
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
-    alliance = allianceOptional.orElse(Alliance.Blue);
+    alliance = allianceOptional.orElse(Alliance.Red);
 
     isHubCurrentlyActive = isHubActive();
 

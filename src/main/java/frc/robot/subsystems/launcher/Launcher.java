@@ -40,6 +40,7 @@ public class Launcher extends SubsystemBase {
     Logger.processInputs("Launcher", inputs);
 
     Logger.recordOutput("Launcher/State", getState());
+    Logger.recordOutput("Launcher/LauncherVelocity", inputs.launcher1Data.velocity());
 
     double desiredVelocity = 0;
     ScoringMode currentScoringMode = RobotContainer.getScoringMode();
@@ -75,6 +76,12 @@ public class Launcher extends SubsystemBase {
         .updateHoodPositionDeg(
             Units.rotationsToDegrees(
                 LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
+
+    Logger.recordOutput("Debug/ScoringMode", currentScoringMode);
+    Logger.recordOutput("Debug/launcherRPS", launcherRPS);
+    Logger.recordOutput("Debug/shouldSOTM", RobotContainer.getShouldSOTM());
+    Logger.recordOutput("Debug/ScoringMode", currentScoringMode);
+    Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
 
     // Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
     // Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
