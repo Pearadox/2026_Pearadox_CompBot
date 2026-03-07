@@ -286,20 +286,20 @@ public class RobotContainer {
     //     new ShootOnTheMove(
     //         launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d));
 
-    // driverController.leftBumper().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setDeployed()));
-    // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setStowed()));
-    opController
+    drivercontroller.leftBumper().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.b().onTrue(new InstantCommand(() -> intake.setOuttaking()));
+    drivercontroller
         .rightBumper()
         .onTrue(
             new InstantCommand(() -> launcher.setScoring())
-                .andThen(new WaitCommand(1))
+                .andThen(new WaitCommand(0.2))
                 .andThen(new InstantCommand(() -> feeder.setRunning()))
-                .andThen(new WaitCommand(1))
+                .andThen(new WaitCommand(0.2))
                 .andThen((new InstantCommand(() -> spindexer.setRunning()))));
 
-
-    opController
+    drivercontroller
         .rightBumper()
         .onFalse(
             new InstantCommand(() -> launcher.setOff()) // THIS IS WRONG!!!

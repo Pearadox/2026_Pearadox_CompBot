@@ -25,7 +25,7 @@ public class Launcher extends SubsystemBase {
     rpsAdjust += adj;
   }
 
-  private double fullyManualInitialVelocity = 60;
+  private double fullyManualInitialVelocity = 50;
 
   public Launcher(LauncherIO io) {
     this.io = io;
