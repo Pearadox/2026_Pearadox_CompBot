@@ -20,6 +20,7 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     this.io = io;
+    io.setPIDFF(kp.get(), kv.get(), pivotkp.get());
   }
 
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -27,8 +28,15 @@ public class Intake extends SubsystemBase {
   // private static LoggedTunableNumber loggedIntakeRollerVoltage =
   //     new LoggedTunableNumber("Intake/Voltage", 4.0);
 
-  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 45.0);
-  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 0);
+  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 100.0);
+  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30);
+
+  private static LoggedTunableNumber kp = new LoggedTunableNumber("Intake/roller kp", 100);
+  private static LoggedTunableNumber kv = new LoggedTunableNumber("Intake/roller kv", 500);
+  private static LoggedTunableNumber pivotkp = new LoggedTunableNumber("Intake/pivot kp", 10);
+
+  // max duty 0.5
+  // amps 45
 
   @Override
   public void periodic() {
@@ -60,6 +68,10 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput(
         "Intake/Current Position Degrees",
         Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING);
+
+    if (kp.hasChanged(hashCode()) || kv.hasChanged(hashCode()) || pivotkp.hasChanged(hashCode())) {
+      io.setPIDFF(kp.get(), kv.get(), pivotkp.get());
+    }
 
     // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
     // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage =

@@ -98,12 +98,15 @@ public class IntakeConstants {
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = PIVOT_STATOR_CURRENT_LIMIT;
 
-    PIVOT_SLOT0_CONFIGS.kP = 0.6;
+    PIVOT_SLOT0_CONFIGS.kP = 10.0;
     PIVOT_SLOT0_CONFIGS.kI = 0.0;
-    PIVOT_SLOT0_CONFIGS.kD = 0.0;
+    PIVOT_SLOT0_CONFIGS.kD = 0.03;
 
     PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    PIVOT_CONFIG.MotorOutput.PeakReverseDutyCycle = -0.1;
+    PIVOT_CONFIG.MotorOutput.PeakForwardDutyCycle = 0.5;
 
     return PIVOT_CONFIG;
   }

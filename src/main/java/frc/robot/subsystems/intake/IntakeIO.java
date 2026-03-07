@@ -20,4 +20,6 @@ public interface IntakeIO {
   public default void runRollersVolts(double volts) {}
 
   public default void runPositionDegrees(double degrees) {}
+
+  public default void setPIDFF(double rollerkp, double kv, double pivotkp) {}
 }

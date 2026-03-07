@@ -18,9 +18,9 @@ public class Spindexer extends SubsystemBase {
   }
 
   private final LoggedTunableNumber spindexerCurrentAmps =
-      new LoggedTunableNumber("Spindexer/Current-Amps", 40.0);
+      new LoggedTunableNumber("Spindexer/Current-Amps", 50.0);
   private final LoggedTunableNumber spindexerMaxDutyCycle =
-      new LoggedTunableNumber("Spindexer/Max-Duty-Cycle", 0.5);
+      new LoggedTunableNumber("Spindexer/Max-Duty-Cycle", 0.8);
 
   @Override
   public void periodic() {
