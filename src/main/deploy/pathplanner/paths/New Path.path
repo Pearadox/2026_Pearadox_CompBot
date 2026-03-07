@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.212,
-        "y": 1.199
+        "x": 3.5820120481927713,
+        "y": 2.4832650602409636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.225137387404303,
-        "y": 1.5902765280674673
+        "x": 2.5985180722891568,
+        "y": 2.505120481927711
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.212,
-        "y": 3.0020888888888884
+        "x": 2.237903614457831,
+        "y": 2.4832650602409636
       },
       "prevControl": {
-        "x": 8.200037101008782,
-        "y": 2.752375274827248
+        "x": 3.1995421686746988,
+        "y": 2.516048192771084
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
-    "maxAcceleration": 1.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Sweeps & Scoops",
+  "folder": null,
   "idealStartingState": {
-    "velocity": 0.5,
-    "rotation": 90.0
+    "velocity": 0,
+    "rotation": 0.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
