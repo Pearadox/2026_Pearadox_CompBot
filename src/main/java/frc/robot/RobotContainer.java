@@ -283,7 +283,17 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> setShouldSOTM(false)));
 
     shouldShootOnTheMoveTrigger.whileTrue(
-        new ShootOnTheMove(launcher, feeder, turret::getFieldRelativeTurretAngleRotation2d));
+        Commands.parallel(
+            Commands.run(
+                () ->
+                    setShotSolution(
+                        MovingShotSolver.solve(drive::getPose, drive::getChassisSpeeds))),
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY() * 0.8,
+                () -> -drivercontroller.getLeftX() * 0.8,
+                () -> shotSolution.getTurretAngleRot2d()),
+            new ShootOnTheMove(launcher, feeder, drive::getRotation)));
 
     opController.a().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.FULLY_AUTO)));
     opController.x().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.PARTIAL_AUTO)));

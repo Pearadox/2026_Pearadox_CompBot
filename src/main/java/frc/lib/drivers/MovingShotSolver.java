@@ -85,7 +85,7 @@ public class MovingShotSolver {
 
     // Robot-relative turret offset (meters)
 
-    double dxTurretRobotRelative = 0.135; // TODO: find real forward offset
+    double dxTurretRobotRelative = -0.135; // TODO: find real forward offset
     double dyTurretRobotRelative = -0.14; // TODO: find real sideways offset
 
     // Rotate offset into field coordinates using matrix multiplication done below

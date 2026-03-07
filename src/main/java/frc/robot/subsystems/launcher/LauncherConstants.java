@@ -55,7 +55,7 @@ public class LauncherConstants {
 
     LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-    LAUNCHER_CONFIG_SLOT0.kP = 0.1;
+    LAUNCHER_CONFIG_SLOT0.kP = 0.5;
     LAUNCHER_CONFIG_SLOT0.kI = 0.0;
     LAUNCHER_CONFIG_SLOT0.kD = 0.0;
     LAUNCHER_CONFIG_SLOT0.kS = 0.19;
