@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private IntakeIO io;
 
-  public IntakeState intakeState = IntakeState.DEPLOYED;
+  public IntakeState intakeState = IntakeState.STOWED;
 
   public static double pivotDegreesAdjust = 0.0;
 
@@ -39,10 +39,15 @@ public class Intake extends SubsystemBase {
 
     Logger.recordOutput("Intake/State", intakeState.toString());
 
-    io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
+    // io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
+    // io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage());
 
+    io.runRollersAmps(
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).amps(),
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty());
     io.runPositionDegrees(
         StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust);
+
     MechVisualizer.getInstance()
         .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));
 

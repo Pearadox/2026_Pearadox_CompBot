@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -57,7 +59,6 @@ import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
 import lombok.Getter;
 import lombok.Setter;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
   // Subsystems
@@ -77,7 +78,7 @@ public class RobotContainer {
   private final CommandXboxController opController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   private static ShotSolution shotSolution = new ShotSolution(0., 0, new Rotation2d(), false);
 
@@ -98,6 +99,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // Register named commands for PathPlanner
+    registerNamedCommands();
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -163,7 +168,8 @@ public class RobotContainer {
     }
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Super auto chooser", autoChooser);
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -192,8 +198,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    // Register named commands for PathPlanner
-    registerNamedCommands();
   }
 
   /**
@@ -286,20 +290,21 @@ public class RobotContainer {
     //     new ShootOnTheMove(
     //         launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d));
 
-    // driverController.leftBumper().whileTrue(new InstantCommand(() -> intake.setIntaking()));
-    // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setDeployed()));
-    // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setStowed()));
-    opController
+    drivercontroller.leftBumper().whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    drivercontroller.leftBumper().onFalse(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.b().onTrue(new InstantCommand(() -> intake.setOuttaking()));
+    drivercontroller
         .rightBumper()
         .onTrue(
             new InstantCommand(() -> launcher.setScoring())
-                .andThen(new WaitCommand(1))
+                .andThen(new WaitCommand(0.2))
                 .andThen(new InstantCommand(() -> feeder.setRunning()))
-                .andThen(new WaitCommand(1))
+                .andThen(new WaitCommand(0.2))
                 .andThen((new InstantCommand(() -> spindexer.setRunning()))));
 
-
-    opController
+    drivercontroller
         .rightBumper()
         .onFalse(
             new InstantCommand(() -> launcher.setOff()) // THIS IS WRONG!!!
@@ -359,17 +364,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoChooser.getSelected();
   }
 
   public void registerNamedCommands() {
     // Feeder Commands
-    NamedCommands.registerCommand("Set Launching", new InstantCommand(() -> feeder.setRunning()));
-    NamedCommands.registerCommand("Stop Launching", new InstantCommand(() -> feeder.setStopped()));
+    NamedCommands.registerCommand(
+        "Set Launching",
+        new InstantCommand(() -> launcher.setScoring())
+            .andThen(new WaitCommand(0.2))
+            .andThen(new InstantCommand(() -> feeder.setRunning()))
+            .andThen(new WaitCommand(0.2))
+            .andThen((new InstantCommand(() -> spindexer.setRunning()))));
+    NamedCommands.registerCommand(
+        "Stop Launching",
+        new InstantCommand(() -> launcher.setOff()) // THIS IS WRONG!!!
+            .andThen(new InstantCommand(() -> feeder.setStopped()))
+            .andThen((new InstantCommand(() -> spindexer.setStopped()))));
 
     // Intake Commands
     NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
+    NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
   }
 
   public void setShotSolution(ShotSolution sol) {

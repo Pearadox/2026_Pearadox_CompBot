@@ -22,13 +22,22 @@ public class IntakeConstants {
    * @param angleRad the angle in radians
    * @param voltage the voltage in volts
    */
-  public static record StateConfig(double angleDeg, double voltage) {
+  // public static record StateConfig(double angleDeg, double voltage) {
+  //   public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
+  //       Map.of(
+  //           IntakeState.STOWED, new StateConfig(0, 0),
+  //           IntakeState.DEPLOYED, new StateConfig(90, 0),
+  //           IntakeState.INTAKING, new StateConfig(90, 3),
+  //           IntakeState.OUTTAKING, new StateConfig(90, -3));
+  // }
+
+  public static record StateConfig(double angleDeg, double amps, double maxDuty) {
     public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
         Map.of(
-            IntakeState.STOWED, new StateConfig(0, 0),
-            IntakeState.DEPLOYED, new StateConfig(90, 0),
-            IntakeState.INTAKING, new StateConfig(90, 3),
-            IntakeState.OUTTAKING, new StateConfig(90, -3.5));
+            IntakeState.STOWED, new StateConfig(0, 0, 0),
+            IntakeState.DEPLOYED, new StateConfig(90, 0, 0),
+            IntakeState.INTAKING, new StateConfig(90, 40, 0.4),
+            IntakeState.OUTTAKING, new StateConfig(90, -40, 0.4));
   }
 
   // roller constants
@@ -72,7 +81,7 @@ public class IntakeConstants {
     ROLLER_SLOT0_CONFIGS.kD = 0.0;
 
     ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     return ROLLER_CONFIG;
   }
@@ -88,7 +97,7 @@ public class IntakeConstants {
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
     PIVOT_CONFIG.CurrentLimits.StatorCurrentLimit = PIVOT_STATOR_CURRENT_LIMIT;
 
-    PIVOT_SLOT0_CONFIGS.kP = 0.3;
+    PIVOT_SLOT0_CONFIGS.kP = 0.6;
     PIVOT_SLOT0_CONFIGS.kI = 0.0;
     PIVOT_SLOT0_CONFIGS.kD = 0.0;
 

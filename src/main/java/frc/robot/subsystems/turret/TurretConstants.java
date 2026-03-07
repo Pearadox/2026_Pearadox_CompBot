@@ -63,7 +63,7 @@ public final class TurretConstants {
     config.MotionMagic.MotionMagicAcceleration = 300;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     config.Slot0.kS = 0.0;
     config.Slot0.kV = 0.0;

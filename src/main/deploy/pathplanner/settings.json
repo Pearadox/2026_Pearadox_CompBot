@@ -3,6 +3,7 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "To Outpost",
     "Sweeps & Scoops",
     "To Alliance Zone",
     "To Depot",
