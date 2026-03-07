@@ -34,7 +34,14 @@ public class Spindexer extends SubsystemBase {
     SmarterDashboard.putNumber(
         "Spindexer/SupplyCurrent", inputs.spindexerMotorData.supplyCurrent());
 
-    io.runSpindexerTorqueCurrent(spindexerCurrentAmps.get(), spindexerMaxDutyCycle.get());
+    if (spindexerState.equals(SpindexerState.RUNNING)) {
+      io.runSpindexerTorqueCurrent(spindexerCurrentAmps.get(), spindexerMaxDutyCycle.get());
+
+    } else if (spindexerState.equals(SpindexerState.REVERSE)) {
+      io.runSpindexerTorqueCurrent(-spindexerCurrentAmps.get(), spindexerMaxDutyCycle.get());
+    } else {
+      io.runSpindexerTorqueCurrent(0, 0);
+    }
   }
 
   public void setStopped() {

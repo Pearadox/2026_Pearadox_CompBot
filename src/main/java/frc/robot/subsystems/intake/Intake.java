@@ -27,8 +27,7 @@ public class Intake extends SubsystemBase {
   // private static LoggedTunableNumber loggedIntakeRollerVoltage =
   //     new LoggedTunableNumber("Intake/Voltage", 4.0);
 
-  private static LoggedTunableNumber loggedIntakeStatorCurrent =
-      new LoggedTunableNumber("Intake/StatorCurrent", 45.0);
+  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 45.0);
   private static LoggedTunableNumber maxDuty = new LoggedTunableNumber("Intake/Maxduty", 0.5);
 
   @Override
@@ -42,9 +41,13 @@ public class Intake extends SubsystemBase {
     // io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
     // io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage());
 
-    io.runRollersAmps(
-        StateConfig.INTAKE_STATE_MAP.get(intakeState).amps(),
-        StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty());
+    if (intakeState == IntakeState.INTAKING) {
+      io.runRollersVelocityTorqueCurrentFOC(rps.get());
+    } else {
+      io.runRollersAmps(
+          StateConfig.INTAKE_STATE_MAP.get(intakeState).amps(),
+          StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty());
+    }
     io.runPositionDegrees(
         StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust);
 

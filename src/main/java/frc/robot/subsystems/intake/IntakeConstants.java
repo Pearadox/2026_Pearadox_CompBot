@@ -79,6 +79,7 @@ public class IntakeConstants {
     ROLLER_SLOT0_CONFIGS.kP = 0.1;
     ROLLER_SLOT0_CONFIGS.kI = 0.0;
     ROLLER_SLOT0_CONFIGS.kD = 0.0;
+    // ROLLER_SLOT0_CONFIGS.kV = 0.12;
 
     ROLLER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     ROLLER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
