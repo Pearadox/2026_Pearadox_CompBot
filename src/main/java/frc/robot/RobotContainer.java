@@ -293,11 +293,12 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftY() * 0.8,
                 () -> -drivercontroller.getLeftX() * 0.8,
                 () -> shotSolution.getTurretAngleRot2d()),
-            new ShootOnTheMove(launcher, feeder, drive::getRotation)));
+            new ShootOnTheMove(launcher, feeder, spindexer, drive::getRotation)));
 
     opController.a().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.FULLY_AUTO)));
     opController.x().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.PARTIAL_AUTO)));
     opController.y().onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.FULLY_MANUAL)));
+
     Trigger isPassing = new Trigger(() -> shotSolution.isInsideNeutralZone);
     isPassing
         .onTrue(new InstantCommand(() -> setScoringMode(ScoringMode.PASSING)))

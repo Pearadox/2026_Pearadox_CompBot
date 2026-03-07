@@ -53,9 +53,9 @@ public class LauncherConstants {
 
     LAUNCHER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    LAUNCHER_CONFIG_SLOT0.kP = 0.5;
+    LAUNCHER_CONFIG_SLOT0.kP = 0.8;
     LAUNCHER_CONFIG_SLOT0.kI = 0.0;
     LAUNCHER_CONFIG_SLOT0.kD = 0.0;
     LAUNCHER_CONFIG_SLOT0.kS = 0.19;
