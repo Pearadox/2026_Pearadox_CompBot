@@ -15,9 +15,9 @@ public final class TurretConstants {
   public static final int TURRET_STATOR_CURRENT_LIMIT =
       60; // originally 50 on 3/3/2026 during testing
 
-  public static final double TURRET_STARTING_ANGLE = Units.degreesToRadians(0);
+  public static final double TURRET_STARTING_ANGLE = Units.degreesToRadians(360);
   public static final double TURRET_MIN_ANGLE = Units.degreesToRadians(-270); // TODO: update
-  public static final double TURRET_MAX_ANGLE = Units.degreesToRadians(270); // TODO: update
+  public static final double TURRET_MAX_ANGLE = Units.degreesToRadians(370); // TODO: update
 
   public static final double SAFETY_LIMIT = Units.degreesToRadians(5);
   public static final double TURRET_SAFE_MIN = TURRET_MIN_ANGLE + SAFETY_LIMIT;
@@ -47,7 +47,7 @@ public final class TurretConstants {
   public static final double FF_CHASSIS_ROT_VELOCITY_LIMIT = 1.5 * Math.PI; // rad/s
 
   public static final int TURRET_CANCODER_ID = 26;
-  public static final double TURRET_CANCODER_OFFSET_ROTS = 0.390869; // TODO
+  public static final double TURRET_CANCODER_OFFSET_ROTS = 0.223145;
 
   public static final double TURRET_TO_CANCODER_RATIO = 3. / 10.;
 
@@ -63,7 +63,7 @@ public final class TurretConstants {
     config.MotionMagic.MotionMagicAcceleration = 300;
 
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     config.Slot0.kS = 0.0;
     config.Slot0.kV = 0.0;

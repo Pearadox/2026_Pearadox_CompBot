@@ -40,7 +40,9 @@ public class Turret extends SubsystemBase {
   private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 85);
   private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 450);
   private final LoggedTunableNumber testSetpoint =
-      new LoggedTunableNumber("Turret/test Setpoint", 90);
+      new LoggedTunableNumber("Turret/test Setpoint", 350);
+  private final LoggedTunableNumber fieldRelOffset =
+      new LoggedTunableNumber("Turret/fieldreloffset", 45);
 
   private final SysIdRoutine sysId;
 
@@ -72,10 +74,7 @@ public class Turret extends SubsystemBase {
     Logger.processInputs("Turret", inputs);
 
     if (!hasZeroed && inputs.cancoderConnected) {
-      io.setPosition(
-          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
-              * TurretConstants.TURRET_GEAR_RATIO);
-      hasZeroed = true;
+      requestZero();
     }
 
     if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
@@ -129,7 +128,7 @@ public class Turret extends SubsystemBase {
             robotRotationSupplier
                 .get()
                 .minus(fieldCentricAngleSupplier.get())
-                .plus(Rotation2d.k180deg));
+                .plus(Rotation2d.fromDegrees(fieldRelOffset.get())));
   }
 
   public void goToZero() {
@@ -156,7 +155,9 @@ public class Turret extends SubsystemBase {
     if (inputs.cancoderConnected) {
       io.setPosition(
           (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
-              * TurretConstants.TURRET_GEAR_RATIO);
+                  * TurretConstants.TURRET_GEAR_RATIO
+              + TurretConstants.TURRET_STARTING_ANGLE / TurretConstants.TURRET_P_COEFFICIENT);
+      hasZeroed = true;
     }
   }
 

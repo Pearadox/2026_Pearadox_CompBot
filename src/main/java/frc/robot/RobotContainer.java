@@ -344,8 +344,8 @@ public class RobotContainer {
                     Math.signum(-opController.getLeftY())
                         * IntakeConstants.OP_ADJUST_INCREMENT_DEGREES)));
 
-    // opController.a().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
-    // opController.b().onTrue(new InstantCommand(() -> turret.goToPlus180(), turret));
+    opController.start().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
+    opController.back().onTrue(new InstantCommand(() -> turret.goToPlus180(), turret));
     // opController.x().onTrue(new InstantCommand(() -> turret.goToMinus180(), turret));
 
     // opController
