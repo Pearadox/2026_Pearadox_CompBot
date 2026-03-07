@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     this.io = io;
-    io.setPIDFF(kp.get(), kv.get(), pivotkp.get());
+    io.setPIDFF(kp.get(), kv.get(), pivotkp.get(), pivotkd.get());
   }
 
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -29,11 +29,13 @@ public class Intake extends SubsystemBase {
   //     new LoggedTunableNumber("Intake/Voltage", 4.0);
 
   private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 100.0);
-  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30);
+  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30.0);
 
-  private static LoggedTunableNumber kp = new LoggedTunableNumber("Intake/roller kp", 100);
-  private static LoggedTunableNumber kv = new LoggedTunableNumber("Intake/roller kv", 500);
-  private static LoggedTunableNumber pivotkp = new LoggedTunableNumber("Intake/pivot kp", 10);
+  private static LoggedTunableNumber kp = new LoggedTunableNumber("Intake/roller kp", 0.05);
+  private static LoggedTunableNumber kv = new LoggedTunableNumber("Intake/roller kv", 0.05);
+  private static LoggedTunableNumber pivotkp = new LoggedTunableNumber("Intake/pivot kp", 0.5);
+  private static LoggedTunableNumber pivotkd = new LoggedTunableNumber("Intake/pivotkd", 0.0);
+  private static LoggedTunableNumber pivotkg = new LoggedTunableNumber("Intake/pivot kg", -0.5);
 
   // max duty 0.5
   // amps 45
@@ -57,7 +59,8 @@ public class Intake extends SubsystemBase {
           StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty());
     }
     io.runPositionDegrees(
-        StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust);
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
+        getFFVolts());
 
     MechVisualizer.getInstance()
         .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));
@@ -69,8 +72,11 @@ public class Intake extends SubsystemBase {
         "Intake/Current Position Degrees",
         Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING);
 
-    if (kp.hasChanged(hashCode()) || kv.hasChanged(hashCode()) || pivotkp.hasChanged(hashCode())) {
-      io.setPIDFF(kp.get(), kv.get(), pivotkp.get());
+    if (kp.hasChanged(hashCode())
+        || kv.hasChanged(hashCode())
+        || pivotkp.hasChanged(hashCode())
+        || pivotkd.hasChanged(hashCode())) {
+      io.setPIDFF(kp.get(), kv.get(), pivotkp.get(), pivotkd.get());
     }
 
     // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
@@ -82,6 +88,14 @@ public class Intake extends SubsystemBase {
     // } else {
     //     io.runRollersVolts(0);
     // }
+  }
+
+  private double getFFVolts() {
+    return Math.sin(Math.toRadians(getAngleDegs())) * pivotkg.get();
+  }
+
+  public double getAngleDegs() {
+    return Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING;
   }
 
   public void setStowed() {

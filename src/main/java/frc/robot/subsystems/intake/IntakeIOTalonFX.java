@@ -72,15 +72,22 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void runPositionDegrees(double degrees) {
+  public void runPositionDegrees(double degrees, double ffvolts) {
     pivotMotor.setControl(
-        pivotPositionVoltage.withPosition(
-            Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
+        pivotPositionVoltage
+            .withPosition(Units.degreesToRotations(degrees) * IntakeConstants.GEARING)
+            .withFeedForward(ffvolts));
     // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
   }
 
   @Override
-  public void setPIDFF(double kp, double kv, double pivotkp) {
+  public void setPIDFF(double kp, double kv, double pivotkp, double pivotkd) {
+    rollerConfigs.Slot0.kP = kp;
+    rollerConfigs.Slot0.kV = kv;
+
+    pivotConfigs.Slot0.kP = pivotkp;
+    pivotConfigs.Slot0.kD = pivotkd;
+
     PhoenixUtil.tryUntilOk(5, () -> roller1Leader.getConfigurator().apply(rollerConfigs));
     PhoenixUtil.tryUntilOk(5, () -> roller2Follower.getConfigurator().apply(rollerConfigs));
     PhoenixUtil.tryUntilOk(5, () -> pivotMotor.getConfigurator().apply(pivotConfigs));
