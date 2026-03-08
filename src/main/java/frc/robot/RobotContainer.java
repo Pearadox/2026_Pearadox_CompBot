@@ -346,8 +346,10 @@ public class RobotContainer {
     opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));
 
-    opController.povUp().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(+0.05)));
-    opController.povDown().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(-0.05)));
+    // opController.povUp().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(+0.05)));
+    // opController.povDown().whileTrue(new RunCommand(() -> launcher.adjustRPSBy(-0.05)));
+    opController.povUp().whileTrue(new RunCommand(() -> intake.adjustMaxDuty(+0.1)));
+    opController.povDown().whileTrue(new RunCommand(() -> intake.adjustMaxDuty(-0.1)));
 
     Trigger intakeAdjust = new Trigger(() -> Math.abs(opController.getLeftY()) > 0.9);
     intakeAdjust.whileTrue(

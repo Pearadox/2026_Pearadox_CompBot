@@ -14,8 +14,14 @@ public class Intake extends SubsystemBase {
 
   public static double pivotDegreesAdjust = 0.0;
 
+  public static double dutyAdjust = 0.0;
+
   public void adjustPivotAngleBy(double adj) {
     pivotDegreesAdjust += adj;
+  }
+
+  public void adjustMaxDuty(double adj) {
+    dutyAdjust += adj;
   }
 
   public Intake(IntakeIO io) {
@@ -28,8 +34,8 @@ public class Intake extends SubsystemBase {
   // private static LoggedTunableNumber loggedIntakeRollerVoltage =
   //     new LoggedTunableNumber("Intake/Voltage", 4.0);
 
-  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 80.0);
-  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 25.0);
+  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 100.0);
+  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30.0);
 
   private static LoggedTunableNumber kp = new LoggedTunableNumber("Intake/roller kp", 0.05);
   private static LoggedTunableNumber kv = new LoggedTunableNumber("Intake/roller kv", 0.05);
@@ -47,17 +53,20 @@ public class Intake extends SubsystemBase {
     Logger.processInputs("Intake", inputs);
 
     Logger.recordOutput("Intake/State", intakeState.toString());
+    Logger.recordOutput(
+        "Intake/maxduty", StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty() + dutyAdjust);
 
     // io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
     // io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage());
 
-    if (intakeState == IntakeState.INTAKING) {
-      io.runRollersVelocityTorqueCurrentFOC(rps.get(), ffamps.get());
-    } else {
-      io.runRollersAmps(
-          StateConfig.INTAKE_STATE_MAP.get(intakeState).amps(),
-          StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty());
-    }
+    // if (intakeState == IntakeState.INTAKING) {
+    //   io.runRollersVelocityTorqueCurrentFOC(rps.get(), ffamps.get());
+
+    // } else {
+    io.runRollersAmps(
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).amps(),
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).maxDuty() + dutyAdjust);
+    // }
     io.runPositionDegrees(
         StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
         getFFVolts());
