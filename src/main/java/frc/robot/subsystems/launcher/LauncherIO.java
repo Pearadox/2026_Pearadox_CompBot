@@ -34,7 +34,7 @@ public interface LauncherIO {
    * @param velocityRPS the rotor velocity setpoint in Rotations per Second
    */
   public default void runLauncherVelocity(
-      double velocityRPS) {} // TODO: add feedfoward for torque current
+      double velocityRPS, double ffamps) {} // TODO: add feedfoward for torque current
 
   /**
    * This is assuming that the left servo is at 0.0 and the right servo is at 1.0 when the hood is

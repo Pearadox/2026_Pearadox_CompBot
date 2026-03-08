@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.ScoringMode;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
+import frc.robot.util.LoggedTunableNumber;
 import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
@@ -18,6 +19,8 @@ public class Launcher extends SubsystemBase {
   private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
   private static LauncherState launcherState = LauncherState.SCORING;
+
+  private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
 
   private double rpsAdjust = 0.0;
 
@@ -64,7 +67,8 @@ public class Launcher extends SubsystemBase {
 
     if (launcherState != LauncherState.OFF
         && launcherRPS > LauncherConstants.SHOOTER_VELOCITY_DEADBAND) {
-      setVelocity(Math.min(launcherRPS, LauncherConstants.SHOOTER_MAX_VELOCITY));
+      setVelocity(
+          Math.min(launcherRPS, LauncherConstants.SHOOTER_MAX_VELOCITY), tunableffAmps.get());
     } else {
       turnLauncherOff();
     }
@@ -94,8 +98,8 @@ public class Launcher extends SubsystemBase {
   }
 
   /** velocity will be calculated from aim assist command factory */
-  public void setVelocity(double velocityRPS) {
-    io.runLauncherVelocity(velocityRPS);
+  public void setVelocity(double velocityRPS, double ffamps) {
+    io.runLauncherVelocity(velocityRPS, ffamps);
   }
 
   public double getLauncherVelocity() {

@@ -28,8 +28,8 @@ public class Intake extends SubsystemBase {
   // private static LoggedTunableNumber loggedIntakeRollerVoltage =
   //     new LoggedTunableNumber("Intake/Voltage", 4.0);
 
-  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 100.0);
-  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30.0);
+  private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 80.0);
+  private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 25.0);
 
   private static LoggedTunableNumber kp = new LoggedTunableNumber("Intake/roller kp", 0.05);
   private static LoggedTunableNumber kv = new LoggedTunableNumber("Intake/roller kv", 0.05);

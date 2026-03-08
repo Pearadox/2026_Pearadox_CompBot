@@ -63,8 +63,8 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
         LauncherConstants.pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
   }
 
-  public void runLauncherVelocity(double velocityRPS) {
-    launcher1Leader.setControl(launcher1Control.withVelocity(velocityRPS).withFeedForward(25));
+  public void runLauncherVelocity(double velocityRPS, double ffamps) {
+    launcher1Leader.setControl(launcher1Control.withVelocity(velocityRPS).withFeedForward(ffamps));
     launcher2Follower.setControl(launcher2Control);
     Logger.recordOutput("Launcher/VelocitySetpointRPS", velocityRPS);
     Logger.recordOutput(

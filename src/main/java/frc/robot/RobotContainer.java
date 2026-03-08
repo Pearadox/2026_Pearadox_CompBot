@@ -319,16 +319,15 @@ public class RobotContainer {
                 scoringMode == ScoringMode.FULLY_MANUAL
                     && drivercontroller.rightBumper().getAsBoolean());
 
-    shouldRunSpindexerAndFeeder
-        .onTrue(
-            new InstantCommand(() -> launcher.setScoring())
-                .andThen(new WaitCommand(0.1))
-                .andThen(new InstantCommand(() -> feeder.setRunning()))
-                .andThen(new InstantCommand(() -> spindexer.setRunning())))
-        .onFalse(
-            new InstantCommand(() -> launcher.setOff())
-                .andThen(new InstantCommand(() -> feeder.setStopped()))
-                .andThen(new InstantCommand(() -> spindexer.setStopped())));
+    shouldRunSpindexerAndFeeder.onTrue(
+        new InstantCommand(() -> launcher.setScoring())
+            .andThen(new WaitCommand(0.1))
+            .andThen(new InstantCommand(() -> feeder.setRunning()))
+            .andThen(new InstantCommand(() -> spindexer.setRunning())));
+    // .onFalse(
+    //     new InstantCommand(() -> launcher.setOff())
+    //         .andThen(new InstantCommand(() -> feeder.setStopped()))
+    //         .andThen(new InstantCommand(() -> spindexer.setStopped())));
 
     drivercontroller
         .b()
