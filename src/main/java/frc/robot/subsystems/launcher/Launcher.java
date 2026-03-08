@@ -5,6 +5,7 @@
 package frc.robot.subsystems.launcher;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.ScoringMode;
@@ -21,7 +22,7 @@ public class Launcher extends SubsystemBase {
 
   private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-  @AutoLogOutput @Getter @Setter private static LauncherState launcherState = LauncherState.SCORING;
+  @AutoLogOutput @Getter @Setter private static LauncherState launcherState = LauncherState.MANUAL;
 
   private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
 
@@ -50,6 +51,7 @@ public class Launcher extends SubsystemBase {
     double desiredVelocity = 0;
     ScoringMode currentScoringMode = RobotContainer.getScoringMode();
     if (currentScoringMode == ScoringMode.FULLY_AUTO) {
+      if (DriverStation.isAutonomousEnabled() && launcherState != LauncherState.SCORING) return;
 
       desiredVelocity = RobotContainer.getShotSolution().getShooterSpeedRPS();
 
