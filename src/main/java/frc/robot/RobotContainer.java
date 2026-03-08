@@ -314,10 +314,7 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> intake.setDeployed()));
 
     Trigger shouldRunSpindexerAndFeeder =
-        new Trigger(
-            () ->
-                scoringMode == ScoringMode.FULLY_MANUAL
-                    && drivercontroller.rightBumper().getAsBoolean());
+        new Trigger(() -> drivercontroller.rightBumper().getAsBoolean());
 
     shouldRunSpindexerAndFeeder.onTrue(
         new InstantCommand(() -> launcher.setScoring())
@@ -357,6 +354,14 @@ public class RobotContainer {
             () ->
                 intake.adjustPivotAngleBy(
                     Math.signum(-opController.getLeftY())
+                        * IntakeConstants.OP_ADJUST_INCREMENT_DEGREES)));
+
+    Trigger launcherAdjust = new Trigger(() -> Math.abs(opController.getRightY()) > 0.9);
+    launcherAdjust.whileTrue(
+        new RunCommand(
+            () ->
+                launcher.adjustRPSBy(
+                    Math.signum(opController.getRightY())
                         * IntakeConstants.OP_ADJUST_INCREMENT_DEGREES)));
 
     opController.leftBumper().onTrue(new InstantCommand(() -> turret.goToZero(), turret));
@@ -404,8 +409,7 @@ public class RobotContainer {
             .andThen((new InstantCommand(() -> spindexer.setRunning()))));
     NamedCommands.registerCommand(
         "Stop Launching",
-        new InstantCommand(() -> launcher.setOff()) // THIS IS WRONG!!!
-            .andThen(new InstantCommand(() -> feeder.setStopped()))
+        new InstantCommand(() -> feeder.setStopped())
             .andThen((new InstantCommand(() -> spindexer.setStopped()))));
 
     // Intake Commands

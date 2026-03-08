@@ -12,6 +12,7 @@ import frc.robot.Constants.FieldConstants.LinesVertical;
 import frc.robot.Robot;
 import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherConstants;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.SmarterDashboard;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -42,6 +43,8 @@ public class MovingShotSolver {
   private static double hubHeightMeters = Hub.height;
   private static double shooterHeightMeters = Units.inchesToMeters(22.5);
   private static double hoodAngleRadians = Units.degreesToRadians(65);
+
+  private final LoggedTunableNumber rpsMultiplier = new LoggedTunableNumber("SOTM/Rps Multiplier", 1.85);
 
   private static final double MPSToRPSConversion =
       LauncherConstants.LAUNCHER_GEARING / LauncherConstants.ROLLER_CIRCUMFERENCE_METERS;
@@ -201,6 +204,6 @@ public class MovingShotSolver {
     Logger.recordOutput("Launcher/SOTM/targetPose", targetPose);
 
     return new ShotSolution(
-        ToF, 1.85 * shooterSpeedRPS, fieldRelativeTurretAngleRot2d, isInNeutralZone);
+        ToF, rpsMultiplier.get() * shooterSpeedRPS, fieldRelativeTurretAngleRot2d, isInNeutralZone);
   }
 }

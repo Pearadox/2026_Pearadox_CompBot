@@ -10,6 +10,9 @@ import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.ScoringMode;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import frc.robot.util.LoggedTunableNumber;
+import lombok.Getter;
+import lombok.Setter;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Launcher extends SubsystemBase {
@@ -18,7 +21,7 @@ public class Launcher extends SubsystemBase {
 
   private final LauncherIOInputsAutoLogged inputs = new LauncherIOInputsAutoLogged();
 
-  private static LauncherState launcherState = LauncherState.SCORING;
+  @AutoLogOutput @Getter @Setter private static LauncherState launcherState = LauncherState.SCORING;
 
   private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
 
@@ -59,16 +62,14 @@ public class Launcher extends SubsystemBase {
               : 20;
 
     } else if (currentScoringMode == ScoringMode.FULLY_MANUAL) {
-
       desiredVelocity = fullyManualInitialVelocity + rpsAdjust;
     }
 
     double launcherRPS = Math.abs(desiredVelocity + rpsAdjust);
 
     if (launcherState != LauncherState.OFF
-        && launcherRPS > LauncherConstants.SHOOTER_VELOCITY_DEADBAND) {
-      setVelocity(
-          Math.min(launcherRPS, LauncherConstants.SHOOTER_MAX_VELOCITY), tunableffAmps.get());
+        && Math.abs(launcherRPS) > LauncherConstants.SHOOTER_VELOCITY_DEADBAND) {
+      setVelocity(launcherRPS, tunableffAmps.get());
     } else {
       turnLauncherOff();
     }
@@ -80,8 +81,7 @@ public class Launcher extends SubsystemBase {
             Units.rotationsToDegrees(
                 LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
 
-    Logger.recordOutput("Launcher/adjust", launcherRPS);
-
+    Logger.recordOutput("Launcher/adjust", rpsAdjust);
     Logger.recordOutput("Debug/ScoringMode", currentScoringMode);
     Logger.recordOutput("Debug/desiredLauncherRPS", launcherRPS);
     Logger.recordOutput("Debug/shouldSOTM", RobotContainer.getShouldSOTM());
