@@ -32,7 +32,7 @@ public class Launcher extends SubsystemBase {
     rpsAdjust += adj;
   }
 
-  private double fullyManualInitialVelocity = LauncherConstants.DEFAULT_VELOCITY_SETPOINT_RPS;
+  private final LoggedTunableNumber fullyManualInitialVelocity = new LoggedTunableNumber("Launcher/Default velocity", LauncherConstants.DEFAULT_VELOCITY_SETPOINT_RPS);
 
   public Launcher(LauncherIO io) {
     this.io = io;
@@ -59,10 +59,10 @@ public class Launcher extends SubsystemBase {
       desiredVelocity =
           RobotContainer.getShouldSOTM()
               ? RobotContainer.getShotSolution().getShooterSpeedRPS()
-              : 20;
+              : fullyManualInitialVelocity.get();
 
     } else if (currentScoringMode == ScoringMode.FULLY_MANUAL) {
-      desiredVelocity = fullyManualInitialVelocity + rpsAdjust;
+      desiredVelocity = fullyManualInitialVelocity.get();
     }
 
     double launcherRPS = Math.abs(desiredVelocity + rpsAdjust);
@@ -101,7 +101,7 @@ public class Launcher extends SubsystemBase {
   }
 
   /** velocity will be calculated from aim assist command factory */
-  public void setVelocity(double velocityRPS, double ffamps) {
+  private void setVelocity(double velocityRPS, double ffamps) {
     io.runLauncherVelocity(velocityRPS, ffamps);
   }
 
@@ -110,7 +110,7 @@ public class Launcher extends SubsystemBase {
   }
 
   // this is the CORRECT method to turn launcher off
-  public void turnLauncherOff() {
+  private void turnLauncherOff() {
     io.stopLauncher();
   }
 
