@@ -41,7 +41,7 @@ public class MovingShotSolver {
 
   private static double hubHeightMeters = Hub.height;
   private static double shooterHeightMeters = Units.inchesToMeters(22.5);
-  private static double hoodAngleRadians = Units.degreesToRadians(65);
+  private static double hoodAngleRadians = Units.degreesToRadians(70);
 
   private final LoggedTunableNumber rpsMultiplier =
       new LoggedTunableNumber("SOTM/Rps Multiplier", 2.2);

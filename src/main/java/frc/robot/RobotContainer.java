@@ -406,7 +406,12 @@ public class RobotContainer {
             .andThen(new WaitCommand(0.2))
             .andThen(new InstantCommand(() -> feeder.setRunning()))
             .andThen(new WaitCommand(0.2))
-            .andThen((new InstantCommand(() -> spindexer.setRunning()))));
+            .andThen(
+                (new InstantCommand(
+                    () -> {
+                      spindexer.setRunning();
+                      setScoringMode(ScoringMode.FULLY_AUTO);
+                    }))));
     NamedCommands.registerCommand(
         "Stop Launching",
         new InstantCommand(() -> feeder.setStopped())
