@@ -5,18 +5,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.intake.IntakeConstants.IntakeState;
 import frc.robot.subsystems.intake.IntakeConstants.StateConfig;
 import frc.robot.util.LoggedTunableNumber;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private IntakeIO io;
-
-  public IntakeState intakeState = IntakeState.STOWED;
-
-  public static double pivotDegreesAdjust = 0.0;
-
-  public static double dutyAdjust = 0.0;
-
-  public static double voltAdjust = 0.0;
+  @AutoLogOutput public IntakeState intakeState = IntakeState.STOWED;
+  @AutoLogOutput public static double pivotDegreesAdjust = 0.0;
+  @AutoLogOutput public static double dutyAdjust = 0.0;
+  @AutoLogOutput public static double voltAdjust = 0.0;
 
   public void adjustPivotAngleBy(double adj) {
     pivotDegreesAdjust += adj;

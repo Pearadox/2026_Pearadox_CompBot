@@ -44,7 +44,7 @@ public class MovingShotSolver {
   private static double hoodAngleRadians = Units.degreesToRadians(70);
 
   private final LoggedTunableNumber rpsMultiplier =
-      new LoggedTunableNumber("SOTM/Rps Multiplier", 2.2);
+      new LoggedTunableNumber("SOTM/Rps Multiplier", 2.1);
 
   private static final double MPSToRPSConversion =
       LauncherConstants.LAUNCHER_GEARING / LauncherConstants.ROLLER_CIRCUMFERENCE_METERS;
