@@ -69,6 +69,8 @@ public class FeederConstants {
     canRangeConfig.ProximityParams.MinSignalStrengthForValidMeasurement = 10000;
     canRangeConfig.ProximityParams.ProximityThreshold = 0.02;
     canRangeConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
+    canRangeConfig.FovParams.FOVCenterX = 3;
+    canRangeConfig.FovParams.FOVCenterY = -6.5;
     return canRangeConfig;
   }
 }
