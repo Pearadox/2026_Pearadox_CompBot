@@ -72,6 +72,7 @@ public class PearadoxTalonFX extends TalonFX {
     double supplyCurrent = telemetrySignals[3].getValueAsDouble();
 
     cumulativeSupplyCurrentDrawAh += supplyCurrent * dtHours;
+    lastTimestamp = currentTime;
 
     return new MotorData(
         telemetrySignals[0].getValueAsDouble(), // position

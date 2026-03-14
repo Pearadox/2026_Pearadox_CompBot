@@ -42,4 +42,6 @@ public interface VisionIO {
   public default void updateInputs(VisionIOInputs inputs) {}
 
   public default void captureRewind() {}
+
+  public default void setThrottle(int throttle) {}
 }

@@ -122,6 +122,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledInit() {
     robotContainer.vision.captureRewind();
+    robotContainer.vision.unthrottleLimelights();
   }
 
   /** This function is called periodically when disabled. */
@@ -131,6 +132,8 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    robotContainer.vision.unthrottleLimelights();
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -153,6 +156,8 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    robotContainer.vision.unthrottleLimelights();
 
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
     alliance = allianceOptional.orElse(Alliance.Blue);
