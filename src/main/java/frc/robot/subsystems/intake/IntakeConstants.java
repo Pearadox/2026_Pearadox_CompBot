@@ -44,8 +44,8 @@ public class IntakeConstants {
   public static final int ROLLER_1_LEADER_ID = 31;
   public static final int ROLLER_2_FOLLOWER_ID = 32;
 
-  public static final int ROLLER_SUPPLY_CURRENT_LIMIT = 70; // changed 3/17/26 for #119
-  public static final int ROLLER_STATOR_CURRENT_LIMIT = 80;
+  public static final int ROLLER_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
+  public static final int ROLLER_STATOR_CURRENT_LIMIT = 60;
 
   // pivot constants
   public static final int PIVOT_ID = 30;

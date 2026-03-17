@@ -35,8 +35,8 @@ public class LauncherConstants {
   public static final double SHOOTER_VELOCITY_DEADBAND = 3.0; // in rps
   public static final double SHOOTER_MAX_VELOCITY = 100.0; // in rps
 
-  public static final int LAUNCHER_SUPPLY_CURRENT_LIMIT = 70; // changed 3/17/26 for #119
-  public static final int LAUNCHER_STATOR_CURRENT_LIMIT = 80;
+  public static final int LAUNCHER_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
+  public static final int LAUNCHER_STATOR_CURRENT_LIMIT = 60;
 
   public static final double LAUNCHER_GEARING = 1.0;
   public static final double DEFAULT_VELOCITY_SETPOINT_RPS = 51.3;

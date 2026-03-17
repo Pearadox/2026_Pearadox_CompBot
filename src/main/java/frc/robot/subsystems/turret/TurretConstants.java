@@ -11,8 +11,8 @@ public final class TurretConstants {
   public static final double TURRET_GEAR_RATIO = 500. / 9.; // ~55.55:1, (100/9)(50/20)(32/16)
   public static final double TURRET_P_COEFFICIENT = 2 * Math.PI / TURRET_GEAR_RATIO;
 
-  public static final int TURRET_SUPPLY_CURRENT_LIMIT = 70; // changed 3/17/26 for #119
-  public static final int TURRET_STATOR_CURRENT_LIMIT = 80;
+  public static final int TURRET_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
+  public static final int TURRET_STATOR_CURRENT_LIMIT = 60;
 
   public static final double TURRET_STARTING_ANGLE = Units.degreesToRadians(0);
   public static final double TURRET_MIN_ANGLE = Units.degreesToRadians(-365);
