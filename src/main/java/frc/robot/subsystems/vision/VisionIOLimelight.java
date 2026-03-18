@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import java.util.HashSet;
@@ -26,6 +27,8 @@ import java.util.function.Supplier;
 public class VisionIOLimelight implements VisionIO {
   private final Supplier<Rotation2d> rotationSupplier;
   private final DoubleArrayPublisher orientationPublisher;
+  private final DoubleArrayPublisher rewindPublisher;
+  private final IntegerPublisher throttlePublisher;
 
   private final DoubleSubscriber latencySubscriber;
   private final DoubleSubscriber txSubscriber;
@@ -34,6 +37,8 @@ public class VisionIOLimelight implements VisionIO {
   private final DoubleArraySubscriber megatag2Subscriber;
 
   private int numRewinds = 0;
+
+  private final double[] rewindArray = new double[2];
 
   /**
    * Creates a new VisionIOLimelight.
@@ -51,6 +56,9 @@ public class VisionIOLimelight implements VisionIO {
     megatag1Subscriber = table.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[] {});
     megatag2Subscriber =
         table.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[] {});
+
+    rewindPublisher = table.getDoubleArrayTopic("capture_rewind").publish();
+    throttlePublisher = table.getIntegerTopic("throttle_set").publish();
   }
 
   @Override
@@ -154,9 +162,14 @@ public class VisionIOLimelight implements VisionIO {
 
   @Override
   public void captureRewind() {
-    NetworkTableInstance.getDefault()
-        .getTable(VisionConstants.camera0Name)
-        .getEntry("capture_rewind")
-        .setDoubleArray(new double[] {++numRewinds, 235});
+    rewindArray[0] = ++numRewinds;
+    rewindArray[1] = VisionConstants.REWIND_LENGTH_SECONDS;
+
+    rewindPublisher.set(rewindArray);
+  }
+
+  @Override
+  public void setThrottle(int throttle) {
+    throttlePublisher.set(throttle);
   }
 }

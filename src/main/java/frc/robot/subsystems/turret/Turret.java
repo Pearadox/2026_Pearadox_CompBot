@@ -38,7 +38,8 @@ public class Turret extends SubsystemBase {
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
   private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
   private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
-  private final LoggedTunableNumber mmCruiseVel = new LoggedTunableNumber("Turret/mmCruiseVel", 85);
+  private final LoggedTunableNumber mmCruiseVel =
+      new LoggedTunableNumber("Turret/mmCruiseVel", 35); // 85
   private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 450);
   private final LoggedTunableNumber testSetpoint =
       new LoggedTunableNumber("Turret/test Setpoint", -90);
@@ -76,13 +77,15 @@ public class Turret extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Turret", inputs);
 
-    if (kP.hasChanged(hashCode()) || kI.hasChanged(hashCode()) || kD.hasChanged(hashCode())) {
+    int hashCode = hashCode();
+
+    if (kP.hasChanged(hashCode) || kI.hasChanged(hashCode) || kD.hasChanged(hashCode)) {
       io.setPID(kP.get(), kI.get(), kD.get());
     }
-    if (kS.hasChanged(hashCode()) || kV.hasChanged(hashCode()) || kA.hasChanged(hashCode())) {
+    if (kS.hasChanged(hashCode) || kV.hasChanged(hashCode) || kA.hasChanged(hashCode)) {
       io.setFFGains(kS.get(), kV.get(), kA.get());
     }
-    if (mmCruiseVel.hasChanged(hashCode()) || mmAcceleration.hasChanged(hashCode())) {
+    if (mmCruiseVel.hasChanged(hashCode) || mmAcceleration.hasChanged(hashCode)) {
       io.setMotionMagicLimits(mmCruiseVel.get(), mmAcceleration.get());
     }
   }

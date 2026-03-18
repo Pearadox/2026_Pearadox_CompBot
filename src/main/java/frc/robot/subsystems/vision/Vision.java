@@ -181,4 +181,16 @@ public class Vision extends SubsystemBase {
       camera.captureRewind();
     }
   }
+
+  public void throttleLimelights() {
+    for (VisionIO camera : io) {
+      camera.setThrottle(VisionConstants.DISABLED_THROTTLE);
+    }
+  }
+
+  public void unthrottleLimelights() {
+    for (VisionIO camera : io) {
+      camera.setThrottle(VisionConstants.ENABLED_THROTTLE);
+    }
+  }
 }
