@@ -161,6 +161,7 @@ public class Robot extends LoggedRobot {
     }
 
     robotContainer.vision.unthrottleLimelights();
+    robotContainer.launcher.setIdle();
 
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
     alliance = allianceOptional.orElse(Alliance.Blue);

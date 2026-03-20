@@ -65,7 +65,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Feeder feeder;
   private final Intake intake;
-  private final Launcher launcher;
+  public final Launcher launcher;
   private final Spindexer spindexer;
   private final Turret turret;
   public final Vision vision;
