@@ -236,7 +236,13 @@ public class RobotContainer {
         .whileTrue(
             new ShootOnTheMove(
                     launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-                .alongWith(launcher.score()));
+                .alongWith(launcher.score()))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  feeder.setStopped();
+                  spindexer.setStopped();
+                }));
 
     drivercontroller
         .leftBumper()
@@ -256,7 +262,15 @@ public class RobotContainer {
 
     // Op Bindings
     opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
-    opController.b().onTrue(new InstantCommand(() -> launcher.setOff()));
+    opController
+        .b()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  launcher.setOff();
+                  spindexer.setStopped();
+                  feeder.setStopped();
+                }));
     opController.y().onTrue(new InstantCommand(() -> launcher.setManual()));
 
     opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
@@ -342,7 +356,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Stop Launching",
         new InstantCommand(() -> feeder.setStopped())
-            .andThen((new InstantCommand(() -> spindexer.setStopped()))));
+            .andThen(
+                (new InstantCommand(
+                    () -> {
+                      spindexer.setStopped();
+                      launcher.setOff();
+                    }))));
 
     // Intake Commands
     NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));

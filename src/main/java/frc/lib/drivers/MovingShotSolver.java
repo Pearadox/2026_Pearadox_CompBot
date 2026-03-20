@@ -220,7 +220,7 @@ public class MovingShotSolver {
     Logger.recordOutput(
         "SOTM/fieldRelativeTurretAngle", fieldRelativeTurretAngleRot2d.getDegrees());
     Logger.recordOutput("SOTM/timeOfFlight", ToF);
-    Logger.recordOutput("SOTM/desiredShooterSpeed_RPS", shooterSpeedRPS);
+    Logger.recordOutput("SOTM/desiredShooterSpeed_RPS", shooterSpeedRPS * rpsMultiplier.get());
     Logger.recordOutput("SOTM/cappedShooterSpeed_RPS", outputtedShooterVelocity);
     Logger.recordOutput("SOTM/currentRotation", curPose.getRotation().getDegrees());
     Logger.recordOutput("SOTM/targetPose", targetPose);
