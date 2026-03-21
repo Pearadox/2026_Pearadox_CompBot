@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.62718309859155,
-        "y": 6.440892018779343
+        "x": 2.456457831325301,
+        "y": 6.1003373493975905
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.751743772241993,
-        "y": 5.213131672597865
+        "x": 5.581018504975744,
+        "y": 4.872577003216112
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot front space"
     },
     {
       "anchor": {
