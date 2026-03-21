@@ -367,5 +367,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
+    NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
   }
 }

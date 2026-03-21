@@ -13,7 +13,8 @@ public class IntakeConstants {
     STOWED,
     DEPLOYED,
     INTAKING,
-    OUTTAKING
+    OUTTAKING,
+    FLOW_STATE // pivot stowed but rollers still going
   }
 
   /**
@@ -28,7 +29,8 @@ public class IntakeConstants {
             IntakeState.STOWED, new StateConfig(0, 0),
             IntakeState.DEPLOYED, new StateConfig(100, 0),
             IntakeState.INTAKING, new StateConfig(100, 4.0),
-            IntakeState.OUTTAKING, new StateConfig(100, -4.0));
+            IntakeState.OUTTAKING, new StateConfig(100, -4.0),
+            IntakeState.FLOW_STATE, new StateConfig(0, 4.0));
   }
 
   // public static record StateConfig(double angleDeg, double amps, double maxDuty) {
