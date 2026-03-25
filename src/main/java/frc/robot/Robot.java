@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.LauncherVisualizer;
+import frc.robot.util.EnergyTracker;
 import frc.robot.util.LoggedTracer;
 import frc.robot.util.PhoenixUtil;
 import java.util.Optional;
@@ -112,6 +113,7 @@ public class Robot extends LoggedRobot {
     // Threads.setCurrentThreadPriority(false, 10);
 
     robotContainer.visualizer.periodic();
+    EnergyTracker.periodic();
 
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
     alliance = allianceOptional.orElse(Alliance.Blue);
