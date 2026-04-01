@@ -7,7 +7,7 @@ import edu.wpi.first.math.util.Units;
 import java.util.function.Supplier;
 
 public class DriveHelpers {
-
+  private static Rotation2d lastCourse = new Rotation2d();
   /**
    * rotates the robot 45 degrees given current pose
    *
@@ -36,11 +36,10 @@ public class DriveHelpers {
     double vx = chassisSpeeds.vxMetersPerSecond;
     double vy = chassisSpeeds.vyMetersPerSecond;
 
-    Rotation2d course = new Rotation2d(vx, vy);
-    if (Math.hypot(vx, vy) < 0.05) {
-      return new Rotation2d();
+    if (Math.hypot(vx, vy) > 0.05) {
+        lastCourse = new Rotation2d(vx, vy);
     }
-    return course;
+    return lastCourse;
   }
 
 }
