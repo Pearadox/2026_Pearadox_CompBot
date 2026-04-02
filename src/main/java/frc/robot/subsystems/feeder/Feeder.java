@@ -6,6 +6,7 @@ package frc.robot.subsystems.feeder;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.feeder.FeederConstants.FeederState;
 import frc.robot.subsystems.feeder.FeederConstants.StateConfig;
@@ -20,6 +21,7 @@ public class Feeder extends SubsystemBase {
   private Debouncer canRangeDebouncer = new Debouncer(0.1, DebounceType.kFalling);
   private int fuelCount = 0;
   private boolean lastDetected = false;
+  Timer timer = new Timer();
 
   /** Creates a new Feeder. */
   public Feeder(FeederIO io) {
@@ -51,6 +53,13 @@ public class Feeder extends SubsystemBase {
     return canRangeDebouncer.calculate(inputs.canRangeIsDetected);
   }
 
+  public boolean isHopperEmpty() {
+    if (timer.get() > 3) {
+      return true;
+    }
+    return false;
+  }
+
   public double canRangeGetDistanceMeters() {
     return inputs.canRangeDistanceMeters;
   }
@@ -63,6 +72,7 @@ public class Feeder extends SubsystemBase {
     boolean isDetectedDebounced = isDetectedDebounced();
     if (isDetectedDebounced && !lastDetected) {
       fuelCount++;
+      timer.reset();
     }
     lastDetected = isDetectedDebounced;
   }

@@ -352,7 +352,7 @@ public class RobotContainer {
                 (new InstantCommand(
                     () -> {
                       spindexer.setRunning();
-                    }))));
+                    })).until(() -> feeder.isHopperEmpty())));
     NamedCommands.registerCommand(
         "Stop Launching",
         new InstantCommand(() -> feeder.setStopped())
