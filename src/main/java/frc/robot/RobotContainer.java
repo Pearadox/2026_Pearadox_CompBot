@@ -13,7 +13,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,6 +72,8 @@ public class RobotContainer {
   private final Turret turret;
   public final Vision vision;
   public static final LEDStrip ledStrip = LEDStrip.getInstance();
+
+  private boolean autoScore = false;
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -280,7 +281,19 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
 
     // Op Bindings
-    opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
+    
+    //standard hold-button to shoot mode
+    opController
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  launcher.setScoring();
+                  turret.setAuto();
+                  autoScore = false;
+                }));
+
+    //subsystems off mode
     opController
         .b()
         .onTrue(
@@ -290,7 +303,48 @@ public class RobotContainer {
                   spindexer.setStopped();
                   feeder.setStopped();
                 }));
-    opController.y().onTrue(new InstantCommand(() -> launcher.setManual()));
+
+    //manual scoring mode
+    opController
+        .y()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  launcher.setManual();
+                  turret.setManual();
+                  autoScore = false;
+                }));
+
+    //auto scoring mode
+    opController
+        .x()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  launcher.setScoring();
+                  turret.setAuto();
+                  autoScore = true;
+                }));
+
+    Trigger autoShootOnTheMove =
+        new Trigger(
+            () ->
+                autoScore
+                    && Robot.isHubCurrentlyActive()
+                    && MovingShotSolver.isInsideAllianceZone(drive.getPose(), Robot.getAlliance()));
+
+    autoShootOnTheMove
+        .whileTrue(
+            new ShootOnTheMove(
+                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
+                .alongWith(launcher.score()))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  feeder.setStopped();
+                  spindexer.setStopped();
+                }));
+
 
     opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));

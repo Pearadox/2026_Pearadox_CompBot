@@ -61,18 +61,28 @@ public class MovingShotSolver {
       return alliance == Alliance.Red ? redLocation : blueLocation;
     }
 
-    public static Goal findTarget(Pose2d robotPose, Alliance alliance) {
+    public static boolean isInsideAllianceZone(Pose2d robotPose, boolean isRedAlliance) {
+
       double robotX = robotPose.getX();
-      double robotY = robotPose.getY();
-      boolean isRedAlliance = alliance == Alliance.Red;
 
       boolean inAllianceZone =
           (!isRedAlliance && robotX < LinesVertical.allianceZone)
               || (isRedAlliance && robotX > LinesVertical.oppAllianceZone);
 
+      return inAllianceZone;
+    }
+
+    public static Goal findTarget(Pose2d robotPose, Alliance alliance) {
+
+      boolean isRedAlliance = alliance == Alliance.Red;
+      boolean inAllianceZone = isInsideAllianceZone(robotPose, isRedAlliance);
+
+      Logger.recordOutput("SOTM/isInsideAllianceZone", inAllianceZone);
+
       if (inAllianceZone) {
         return HUB;
       }
+      double robotY = robotPose.getY();
 
       boolean isLowerHalf = robotY < FieldConstants.fieldWidth / 2.0;
 
@@ -82,6 +92,11 @@ public class MovingShotSolver {
         return isLowerHalf ? DEPOT_CORNER : OUTPOST_CORNER;
       }
     }
+  }
+
+  public static boolean isInsideAllianceZone(Pose2d robotPose, Alliance alliance) {
+    boolean isRedAlliance = alliance == Alliance.Red;
+    return Goal.isInsideAllianceZone(robotPose, isRedAlliance);
   }
 
   private final LoggedTunableNumber rpsMultiplier =

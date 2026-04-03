@@ -237,11 +237,14 @@ public class Robot extends LoggedRobot {
           case Blue -> redInactiveFirst;
         };
 
-    if (matchTime > 130) return true;
-    if (matchTime > 105) return shift1Active;
-    if (matchTime > 80) return !shift1Active;
-    if (matchTime > 55) return shift1Active;
-    if (matchTime > 30) return !shift1Active;
+    // hub register delay / shot ToF delay in (s)
+    double allianceBuffer = shift1Active ? -2 : 2;
+
+    if (matchTime > 130 - Math.abs(allianceBuffer)) return true;
+    if (matchTime > 105 + allianceBuffer) return shift1Active;
+    if (matchTime > 80 - allianceBuffer) return !shift1Active;
+    if (matchTime > 55 + allianceBuffer) return shift1Active;
+    if (matchTime > 30 - allianceBuffer) return !shift1Active;
     return true;
   }
 }

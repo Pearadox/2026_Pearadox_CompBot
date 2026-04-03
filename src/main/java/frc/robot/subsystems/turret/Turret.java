@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
 import lombok.Getter;
+import lombok.Setter;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,6 +25,8 @@ public class Turret extends SubsystemBase {
   private Supplier<Rotation2d> robotRotationSupplier;
 
   @AutoLogOutput @Getter private boolean hasZeroed = false;
+
+  @AutoLogOutput @Getter @Setter private boolean isInManualMode = false;
 
   @AutoLogOutput private double turretRotationAdjust = 0;
 
@@ -90,10 +93,24 @@ public class Turret extends SubsystemBase {
     }
   }
 
+  public void setManual() {
+    isInManualMode = true;
+  }
+
+  public void setAuto() {
+    isInManualMode = false;
+    turretRotationAdjust = 0;
+  }
+
   /** Follows a robot-centric angle. */
   public void followRobotCentricTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
     if (!hasZeroed) return;
-    double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
+
+    double setpointTurretRads =
+        isInManualMode
+            ? wrap(turretRotationAdjust)
+            : wrap(robotCentricAngleSupplier.get().getRadians());
+
     double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
     double ffVolts = getFF(setpointTurretRads);
