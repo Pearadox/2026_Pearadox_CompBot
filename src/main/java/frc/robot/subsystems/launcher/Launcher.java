@@ -81,13 +81,17 @@ public class Launcher extends SubsystemBase {
     LauncherVisualizer.getInstance()
         .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
     LauncherVisualizer.getInstance()
-        .updateHoodPositionDeg(Units.rotationsToDegrees(inputs.hoodData.position()));
+        .updateHoodPositionDeg(
+            Units.rotationsToDegrees(inputs.hoodData.position() / LauncherConstants.HOOD_GEARING));
 
     Logger.recordOutput("Launcher/adjust", rpsAdjust);
     Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
 
-    // io.setHoodAngleRads(launcherState.getHoodAngleRads());
-    // Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
+    io.setHoodAngleRads(launcherState.getHoodAngleRads());
+    Logger.recordOutput(
+        "Hood/Desired-Angle-Rotations",
+        Units.radiansToRotations(
+            launcherState.getHoodAngleRads() - LauncherConstants.HOOD_MIN_ANGLE_RADS));
     // Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
     // Logger.recordOutput(
     //     "Hood/Current-Angle",
@@ -104,7 +108,7 @@ public class Launcher extends SubsystemBase {
       io.setCurrentLimits(statorCurrentLimit.get(), supplyCurrentLimit.get());
     }
 
-    io.setHoodAngleRads(launcherState.getHoodAngleRads());
+    // io.setHoodAngleRads(launcherState.getHoodAngleRads());
   }
 
   /** velocity will be calculated from aim assist command factory */

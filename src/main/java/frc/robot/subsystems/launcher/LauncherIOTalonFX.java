@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import edu.wpi.first.math.util.Units;
 import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.util.EnergyTracker.Compeartment;
 import frc.robot.util.PhoenixUtil;
@@ -29,6 +28,7 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
   private final TalonFXConfiguration launcherConfigs;
 
   protected final PearadoxTalonFX hood;
+  private final TalonFXConfiguration hoodConfigs;
 
   protected final PositionVoltage hoodControl;
 
@@ -46,9 +46,9 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
     velocityVoltageRequest = new VelocityVoltage(0);
     launcher2Control = new Follower(launcher1Leader.getDeviceID(), MotorAlignmentValue.Opposed);
 
-    hood =
-        new PearadoxTalonFX(
-            LauncherConstants.HOOD_ID, LauncherConstants.HOOD_CONFIG(), Compeartment.HOOD);
+    hoodConfigs = LauncherConstants.HOOD_CONFIG();
+
+    hood = new PearadoxTalonFX(LauncherConstants.HOOD_ID, hoodConfigs, Compeartment.HOOD);
 
     hoodControl = new PositionVoltage(0);
   }
@@ -86,11 +86,14 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
     if (angleRads < LauncherConstants.HOOD_MAX_ANGLE_RADS
         && angleRads > LauncherConstants.HOOD_MIN_ANGLE_RADS) {
       double setpoint =
-          Units.radiansToRotations(angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS)
-              * LauncherConstants.HOOD_GEARING;
+          (angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS)
+              / LauncherConstants.HOOD_P_COEFFICIENT;
       hood.setControl(hoodControl.withPosition(setpoint));
+      System.out.printf("%.2f set %.2f actual%n", setpoint, hood.getPosition().getValueAsDouble());
+      Logger.recordOutput("Hood/AngleSetpointRots", setpoint);
+      Logger.recordOutput("Hood/HoodAngle-inRange", true);
     } else {
-      Logger.recordOutput("HoodAngle-OutofRange", angleRads);
+      Logger.recordOutput("Hood/HoodAngle-inRange", false);
     }
   }
 

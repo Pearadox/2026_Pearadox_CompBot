@@ -27,12 +27,12 @@ public class LauncherIOSim extends LauncherIOTalonFX {
       new SingleJointedArmSim(
           LauncherConstants.HOOD_MOTOR,
           LauncherConstants.HOOD_GEARING,
-          SingleJointedArmSim.estimateMOI(
-              LauncherConstants.HOOD_LENGTH_METERS, LauncherConstants.HOOD_MASS_KG),
+          0.2, // SingleJointedArmSim.estimateMOI(
+          // LauncherConstants.HOOD_LENGTH_METERS, LauncherConstants.HOOD_MASS_KG),
           LauncherConstants.HOOD_LENGTH_METERS,
-          LauncherConstants.HOOD_MIN_ANGLE_RADS,
-          LauncherConstants.HOOD_MAX_ANGLE_RADS,
-          true,
+          -1,
+          3,
+          false,
           LauncherConstants.HOOD_MIN_ANGLE_RADS);
   private TalonFXSimState hoodSimState;
 
@@ -47,27 +47,24 @@ public class LauncherIOSim extends LauncherIOTalonFX {
   public void updateInputs(LauncherIOInputs inputs) {
     super.updateInputs(inputs);
 
-    updateSim();
-  }
-
-  public void updateSim() {
     launcherSimState.setSupplyVoltage(12);
     launcherPhysicsSim.setInputVoltage(launcherSimState.getMotorVoltage());
 
     launcherSimState.setRawRotorPosition(
         Units.radiansToRotations(launcherPhysicsSim.getAngleRads()));
     launcherSimState.setRotorVelocity(
-        Units.radiansPerSecondToRotationsPerMinute(launcherPhysicsSim.getVelocityRadPerSec()) / 60);
-
-    launcherPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
+        Units.radiansToRotations(launcherPhysicsSim.getVelocityRadPerSec()));
 
     hoodSimState.setSupplyVoltage(12);
     hoodPhysicsSim.setInputVoltage(hoodSimState.getMotorVoltage());
 
-    hoodSimState.setRawRotorPosition(Units.radiansToRotations(hoodPhysicsSim.getAngleRads()));
-    hoodSimState.setRotorVelocity(
-        Units.radiansPerSecondToRotationsPerMinute(hoodPhysicsSim.getVelocityRadPerSec()) / 60);
-
+    launcherPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
     hoodPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
+
+    hoodSimState.setRawRotorPosition(
+        (hoodPhysicsSim.getAngleRads() - LauncherConstants.HOOD_MIN_ANGLE_RADS)
+            / LauncherConstants.HOOD_P_COEFFICIENT * 0.1);
+    hoodSimState.setRotorVelocity(
+        hoodPhysicsSim.getVelocityRadPerSec() / LauncherConstants.HOOD_P_COEFFICIENT * 0.1);
   }
 }

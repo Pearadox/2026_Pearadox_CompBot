@@ -16,7 +16,7 @@ import lombok.Getter;
 public class LauncherConstants {
   public static enum LauncherState {
     OFF(Units.degreesToRadians(60)),
-    MANUAL(Units.degreesToRadians(40)),
+    MANUAL(Units.degreesToRadians(20)),
     IDLE(Units.degreesToRadians(40)),
     SELF_DIRECTING(Units.degreesToRadians(40));
     // PASSING(Units.degreesToRadians(25)); // TODO: find proper hood angles
@@ -68,12 +68,12 @@ public class LauncherConstants {
     return LAUNCHER_CONFIG;
   }
 
-  public static final int HOOD_ID = 0; // TODO: get
+  public static final int HOOD_ID = 23; // TODO: get
 
-  public static final double HOOD_STATOR_CURRENT = 0.0; // TODO: tune
-  public static final double HOOD_SUPPLY_CURRENT = 0.0; // TODO: tune
+  public static final double HOOD_STATOR_CURRENT = 80.0; // TODO: tune
+  public static final double HOOD_SUPPLY_CURRENT = 80.0; // TODO: tune
 
-  public static final double HOOD_GEARING = 0.0; // TODO: tune
+  public static final double HOOD_GEARING = 261. / 18.; // 14.5; // TODO: tune
 
   public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(10);
   public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(40);
@@ -89,12 +89,12 @@ public class LauncherConstants {
     HOOD_CONFIG.CurrentLimits.SupplyCurrentLimit = HOOD_SUPPLY_CURRENT;
 
     HOOD_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    HOOD_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO: find
+    HOOD_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // TODO: find
 
     HOOD_CONFIG.Voltage.PeakForwardVoltage = 6;
     HOOD_CONFIG.Voltage.PeakReverseVoltage = 6;
 
-    HOOD_CONFIG_SLOT0.kP = 0.1; // TODO: tune
+    HOOD_CONFIG_SLOT0.kP = 0.5; // TODO: tune
     HOOD_CONFIG_SLOT0.kI = 0.0; // TODO: tune
     HOOD_CONFIG_SLOT0.kD = 0.0; // TODO: tune
     HOOD_CONFIG_SLOT0.kV = 0.0; // TODO: tune
@@ -111,11 +111,12 @@ public class LauncherConstants {
       Units.inchesToMeters(22.5); // TODO: double check
   public static final double LAUNCHER_ROLLER_MOI = 0.003;
   // 0.5 * ROLLER_MASS_KG * Math.pow(ROLLER_RADIUS_METERS, 2);
-  public static final int ROLLER_SEGMENT_COUNT = 60;
+  public static final int ROLLER_SEGMENT_COUNT = 20;
   public static final int SIM_LINE_WIDTH = 5;
 
-  public static final DCMotor HOOD_MOTOR = DCMotor.getKrakenX44(1);
+  public static final DCMotor HOOD_MOTOR = DCMotor.getKrakenX60(1);
   public static final double HOOD_LENGTH_METERS =
-      Units.inchesToMeters(10); // TODO: get better values
-  public static final double HOOD_MASS_KG = Units.lbsToKilograms(3); // TODO: get better values
+      Units.inchesToMeters(8); // TODO: get better values
+  public static final double HOOD_MASS_KG = Units.lbsToKilograms(1); // TODO: get better values
+  public static final double HOOD_P_COEFFICIENT = (2 * Math.PI) / LauncherConstants.HOOD_GEARING;
 }
