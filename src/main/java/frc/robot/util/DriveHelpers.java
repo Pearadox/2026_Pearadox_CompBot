@@ -5,9 +5,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveHelpers {
+  private static Rotation2d lastCourse = new Rotation2d();
+
   /**
    * rotates the robot 45 degrees given current pose
    *
@@ -38,15 +39,11 @@ public class DriveHelpers {
     double vx = chassisSpeeds.vxMetersPerSecond;
     double vy = chassisSpeeds.vyMetersPerSecond;
 
-    if (Math.hypot(vx, vy) < 0.05) {
-      return new Rotation2d();
+    if (Math.hypot(vx, vy) > 0.1) {
+      double angleRad = (Math.atan2(vy, vx));
+      lastCourse = new Rotation2d(angleRad);
     }
 
-    Logger.recordOutput("Snake/vy", vy);
-    Logger.recordOutput("Snake/vx", vx);
-    double angleRad = (Math.atan2(vy, vx));
-
-    Logger.recordOutput("Snake/snake angle", Units.radiansToDegrees(angleRad));
-    return new Rotation2d(angleRad);
+    return lastCourse;
   }
 }
