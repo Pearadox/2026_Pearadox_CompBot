@@ -196,7 +196,7 @@ public class RobotContainer {
               LoggedTracer.record("MovingShotSolve");
             },
             vision));
-    ledStrip.isHubActive();
+    ledStrip.setDefaultCommand(new RunCommand(() -> ledStrip.isHubActive(), ledStrip));
   }
 
   /**
