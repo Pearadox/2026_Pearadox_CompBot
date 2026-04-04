@@ -211,6 +211,7 @@ public class RobotContainer {
     drivercontroller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when start button is pressed
+    // hi chicken jockey
     drivercontroller
         .start()
         .onTrue(
@@ -232,6 +233,19 @@ public class RobotContainer {
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
     drivercontroller
+        .rightBumper()
+        .whileTrue(
+            new ShootOnTheMove(
+                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
+                .alongWith(launcher.score()))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  feeder.setStopped();
+                  spindexer.setStopped();
+                }));
+
+                opController
         .rightBumper()
         .whileTrue(
             new ShootOnTheMove(
