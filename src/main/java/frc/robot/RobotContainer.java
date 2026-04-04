@@ -48,6 +48,7 @@ import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherIO;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
+import frc.robot.subsystems.leds.LEDStrip;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
@@ -60,6 +61,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
+import frc.robot.util.LoggedTracer;
 
 public class RobotContainer {
   // Subsystems
@@ -70,6 +72,7 @@ public class RobotContainer {
   public final Spindexer spindexer;
   private final Turret turret;
   public final Vision vision;
+  public static final LEDStrip ledStrip = LEDStrip.getInstance();
 
   // Visualizer
   public final RobotVisualizer visualizer;
@@ -188,8 +191,13 @@ public class RobotContainer {
 
     vision.setDefaultCommand(
         new RunCommand(
-            () -> MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds),
+            () -> {
+              LoggedTracer.reset();
+              MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds);
+              LoggedTracer.record("MovingShotSolve");
+            },
             vision));
+    ledStrip.isHubActive();
   }
 
   /**
@@ -231,6 +239,16 @@ public class RobotContainer {
                 () -> -drivercontroller.getLeftY(),
                 () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
+
+    drivercontroller
+        .y()
+        .toggleOnTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
+                () ->
+                    DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds, drive::getRotation)));
 
     drivercontroller
         .rightBumper()
