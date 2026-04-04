@@ -215,10 +215,10 @@ public class RobotContainer {
     //               spindexer.setStopped();
     //             }));
 
-    drivercontroller
-        .a()
-        .whileTrue(new InstantCommand(() -> intake.setIntaking()))
-        .onFalse(new InstantCommand(() -> intake.setDeployed()));
+    // drivercontroller
+    //     .a()
+    //     .whileTrue(new InstantCommand(() -> intake.setIntaking()))
+    //     .onFalse(new InstantCommand(() -> intake.setDeployed()));
     // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
     // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
     // drivercontroller
@@ -242,7 +242,7 @@ public class RobotContainer {
     //               spindexer.setStopped();
     //               feeder.setStopped();
     //             }));
-    opController.y().onTrue(new InstantCommand(() -> launcher.setManual()));
+    opController.y().onTrue(new InstantCommand(() -> launcher.zeroHood()).ignoringDisable(true));
 
     // opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     // opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));

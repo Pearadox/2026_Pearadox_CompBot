@@ -94,13 +94,16 @@ public class LauncherConstants {
     HOOD_CONFIG.Voltage.PeakForwardVoltage = 4;
     HOOD_CONFIG.Voltage.PeakReverseVoltage = -4;
 
-    HOOD_CONFIG_SLOT0.kP = 1.0; // TODO: tune
-    HOOD_CONFIG_SLOT0.kI = 0.0; // TODO: tune
-    HOOD_CONFIG_SLOT0.kD = 0.0; // TODO: tune
-    HOOD_CONFIG_SLOT0.kV = 0.0; // TODO: tune
+    HOOD_CONFIG_SLOT0.kP = 4; // TODO: tune
+    HOOD_CONFIG_SLOT0.kI = 1.18; // TODO: tune
+    HOOD_CONFIG_SLOT0.kD = 0.1323; // TODO: tune
+    HOOD_CONFIG_SLOT0.kG = 0.254;
+    HOOD_CONFIG_SLOT0.kS = 0.07115;
 
     return HOOD_CONFIG;
   }
+
+  public static final double HOOD_KG_OFFSET_DEG = 40.0;
 
   // SIM
   public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
@@ -116,7 +119,7 @@ public class LauncherConstants {
 
   public static final DCMotor HOOD_MOTOR = DCMotor.getKrakenX60(1);
   public static final double HOOD_LENGTH_METERS =
-      Units.inchesToMeters(8); // TODO: get better values
-  public static final double HOOD_MASS_KG = Units.lbsToKilograms(1); // TODO: get better values
+      Units.inchesToMeters(10); // TODO: get better values
+  public static final double HOOD_MASS_KG = Units.lbsToKilograms(3); // TODO: get better values
   public static final double HOOD_P_COEFFICIENT = (2 * Math.PI) / LauncherConstants.HOOD_GEARING;
 }

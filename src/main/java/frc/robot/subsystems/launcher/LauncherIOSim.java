@@ -27,12 +27,12 @@ public class LauncherIOSim extends LauncherIOTalonFX {
       new SingleJointedArmSim(
           LauncherConstants.HOOD_MOTOR,
           LauncherConstants.HOOD_GEARING,
-          0.2, // SingleJointedArmSim.estimateMOI(
-          // LauncherConstants.HOOD_LENGTH_METERS, LauncherConstants.HOOD_MASS_KG),
+          SingleJointedArmSim.estimateMOI(
+              LauncherConstants.HOOD_LENGTH_METERS, LauncherConstants.HOOD_MASS_KG),
           LauncherConstants.HOOD_LENGTH_METERS,
-          -1,
-          3,
-          false,
+          Double.NEGATIVE_INFINITY,
+          Double.POSITIVE_INFINITY,
+          true,
           LauncherConstants.HOOD_MIN_ANGLE_RADS);
   private TalonFXSimState hoodSimState;
 

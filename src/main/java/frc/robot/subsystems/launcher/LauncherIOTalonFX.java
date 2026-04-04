@@ -91,25 +91,32 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
     launcher2Follower.stopMotor();
   }
 
-  public void setHoodAngleRads(double angleRads) {
-    if (angleRads < LauncherConstants.HOOD_MAX_ANGLE_RADS
-        && angleRads > LauncherConstants.HOOD_MIN_ANGLE_RADS) {
+  public void setHoodAngleRads(double angleRads, double feedforward) {
+    if (angleRads <= LauncherConstants.HOOD_MAX_ANGLE_RADS
+        && angleRads >= LauncherConstants.HOOD_MIN_ANGLE_RADS) {
       double setpoint =
           // (angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS)
           //     / LauncherConstants.HOOD_P_COEFFICIENT;
           Units.radiansToRotations(angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS)
               * LauncherConstants.HOOD_GEARING;
-      hood.setControl(new PositionVoltage(setpoint));
-      System.out.printf("%.2f set %.2f actual%n", setpoint, hood.getPosition().getValueAsDouble());
+      hood.setControl(hoodControl.withPosition(setpoint).withFeedForward(feedforward));
+      // System.out.printf("%.2f set %.2f actual%n", setpoint,
+      // hood.getPosition().getValueAsDouble());
       Logger.recordOutput("Hood/AngleSetpointRots", setpoint);
+      Logger.recordOutput(
+          "Hood/HoodError", Math.abs(setpoint - hood.getPosition().getValueAsDouble()));
       Logger.recordOutput("Hood/HoodAngle-inRange", true);
     } else {
       Logger.recordOutput("Hood/HoodAngle-inRange", false);
     }
   }
 
+  public void zeroHood() {
+    hood.setPosition(0);
+  }
+
   @Override
-  public void setPIDFF(double kP, double kD, double kS, double kV) {
+  public void setLauncherPIDFF(double kP, double kD, double kS, double kV) {
     launcherConfigs.Slot0.kP = kP;
     launcherConfigs.Slot0.kD = kD;
     launcherConfigs.Slot0.kS = kS;
@@ -126,5 +133,16 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
 
     PhoenixUtil.tryUntilOk(5, () -> launcher1Leader.getConfigurator().apply(launcherConfigs));
     PhoenixUtil.tryUntilOk(5, () -> launcher2Follower.getConfigurator().apply(launcherConfigs));
+  }
+
+  @Override
+  public void setHoodPIDFF(double kP, double kI, double kD, double kS, double kG) {
+    hoodConfigs.Slot0.kP = kP;
+    hoodConfigs.Slot0.kI = kI;
+    hoodConfigs.Slot0.kD = kD;
+    hoodConfigs.Slot0.kS = kS;
+    hoodConfigs.Slot0.kG = kG;
+
+    PhoenixUtil.tryUntilOk(5, () -> hood.getConfigurator().apply(hoodConfigs));
   }
 }
