@@ -281,8 +281,8 @@ public class RobotContainer {
         .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
 
     // Op Bindings
-    
-    //standard hold-button to shoot mode
+
+    // standard hold-button to shoot mode
     opController
         .a()
         .onTrue(
@@ -293,7 +293,7 @@ public class RobotContainer {
                   autoScore = false;
                 }));
 
-    //subsystems off mode
+    // subsystem 'off' mode
     opController
         .b()
         .onTrue(
@@ -304,7 +304,7 @@ public class RobotContainer {
                   feeder.setStopped();
                 }));
 
-    //manual scoring mode
+    // manual scoring mode
     opController
         .y()
         .onTrue(
@@ -315,7 +315,7 @@ public class RobotContainer {
                   autoScore = false;
                 }));
 
-    //auto scoring mode
+    // auto scoring mode
     opController
         .x()
         .onTrue(
@@ -344,7 +344,6 @@ public class RobotContainer {
                   feeder.setStopped();
                   spindexer.setStopped();
                 }));
-
 
     opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));

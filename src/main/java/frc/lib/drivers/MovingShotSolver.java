@@ -36,16 +36,16 @@ public class MovingShotSolver {
     HUB(Hub.topCenterPointRed, Hub.topCenterPointBlue),
     DEPOT_CORNER(
         new Translation3d(
-            LinesVertical.redHubCenterX + 1, LinesHorizontal.leftBumpStart - 0.25, 2.0),
+            LinesVertical.redHubCenterX + 1.5, LinesHorizontal.leftBumpStart - 0.25, 2.0),
         new Translation3d(
-            LinesVertical.blueHubCenterX - 1,
+            LinesVertical.blueHubCenterX - 1.5,
             FieldConstants.fieldWidth - (LinesHorizontal.leftBumpStart - 0.25),
             2.0)),
     OUTPOST_CORNER(
         new Translation3d(
-            LinesVertical.redHubCenterX + 1, LinesHorizontal.rightBumpEnd + 0.25, 2.0),
+            LinesVertical.redHubCenterX + 1.5, LinesHorizontal.rightBumpEnd + 0.25, 2.0),
         new Translation3d(
-            LinesVertical.blueHubCenterX - 1,
+            LinesVertical.blueHubCenterX - 1.5,
             FieldConstants.fieldWidth - (LinesHorizontal.rightBumpEnd + 0.25),
             2.0));
 
@@ -106,7 +106,7 @@ public class MovingShotSolver {
   private final LoggedTunableNumber shooterHeightInches =
       new LoggedTunableNumber("SOTM/Launch Height in", 22.5);
   private final LoggedTunableNumber hoodAngleDegrees =
-      new LoggedTunableNumber("SOTM/Launch Angle Degs", 72);
+      new LoggedTunableNumber("SOTM/Launch Angle Degs", 68);
 
   private static final double MPSToRPSConversion =
       LauncherConstants.LAUNCHER_GEARING / LauncherConstants.ROLLER_CIRCUMFERENCE_METERS;

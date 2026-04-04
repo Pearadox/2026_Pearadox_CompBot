@@ -49,7 +49,7 @@ public class Turret extends SubsystemBase {
   private final LoggedTunableNumber fieldRelOffset =
       new LoggedTunableNumber("Turret/fieldreloffset", 0);
 
-  private boolean shouldApplyFF = true;
+  @AutoLogOutput private boolean shouldApplyFF = true;
 
   private final SysIdRoutine sysId;
 
@@ -107,14 +107,11 @@ public class Turret extends SubsystemBase {
     if (!hasZeroed) return;
 
     double setpointTurretRads =
-        isInManualMode
-            ? wrap(turretRotationAdjust)
-            : wrap(robotCentricAngleSupplier.get().getRadians());
+        isInManualMode ? turretRotationAdjust : wrap(robotCentricAngleSupplier.get().getRadians());
 
     double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
     double ffVolts = getFF(setpointTurretRads);
-
     io.runPosition(setpointMotorRots, ffVolts);
 
     Logger.recordOutput(
