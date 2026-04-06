@@ -26,11 +26,11 @@ public class IntakeConstants {
   public static record StateConfig(double angleDeg, double voltage) {
     public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
         Map.of(
-            IntakeState.STOWED, new StateConfig(0, 0),
-            IntakeState.DEPLOYED, new StateConfig(100, 0),
-            IntakeState.INTAKING, new StateConfig(100, 4.0),
-            IntakeState.OUTTAKING, new StateConfig(100, -4.0),
-            IntakeState.FLOW_STATE, new StateConfig(0, 4.0));
+            IntakeState.STOWED, new StateConfig(12, 0),
+            IntakeState.DEPLOYED, new StateConfig(118, 0),
+            IntakeState.INTAKING, new StateConfig(12, 4.0),
+            IntakeState.OUTTAKING, new StateConfig(118, -4.0),
+            IntakeState.FLOW_STATE, new StateConfig(12, 4.0));
   }
 
   // public static record StateConfig(double angleDeg, double amps, double maxDuty) {
@@ -56,7 +56,8 @@ public class IntakeConstants {
   public static final int PIVOT_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
   public static final int PIVOT_STATOR_CURRENT_LIMIT = 60;
 
-  public static final double GEARING = (44.0 / 12.0) * (60.0 / 16.0) * (44.0 / 14.0);
+  public static final double GEARING = (38.0 / 12.0) * (50.0 / 16.0) * (44.0 / 12.0);
+  // (44.0 / 12.0) * (60.0 / 16.0) * (44.0 / 14.0);
   public static final double LENGTH_METERS = Units.inchesToMeters(15.114);
   public static final double MASS_KG = 11.246;
 
