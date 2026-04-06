@@ -9,6 +9,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -175,6 +177,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     visualizer =
         new RobotVisualizer(
@@ -386,5 +391,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
+
+    new EventTrigger("Set Intaking").whileTrue(new InstantCommand(() -> intake.setIntaking()));
   }
 }
