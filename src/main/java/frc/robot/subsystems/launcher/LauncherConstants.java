@@ -16,16 +16,18 @@ import lombok.Getter;
 /** Constants for the launcher */
 public class LauncherConstants {
   public static enum LauncherState {
-    OFF(Units.degreesToRadians(60)),
-    MANUAL(Units.degreesToRadians(40)),
-    IDLE(Units.degreesToRadians(40)),
-    SELF_DIRECTING(Units.degreesToRadians(40));
+    OFF(60),
+    MANUAL(40),
+    IDLE(40),
+    SELF_DIRECTING(40);
     // PASSING(Units.degreesToRadians(25)); // TODO: find proper hood angles
 
     @Getter private final double hoodAngleRads;
+    @Getter private final double hoodAngleDegrees;
 
-    private LauncherState(double angle) {
-      hoodAngleRads = angle;
+    private LauncherState(double degrees) {
+      hoodAngleRads = Units.degreesToRadians(degrees);
+      hoodAngleDegrees = degrees;
     }
   }
 

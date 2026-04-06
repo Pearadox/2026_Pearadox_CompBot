@@ -97,8 +97,8 @@ public class MovingShotSolver {
   private final LoggedTunableNumber shooterHeightInches =
       new LoggedTunableNumber("SOTM/Launch Height inches", 22.5);
 
-  private final LoggedTunableNumber hoodAngleDegrees =
-      new LoggedTunableNumber("SOTM/Launch Angle Degs", 72);
+  private final double hoodAngleRads = Units.degreesToRadians(72);
+  // new LoggedTunableNumber("SOTM/Launch Angle Degs", 72);
 
   // may need to be tuned
   private final LoggedTunableNumber shotLatency = new LoggedTunableNumber("SOTM/shot latency", 0.1);
@@ -113,7 +113,9 @@ public class MovingShotSolver {
   public record ShotSolution(double time, double speed, Rotation2d turretAngle) {}
 
   public ShotSolution solve(
-      Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> robotRelativeSpeedSupplier) {
+      Supplier<Pose2d> poseSupplier,
+      Supplier<ChassisSpeeds> robotRelativeSpeedSupplier,
+      Supplier<Double> hoodAngleRadsSupplier) {
 
     // hoodAngleRadians = Launcher.getState().getHoodAngleRads();
 
@@ -202,7 +204,7 @@ public class MovingShotSolver {
     double Dy = goalYMeters - turretYMeters;
     double Dz = goalHeightMeters - Units.inchesToMeters(shooterHeightInches.get());
 
-    double hoodAngleRadians = Math.toRadians(hoodAngleDegrees.get());
+    double hoodAngleRadians = hoodAngleRadsSupplier.get();
 
     Logger.recordOutput("SOTM/lateral dist to target", Math.hypot(Dx, Dy));
 

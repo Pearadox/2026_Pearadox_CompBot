@@ -196,7 +196,8 @@ public class RobotContainer {
         new RunCommand(
             () -> {
               LoggedTracer.reset();
-              MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds);
+              MovingShotSolver.getInstance()
+                  .solve(drive::getPose, drive::getChassisSpeeds, launcher::getHoodAngleRads);
               LoggedTracer.record("MovingShotSolve");
             },
             vision));
@@ -375,9 +376,7 @@ public class RobotContainer {
 
   public void registerNamedCommands() {
     // Timer Commands
-    NamedCommands.registerCommand(
-        "Start Timer",
-        new InstantCommand(() -> feeder.startTimer()));
+    NamedCommands.registerCommand("Start Timer", new InstantCommand(() -> feeder.startTimer()));
 
     // Launching Sequence Commands
     NamedCommands.registerCommand(

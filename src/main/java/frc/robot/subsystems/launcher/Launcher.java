@@ -90,13 +90,13 @@ public class Launcher extends SubsystemBase {
     Logger.recordOutput("Launcher/adjust", rpsAdjust);
     Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
 
-    // io.setHoodAngleRads(launcherState.getHoodAngleRads());
-    // Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
-    // Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
-    // Logger.recordOutput(
-    //     "Hood/Current-Angle",
-    //     LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
-    //         / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
+    io.setHoodAngleRads(launcherState.getHoodAngleRads());
+    Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
+    Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
+    Logger.recordOutput(
+        "Hood/Current-Angle",
+        LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
+            / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
     if (kP.hasChanged(hashCode())
         || kD.hasChanged(hashCode())
@@ -151,6 +151,14 @@ public class Launcher extends SubsystemBase {
             launcherState = LauncherState.IDLE;
           }
         });
+  }
+
+  public double getHoodAngleDegrees() {
+    return launcherState.getHoodAngleDegrees();
+  }
+
+  public double getHoodAngleRads() {
+    return launcherState.getHoodAngleRads();
   }
 
   // public void setPassing() {
