@@ -410,6 +410,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
 
-    new EventTrigger("Set Intaking").whileTrue(new InstantCommand(() -> intake.setIntaking()));
+    new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));
   }
 }
