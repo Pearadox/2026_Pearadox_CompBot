@@ -34,8 +34,8 @@ public class Intake extends SubsystemBase {
 
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  // private static LoggedTunableNumber loggedIntakeRollerVoltage =
-  //     new LoggedTunableNumber("Intake/Voltage", 4.0);
+  private static LoggedTunableNumber loggedIntakeRollerVoltage =
+      new LoggedTunableNumber("Intake/Voltage", 4.0);
   // private static LoggedTunableNumber rps = new LoggedTunableNumber("Intake/rps", 100.0);
   // private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30.0);
   private static LoggedTunableNumber rollerkP = new LoggedTunableNumber("Intake/roller kp", 0.05);
@@ -64,8 +64,9 @@ public class Intake extends SubsystemBase {
     io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + voltAdjust);
 
     // }
-    io.runPositionDegreesWithoutFF(
-        StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust);
+    io.runPositionDegrees(
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
+        getFFVolts());
 
     // MechVisualizer.getInstance()
     //     .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivot1MotorData.position()));

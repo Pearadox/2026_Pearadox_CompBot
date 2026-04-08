@@ -28,8 +28,8 @@ public class IntakeConstants {
         Map.of(
             IntakeState.STOWED, new StateConfig(12, 0),
             IntakeState.DEPLOYED, new StateConfig(118, 0),
-            IntakeState.INTAKING, new StateConfig(12, 5.0), //4V
-            IntakeState.OUTTAKING, new StateConfig(118, -5.0), //-4V
+            IntakeState.INTAKING, new StateConfig(12, 5.0), // 4V
+            IntakeState.OUTTAKING, new StateConfig(118, -5.0), // -4V
             IntakeState.FLOW_STATE, new StateConfig(12, 4.0));
   }
 
@@ -105,7 +105,9 @@ public class IntakeConstants {
     PIVOT_SLOT0_CONFIGS.kI = 0.0;
     PIVOT_SLOT0_CONFIGS.kD = 0.03;
 
+    PIVOT_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 15.0;
     PIVOT_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
     PIVOT_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // PIVOT_CONFIG.MotorOutput.PeakReverseDutyCycle = -0.5;

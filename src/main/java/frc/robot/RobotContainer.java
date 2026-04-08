@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -36,6 +35,10 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
 // import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.util.DriveHelpers;
 
@@ -45,7 +48,7 @@ public class RobotContainer {
   public final Feeder feeder;
   private final Intake intake;
   //   public final Launcher launcher;
-  //   public final Spindexer spindexer;
+  public final Spindexer spindexer;
   //   private final Turret turret;
   //   public final Vision vision;
 
@@ -81,7 +84,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOReal());
         intake = new Intake(new IntakeIOReal());
         // launcher = new Launcher(new LauncherIOReal());
-        // spindexer = new Spindexer(new SpindexerIOReal());
+        spindexer = new Spindexer(new SpindexerIOReal());
         // turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
         // vision =
         //     new Vision(
@@ -106,7 +109,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIOSim());
         intake = new Intake(new IntakeIOSim());
         // launcher = new Launcher(new LauncherIOSim());
-        // spindexer = new Spindexer(new SpindexerIOSim());
+        spindexer = new Spindexer(new SpindexerIOSim());
         // turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
         // vision = new Vision(drive::addVisionMeasurement);
 
@@ -125,7 +128,7 @@ public class RobotContainer {
         feeder = new Feeder(new FeederIO() {});
         intake = new Intake(new IntakeIO() {});
         // launcher = new Launcher(new LauncherIO() {});
-        // spindexer = new Spindexer(new SpindexerIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         // turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
         // vision = new Vision(drive::addVisionMeasurement);
 
@@ -234,14 +237,14 @@ public class RobotContainer {
     //     .onTrue(new InstantCommand(() -> intake.setOuttaking()))
     //     .onFalse(new InstantCommand(() -> intake.setDeployed()));
 
-    // drivercontroller
-    //     .b()
-    //     .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer))
-    //     .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+    drivercontroller
+        .y()
+        .whileTrue(new InstantCommand(() -> spindexer.setRunning(), spindexer))
+        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
 
     drivercontroller
         .b()
-        .whileTrue(new RunCommand(() -> feeder.setRunning()))
+        .whileTrue(new InstantCommand(() -> feeder.setRunning()))
         .onFalse(new InstantCommand(() -> feeder.setStopped()));
 
     // // Op Bindings

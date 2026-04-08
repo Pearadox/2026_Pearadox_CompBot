@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -23,6 +24,8 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   protected final Follower pivotFollowerRequest;
   protected final TorqueCurrentFOC torqueCurrentFOC;
   protected final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC;
+
+  protected final MotionMagicDutyCycle motionMagicDutyCycle;
 
   private TalonFXConfiguration rollerConfigs;
   private TalonFXConfiguration pivotConfigs;
@@ -48,6 +51,7 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
     pivotPositionVoltage = new PositionVoltage(0);
     torqueCurrentFOC = new TorqueCurrentFOC(0);
     velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
+    motionMagicDutyCycle = new MotionMagicDutyCycle(0);
 
     pivotFollowerRequest =
         new Follower(IntakeConstants.PIVOT_1_LEADER_ID, MotorAlignmentValue.Opposed);
@@ -90,7 +94,7 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   @Override
   public void runPositionDegrees(double degrees, double ffvolts) {
     pivot1Leader.setControl(
-        pivotPositionVoltage
+        motionMagicDutyCycle
             .withPosition(Units.degreesToRotations(degrees) * IntakeConstants.GEARING)
             .withFeedForward(ffvolts));
     // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
@@ -100,8 +104,11 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void runPositionDegreesWithoutFF(double degrees) {
+    // pivot1Leader.setControl(
+    //     pivotPositionVoltage.withPosition(
+    //         Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
     pivot1Leader.setControl(
-        pivotPositionVoltage.withPosition(
+        motionMagicDutyCycle.withPosition(
             Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
     // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
 
