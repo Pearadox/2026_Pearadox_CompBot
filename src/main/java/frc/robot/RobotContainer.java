@@ -9,6 +9,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -91,7 +93,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     // Register named commands for PathPlanner
-    registerNamedCommands();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -160,6 +161,7 @@ public class RobotContainer {
         break;
     }
 
+    registerNamedCommands();
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Super auto chooser", autoChooser);
@@ -179,6 +181,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     visualizer =
         new RobotVisualizer(
@@ -200,7 +205,7 @@ public class RobotContainer {
               LoggedTracer.record("MovingShotSolve");
             },
             vision));
-    ledStrip.isHubActive();
+    ledStrip.setDefaultCommand(new RunCommand(() -> ledStrip.isHubActive(), ledStrip));
   }
 
   /**
@@ -375,9 +380,7 @@ public class RobotContainer {
 
   public void registerNamedCommands() {
     // Timer Commands
-    NamedCommands.registerCommand(
-        "Start Timer",
-        new InstantCommand(() -> feeder.startTimer()));
+    NamedCommands.registerCommand("Start Timer", new InstantCommand(() -> feeder.startTimer()));
 
     // Launching Sequence Commands
     NamedCommands.registerCommand(
@@ -406,5 +409,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
+
+    new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));
   }
 }
