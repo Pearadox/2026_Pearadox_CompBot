@@ -137,7 +137,7 @@ public class Launcher extends SubsystemBase {
   }
 
   public void setScoringFar() {
-    launcherState = LauncherState.SELF_DIRECTING;
+    launcherState = LauncherState.SELF_DIRECTING_FAR;
   }
 
   public void setIdle() {

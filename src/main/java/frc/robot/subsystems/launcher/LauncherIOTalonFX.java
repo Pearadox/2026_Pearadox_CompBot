@@ -97,18 +97,28 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
   }
 
   public void setHoodAngleRads(double angleRads) {
-    if (angleRads < LauncherConstants.HOOD_MAX_ANGLE_RADS
-        && angleRads > LauncherConstants.HOOD_MIN_ANGLE_RADS) {
+    if (angleRads <= LauncherConstants.HOOD_MAX_ANGLE_RADS
+        && angleRads >= LauncherConstants.HOOD_MIN_ANGLE_RADS) {
       double angleRadsFromMinimum = angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS;
 
       double servoRotations =
           (Units.radiansToRotations(angleRadsFromMinimum) * LauncherConstants.HOOD_GEARING)
               / LauncherConstants.SERVO_POSITION_TO_ROTATIONS_CONVERSION;
 
-      hoodServo1.setPulseWidth(LauncherConstants.rotationstoPulseWidth(servoRotations));
-      hoodServo2.setPulseWidth(
-          LauncherConstants.SERVO_MAX_PULSE_WIDTH
-              - LauncherConstants.rotationstoPulseWidth(servoRotations));
+
+      // int pwm0 = (int) (-(servoRotations * LauncherConstants.SERVO_POSITION_TO_ROTATIONS_CONVERSION) + LauncherConstants.SERVO_MAX_PULSE_WIDTH);
+      // int pwm5 = (int) ( (servoRotations * LauncherConstants.SERVO_POSITION_TO_ROTATIONS_CONVERSION) + LauncherConstants.SERVO_MIN_PULSE_WIDTH);
+      // int pwm5 = LauncherConstants.rotationstoPulseWidth(servoRotations);
+      // int pwm0 = LauncherConstants.SERVO_MAX_PULSE_WIDTH
+      //         - LauncherConstants.rotationstoPulseWidth(servoRotations) - LauncherConstants.SERVO_MIN_PULSE_WIDTH;
+
+      int pwm0 = (int) (12000 * Units.radiansToRotations(angleRads) + 833.33); // [1500, 2500]
+      int pwm5 = (int) (-12000 * Units.radiansToRotations(angleRads) + 2166.67); // [500, 1500]
+
+      Logger.recordOutput("Hood/pwm0", pwm0);
+      Logger.recordOutput("Hood/pwm5", pwm5);
+      hoodServo1.setPulseWidth(pwm0);
+      hoodServo2.setPulseWidth(pwm5);
     } else {
       Logger.recordOutput("HoodAngleOutOfRange", angleRads);
     }
