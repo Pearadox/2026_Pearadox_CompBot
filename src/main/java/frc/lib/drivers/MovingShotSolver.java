@@ -15,7 +15,9 @@ import frc.robot.Constants.FieldConstants.Hub;
 import frc.robot.Constants.FieldConstants.LinesHorizontal;
 import frc.robot.Constants.FieldConstants.LinesVertical;
 import frc.robot.Robot;
+import frc.robot.subsystems.launcher.Launcher;
 import frc.robot.subsystems.launcher.LauncherConstants;
+import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -92,12 +94,24 @@ public class MovingShotSolver {
 
   private final LoggedTunableNumber rpsMultiplier =
       new LoggedTunableNumber("SOTM/Rps Multiplier", 2.0);
+  private final LoggedTunableNumber farRpsMultiplier =
+      new LoggedTunableNumber("SOTM/far Rps Multiplier", 2.0);
   private final LoggedTunableNumber turretDx = new LoggedTunableNumber("SOTM/Turret dx", -0.135);
   private final LoggedTunableNumber turretDy = new LoggedTunableNumber("SOTM/Turret dy", -0.14);
   private final LoggedTunableNumber shooterHeightInches =
       new LoggedTunableNumber("SOTM/Launch Height inches", 22.5);
 
   private final double hoodAngleRads = Units.degreesToRadians(72);
+
+  private final LoggedTunableNumber normalShotAngleDegrees =
+      new LoggedTunableNumber("SOTM/normalShotAngleDegrees", 72);
+
+  private final LoggedTunableNumber farShotAngleDegrees =
+      new LoggedTunableNumber("SOTM/farShotAngleDegrees", 50);
+  private final LoggedTunableNumber farShotMinDistance =
+      new LoggedTunableNumber("SOTM/farShotMinDistance", 3);
+
+  private final Debouncer hoodAngleDebouncer = new Debouncer(0.5, DebounceType.kBoth);
   // new LoggedTunableNumber("SOTM/Launch Angle Degs", 72);
 
   // may need to be tuned
@@ -115,7 +129,7 @@ public class MovingShotSolver {
   public ShotSolution solve(
       Supplier<Pose2d> poseSupplier,
       Supplier<ChassisSpeeds> robotRelativeSpeedSupplier,
-      Supplier<Double> hoodAngleRadsSupplier) {
+      Launcher launcher) {
 
     // hoodAngleRadians = Launcher.getState().getHoodAngleRads();
 
@@ -203,16 +217,29 @@ public class MovingShotSolver {
     double Dx = goalXMeters - turretXMeters;
     double Dy = goalYMeters - turretYMeters;
     double Dz = goalHeightMeters - Units.inchesToMeters(shooterHeightInches.get());
-    
+
     // double hoodAngleRadians = hoodAngleRadsSupplier.get();
     double distanceToTarget = Math.hypot(Dx, Dy);
-    double hoodAngleRadians = distanceToTarget < 10 ? 72 : 50;
-    
+    LauncherState launcherState = launcher.getLauncherState();
+
+    if (hoodAngleDebouncer.calculate(distanceToTarget > farShotMinDistance.get())
+        && launcherState == LauncherState.SELF_DIRECTING) {
+      launcher.setScoringFar();
+    } else if (hoodAngleDebouncer.calculate(distanceToTarget < farShotMinDistance.get())
+        && launcherState == LauncherState.SELF_DIRECTING_FAR) {
+      launcher.setScoring();
+    }
+
+    double hoodAngleRadians =
+        launcherState == LauncherState.SELF_DIRECTING
+            ? Units.degreesToRadians(normalShotAngleDegrees.get())
+            : Units.degreesToRadians(farShotAngleDegrees.get());
+
     double ToF =
-    1.0 + distanceToTarget / 15.0 * (3.0 - 1.0); // Initial guess of ToF for Newton's Method
+        1.0 + distanceToTarget / 15.0 * (3.0 - 1.0); // Initial guess of ToF for Newton's Method
     // (formula: ToF = t_min + dist/maxDist * (t_max - t_min))
-    
-    Logger.recordOutput("SOTM/lateral dist to target", distanceToTarget);
+
+    Logger.recordOutput("SOTM/distance to target (lateral)", distanceToTarget);
 
     for (int i = 0; i < Constants.NEWTONS_METHOD_NUM_STEPS; i++) {
       // recalculating closer approximate value of ToF after each "step"
@@ -268,8 +295,11 @@ public class MovingShotSolver {
     double targetYOffsetMeters = goalYMeters - predictedRobotVy * ToF;
     Pose2d targetPose = new Pose2d(targetXOffsetMeters, targetYOffsetMeters, new Rotation2d());
 
-    double outputtedShooterVelocity =
-        MathUtil.clamp(rpsMultiplier.get() * shooterSpeedRPS, 40, 100);
+    double multiplier =
+        launcherState == LauncherState.SELF_DIRECTING
+            ? rpsMultiplier.get()
+            : farRpsMultiplier.get();
+    double outputtedShooterVelocity = MathUtil.clamp(multiplier * shooterSpeedRPS, 40, 100);
 
     // Compute field-relative turret angle
 

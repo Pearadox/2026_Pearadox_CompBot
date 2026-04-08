@@ -91,7 +91,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     // Register named commands for PathPlanner
-    registerNamedCommands();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -160,6 +159,7 @@ public class RobotContainer {
         break;
     }
 
+    registerNamedCommands();
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Super auto chooser", autoChooser);
@@ -197,7 +197,7 @@ public class RobotContainer {
             () -> {
               LoggedTracer.reset();
               MovingShotSolver.getInstance()
-                  .solve(drive::getPose, drive::getChassisSpeeds, launcher::getHoodAngleRads);
+                  .solve(drive::getPose, drive::getChassisSpeeds, launcher);
               LoggedTracer.record("MovingShotSolve");
             },
             vision));
