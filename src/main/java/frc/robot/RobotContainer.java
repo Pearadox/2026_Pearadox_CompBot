@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
@@ -26,13 +28,22 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOReal;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+// import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.util.DriveHelpers;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  //   public final Feeder feeder;
-  //   private final Intake intake;
+  public final Feeder feeder;
+  private final Intake intake;
   //   public final Launcher launcher;
   //   public final Spindexer spindexer;
   //   private final Turret turret;
@@ -67,8 +78,8 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // feeder = new Feeder(new FeederIOReal());
-        // intake = new Intake(new IntakeIOReal());
+        feeder = new Feeder(new FeederIOReal());
+        intake = new Intake(new IntakeIOReal());
         // launcher = new Launcher(new LauncherIOReal());
         // spindexer = new Spindexer(new SpindexerIOReal());
         // turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
@@ -92,8 +103,8 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        // feeder = new Feeder(new FeederIOSim());
-        // intake = new Intake(new IntakeIOSim());
+        feeder = new Feeder(new FeederIOSim());
+        intake = new Intake(new IntakeIOSim());
         // launcher = new Launcher(new LauncherIOSim());
         // spindexer = new Spindexer(new SpindexerIOSim());
         // turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
@@ -111,8 +122,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        // feeder = new Feeder(new FeederIO() {});
-        // intake = new Intake(new IntakeIO() {});
+        feeder = new Feeder(new FeederIO() {});
+        intake = new Intake(new IntakeIO() {});
         // launcher = new Launcher(new LauncherIO() {});
         // spindexer = new Spindexer(new SpindexerIO() {});
         // turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
@@ -212,12 +223,12 @@ public class RobotContainer {
     //               spindexer.setStopped();
     //             }));
 
-    // drivercontroller
-    //     .leftBumper()
-    //     .whileTrue(new InstantCommand(() -> intake.setIntaking()))
-    //     .onFalse(new InstantCommand(() -> intake.setDeployed()));
-    // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
-    // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller
+        .leftBumper()
+        .whileTrue(new InstantCommand(() -> intake.setIntaking()))
+        .onFalse(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
     // drivercontroller
     //     .povLeft()
     //     .onTrue(new InstantCommand(() -> intake.setOuttaking()))
@@ -227,6 +238,11 @@ public class RobotContainer {
     //     .b()
     //     .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer))
     //     .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+
+    drivercontroller
+        .b()
+        .whileTrue(new RunCommand(() -> feeder.setRunning()))
+        .onFalse(new InstantCommand(() -> feeder.setStopped()));
 
     // // Op Bindings
     // opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
