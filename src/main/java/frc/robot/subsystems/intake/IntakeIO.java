@@ -22,5 +22,8 @@ public interface IntakeIO {
 
   public default void runPositionDegrees(double degrees, double ffvolts) {}
 
-  public default void setPIDFF(double rollerkp, double kv, double pivotkp, double pivotkd) {}
+  public default void runPositionDegreesWithoutFF(double degrees) {}
+
+  public default void setPIDFF(
+      double rollerkp, double kv, double pivotkp, double pivotkd, double pivotkg) {}
 }
