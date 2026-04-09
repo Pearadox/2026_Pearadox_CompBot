@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.launcher;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,6 +34,8 @@ public class Launcher extends SubsystemBase {
           "Launcher/Manual Mode Default Velocity", LauncherConstants.DEFAULT_VELOCITY_SETPOINT_RPS);
   private final LoggedTunableNumber idleDefaultVelocity =
       new LoggedTunableNumber("Launcher/Idle Mode Default Velocity", 20);
+  private final LoggedTunableNumber defaultStateAngleDegrees =
+      new LoggedTunableNumber("Launcher/defaultStateAngle", 20);
 
   private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 99999);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0);
@@ -58,8 +61,7 @@ public class Launcher extends SubsystemBase {
     Logger.processInputs("Launcher", inputs);
 
     double desiredVelocity;
-    if (launcherState == LauncherState.SELF_DIRECTING
-        || launcherState == LauncherState.SELF_DIRECTING_FAR) {
+    if (launcherState == LauncherState.SELF_DIRECTING) {
       desiredVelocity = MovingShotSolver.getShotSolution().speed();
     } else if (launcherState == LauncherState.MANUAL) {
       desiredVelocity = manualDefaultVelocity.get();
@@ -91,8 +93,19 @@ public class Launcher extends SubsystemBase {
     Logger.recordOutput("Launcher/adjust", rpsAdjust);
     Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
 
-    io.setHoodAngleRads(launcherState.getHoodAngleRads());
-    Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
+    // io.setHoodAngleRads(launcherState.getHoodAngleRads());
+
+    double desiredHoodAngleRads;
+    if (launcherState == LauncherState.SELF_DIRECTING) {
+      desiredHoodAngleRads = MovingShotSolver.getShotSolution().hoodAngleRadians();
+    } else {
+      desiredHoodAngleRads = Units.degreesToRadians(defaultStateAngleDegrees.get());
+    }
+    io.setHoodAngleRads(desiredHoodAngleRads);
+    // desiredHoodAngleRads = RobotContainer.hoodAngleTesting;
+    // io.setHoodAngleRads(desiredHoodAngleRads);
+
+    Logger.recordOutput("Hood/Desired-Angle", desiredHoodAngleRads);
     Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
     Logger.recordOutput(
         "Hood/Current-Angle",
@@ -136,10 +149,6 @@ public class Launcher extends SubsystemBase {
     launcherState = LauncherState.SELF_DIRECTING;
   }
 
-  public void setScoringFar() {
-    launcherState = LauncherState.SELF_DIRECTING_FAR;
-  }
-
   public void setIdle() {
     launcherState = LauncherState.IDLE;
   }
@@ -152,22 +161,9 @@ public class Launcher extends SubsystemBase {
           }
         },
         () -> {
-          if (launcherState == LauncherState.SELF_DIRECTING
-              || launcherState == LauncherState.SELF_DIRECTING_FAR) {
+          if (launcherState == LauncherState.SELF_DIRECTING) {
             launcherState = LauncherState.IDLE;
           }
         });
   }
-
-  public double getHoodAngleDegrees() {
-    return launcherState.getHoodAngleDegrees();
-  }
-
-  public double getHoodAngleRads() {
-    return launcherState.getHoodAngleRads();
-  }
-
-  // public void setPassing() {
-  //   launcherState = LauncherState.PASSING;
-  // }
 }

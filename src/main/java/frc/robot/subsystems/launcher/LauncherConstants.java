@@ -11,25 +11,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.servohub.ServoChannel.ChannelId;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import lombok.Getter;
 
 /** Constants for the launcher */
 public class LauncherConstants {
   public static enum LauncherState {
-    OFF(60),
-    MANUAL(40),
-    IDLE(40),
-    SELF_DIRECTING(20),
-    SELF_DIRECTING_FAR(40);
-    // PASSING(Units.degreesToRadians(25)); // TODO: find proper hood angles
-
-    @Getter private final double hoodAngleRads;
-    @Getter private final double hoodAngleDegrees;
-
-    private LauncherState(double degrees) {
-      hoodAngleRads = Units.degreesToRadians(degrees);
-      hoodAngleDegrees = degrees;
-    }
+    OFF,
+    MANUAL,
+    IDLE,
+    SELF_DIRECTING,
   }
 
   public static final int LAUNCHER_1_CAN_ID = 22;
