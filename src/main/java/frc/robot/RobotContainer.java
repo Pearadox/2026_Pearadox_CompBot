@@ -27,17 +27,28 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
-import frc.robot.subsystems.intake.*;
-import frc.robot.subsystems.launcher.*;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOReal;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.spindexer.Spindexer;
+import frc.robot.subsystems.spindexer.SpindexerIO;
+import frc.robot.subsystems.spindexer.SpindexerIOReal;
+import frc.robot.subsystems.spindexer.SpindexerIOSim;
+// import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.util.DriveHelpers;
 
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  //   public final Feeder feeder;
+  public final Feeder feeder;
   private final Intake intake;
-  public final Launcher launcher;
-  //   public final Spindexer spindexer;
+  //   public final Launcher launcher;
+  public final Spindexer spindexer;
   //   private final Turret turret;
   //   public final Vision vision;
 
@@ -70,10 +81,10 @@ public class RobotContainer {
                 new ModuleIOTalonFX(TunerConstants.BackLeft),
                 new ModuleIOTalonFX(TunerConstants.BackRight));
 
-        // feeder = new Feeder(new FeederIOReal());
+        feeder = new Feeder(new FeederIOReal());
         intake = new Intake(new IntakeIOReal());
-        launcher = new Launcher(new LauncherIOReal());
-        // spindexer = new Spindexer(new SpindexerIOReal());
+        // launcher = new Launcher(new LauncherIOReal());
+        spindexer = new Spindexer(new SpindexerIOReal());
         // turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
         // vision =
         //     new Vision(
@@ -95,10 +106,10 @@ public class RobotContainer {
                 new ModuleIOSim(TunerConstants.BackLeft),
                 new ModuleIOSim(TunerConstants.BackRight));
 
-        // feeder = new Feeder(new FeederIOSim());
+        feeder = new Feeder(new FeederIOSim());
         intake = new Intake(new IntakeIOSim());
-        launcher = new Launcher(new LauncherIOSim());
-        // spindexer = new Spindexer(new SpindexerIOSim());
+        // launcher = new Launcher(new LauncherIOSim());
+        spindexer = new Spindexer(new SpindexerIOSim());
         // turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
         // vision = new Vision(drive::addVisionMeasurement);
 
@@ -114,10 +125,10 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
 
-        // feeder = new Feeder(new FeederIO() {});
+        feeder = new Feeder(new FeederIO() {});
         intake = new Intake(new IntakeIO() {});
-        launcher = new Launcher(new LauncherIO() {});
-        // spindexer = new Spindexer(new SpindexerIO() {});
+        // launcher = new Launcher(new LauncherIO() {});
+        spindexer = new Spindexer(new SpindexerIO() {});
         // turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
         // vision = new Vision(drive::addVisionMeasurement);
 
@@ -215,21 +226,27 @@ public class RobotContainer {
     //               spindexer.setStopped();
     //             }));
 
-    // drivercontroller
-    //     .a()
-    //     .whileTrue(new InstantCommand(() -> intake.setIntaking()))
-    //     .onFalse(new InstantCommand(() -> intake.setDeployed()));
-    // drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
-    // drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller
+        .leftBumper()
+        .whileTrue(new InstantCommand(() -> intake.setIntaking()))
+        .onFalse(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
+    drivercontroller.povLeft().onTrue(new InstantCommand(() -> intake.setHold()));
     // drivercontroller
     //     .povLeft()
     //     .onTrue(new InstantCommand(() -> intake.setOuttaking()))
     //     .onFalse(new InstantCommand(() -> intake.setDeployed()));
 
-    // drivercontroller
-    //     .b()
-    //     .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer))
-    //     .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+    drivercontroller
+        .y()
+        .whileTrue(new InstantCommand(() -> spindexer.setRunning(), spindexer))
+        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+
+    drivercontroller
+        .b()
+        .whileTrue(new InstantCommand(() -> feeder.setRunning()))
+        .onFalse(new InstantCommand(() -> feeder.setStopped()));
 
     // // Op Bindings
     // opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
