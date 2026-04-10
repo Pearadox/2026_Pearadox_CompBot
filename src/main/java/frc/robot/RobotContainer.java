@@ -259,7 +259,7 @@ public class RobotContainer {
     //               spindexer.setStopped();
     //               feeder.setStopped();
     //             }));
-    // opController.y().onTrue(new InstantCommand(() -> launcher.setManual()));
+    opController.y().onTrue(new InstantCommand(() -> launcher.zeroHood()).ignoringDisable(true));
 
     // opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     // opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));

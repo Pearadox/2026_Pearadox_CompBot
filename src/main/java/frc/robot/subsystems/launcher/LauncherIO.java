@@ -33,17 +33,18 @@ public interface LauncherIO {
    */
   public default void runLauncherVelocity(double velocityRPS) {}
 
+  public default void setLauncherVoltage(double voltage) {}
+
   /**
    * @param angleRads the desired angle of the hood
    */
-  public default void setHoodAngleRads(double angleRads) {}
+  public default void setHoodAngleRads(double angleRads, double feedforward) {}
 
-  // /**
-  //  * @param isPassing if the robot is in PASSING mode or other modes
-  //  */
-  // public default void setHoodAngle(boolean isPassing) {}
-
-  public default void setPIDFF(double kP, double kD, double kS, double kV) {}
+  public default void setLauncherPIDFF(double kP, double kD, double kS, double kV) {}
 
   public default void setCurrentLimits(double stator, double supply) {}
+
+  public default void setHoodPIDFF(double kP, double kI, double kD, double kS, double kG) {}
+
+  public default void zeroHood() {}
 }

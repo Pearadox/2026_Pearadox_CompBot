@@ -30,8 +30,8 @@ public class LauncherIOSim extends LauncherIOTalonFX {
           SingleJointedArmSim.estimateMOI(
               LauncherConstants.HOOD_LENGTH_METERS, LauncherConstants.HOOD_MASS_KG),
           LauncherConstants.HOOD_LENGTH_METERS,
-          LauncherConstants.HOOD_MIN_ANGLE_RADS,
-          LauncherConstants.HOOD_MAX_ANGLE_RADS,
+          Double.NEGATIVE_INFINITY,
+          Double.POSITIVE_INFINITY,
           true,
           LauncherConstants.HOOD_MIN_ANGLE_RADS);
   private TalonFXSimState hoodSimState;
@@ -40,34 +40,28 @@ public class LauncherIOSim extends LauncherIOTalonFX {
     super();
     launcherSimState = launcher1Leader.getSimState();
     hoodSimState = hood.getSimState();
-    // hoodServoHubSim = new ServoHubSim(hoodServoHub);
-    // hoodServoHubSim.enable();
   }
 
   public void updateInputs(LauncherIOInputs inputs) {
     super.updateInputs(inputs);
 
-    updateSim();
-  }
-
-  public void updateSim() {
     launcherSimState.setSupplyVoltage(12);
     launcherPhysicsSim.setInputVoltage(launcherSimState.getMotorVoltage());
+    
+    hoodSimState.setSupplyVoltage(12);
+    hoodPhysicsSim.setInputVoltage(hoodSimState.getMotorVoltage());
+    
+    launcherPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
+    hoodPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
 
     launcherSimState.setRawRotorPosition(
         Units.radiansToRotations(launcherPhysicsSim.getAngleRads()));
     launcherSimState.setRotorVelocity(
-        Units.radiansPerSecondToRotationsPerMinute(launcherPhysicsSim.getVelocityRadPerSec()) / 60);
+        Units.radiansToRotations(launcherPhysicsSim.getVelocityRadPerSec()));
 
-    launcherPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
-
-    hoodSimState.setSupplyVoltage(12);
-    hoodPhysicsSim.setInputVoltage(hoodSimState.getMotorVoltage());
-
-    hoodSimState.setRawRotorPosition(Units.radiansToRotations(hoodPhysicsSim.getAngleRads()));
+    hoodSimState.setRawRotorPosition(
+        (hoodPhysicsSim.getAngleRads() - LauncherConstants.HOOD_MIN_ANGLE_RADS));
     hoodSimState.setRotorVelocity(
-        Units.radiansPerSecondToRotationsPerMinute(hoodPhysicsSim.getVelocityRadPerSec()) / 60);
-
-    hoodPhysicsSim.update(Constants.UPDATE_FREQ_SEC);
+        Units.radiansToRotations(hoodPhysicsSim.getVelocityRadPerSec()));
   }
 }
