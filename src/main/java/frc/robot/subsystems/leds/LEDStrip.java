@@ -42,6 +42,7 @@ public class LEDStrip extends SubsystemBase {
     if (Robot.isHubCurrentlyActive() && Robot.getAlliance() == Alliance.Blue) {
       setSolid(Color.kFirstBlue);
     } else if (Robot.isHubCurrentlyActive() && Robot.getAlliance() == Alliance.Red) {
+    } else if (Robot.isHubCurrentlyActive() && Robot.getAlliance() == Alliance.Red) {
       setSolid(Color.kFirstRed);
     } else if (!Robot.isHubCurrentlyActive()) {
       setGradient(Color.kGreen, Color.kGold);

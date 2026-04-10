@@ -12,7 +12,7 @@
         "y": 0.1987631954350939
       },
       "isLocked": false,
-      "linkedName": "Outpost AllianZone"
+      "linkedName": "Outpost AllianZone2"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": "To Trench",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -0.5787255656077432
+    "rotation": -90.0
   },
   "useDefaultConstraints": false
 }

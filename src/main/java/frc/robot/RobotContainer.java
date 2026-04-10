@@ -9,6 +9,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -35,6 +37,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederConstants;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
@@ -61,6 +64,8 @@ import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOLimelight;
 import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RobotContainer {
   // Subsystems
@@ -75,6 +80,7 @@ public class RobotContainer {
 
   // Visualizer
   public final RobotVisualizer visualizer;
+  @Getter @Setter private double robotSpeedMultiplier = 1.0;
 
   // Controller
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
@@ -87,7 +93,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     // Register named commands for PathPlanner
-    registerNamedCommands();
 
     switch (Constants.currentMode) {
       case REAL:
@@ -156,6 +161,7 @@ public class RobotContainer {
         break;
     }
 
+    registerNamedCommands();
     // Set up auto routines
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Super auto chooser", autoChooser);
@@ -175,6 +181,9 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     visualizer =
         new RobotVisualizer(
@@ -211,8 +220,8 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -drivercontroller.getLeftY(),
-            () -> -drivercontroller.getLeftX(),
+            () -> -drivercontroller.getLeftY() * getRobotSpeedMultiplier(),
+            () -> -drivercontroller.getLeftX() * getRobotSpeedMultiplier(),
             () -> -drivercontroller.getRightX()));
 
     // Switch to X pattern when X button is pressed
@@ -260,6 +269,17 @@ public class RobotContainer {
                 () -> {
                   feeder.setStopped();
                   spindexer.setStopped();
+                }));
+
+    drivercontroller
+        .rightBumper()
+        .whileTrue(
+            Commands.startEnd(
+                () -> {
+                  setRobotSpeedMultiplier(0.7);
+                },
+                () -> {
+                  setRobotSpeedMultiplier(1.0);
                 }));
 
     drivercontroller
@@ -359,7 +379,10 @@ public class RobotContainer {
   }
 
   public void registerNamedCommands() {
-    // Feeder Commands
+    // Timer Commands
+    NamedCommands.registerCommand("Start Timer", new InstantCommand(() -> feeder.startTimer()));
+
+    // Launching Sequence Commands
     NamedCommands.registerCommand(
         "Set Launching",
         new InstantCommand(() -> launcher.setScoring())
@@ -367,10 +390,10 @@ public class RobotContainer {
             .andThen(new InstantCommand(() -> feeder.setRunning()))
             .andThen(new WaitCommand(0.2))
             .andThen(
-                (new InstantCommand(
-                    () -> {
-                      spindexer.setRunning();
-                    }))));
+                (new RunCommand(() -> spindexer.setRunning(), spindexer))
+                    .until(() -> feeder.isHopperEmpty())
+                    .withTimeout(FeederConstants.IS_HOPPER_EMPTY_BUFFER_TIME)));
+
     NamedCommands.registerCommand(
         "Stop Launching",
         new InstantCommand(() -> feeder.setStopped())
@@ -386,5 +409,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
+
+    new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));
   }
 }
