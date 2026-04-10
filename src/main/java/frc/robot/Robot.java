@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.intake.MechVisualizer;
+// import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.EnergyTracker;
@@ -114,11 +114,15 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
 
+<<<<<<< ChangesForGamma
     LoggedTracer.reset();
     robotContainer.visualizer.periodic();
     LoggedTracer.record("Visualizer");
 
     LoggedTracer.reset();
+=======
+    // robotContainer.visualizer.periodic();
+>>>>>>> ChangesFromCompbot
     EnergyTracker.periodic();
     LoggedTracer.record("EnergyTracker");
 
@@ -210,7 +214,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    MechVisualizer.getInstance().periodic();
+    // MechVisualizer.getInstance().periodic();
     LauncherVisualizer.getInstance().periodic();
   }
 

@@ -51,6 +51,9 @@ import frc.robot.subsystems.launcher.LauncherIO;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
 import frc.robot.subsystems.leds.LEDStrip;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.spindexer.Spindexer;
 import frc.robot.subsystems.spindexer.SpindexerIO;
 import frc.robot.subsystems.spindexer.SpindexerIOReal;
@@ -62,6 +65,7 @@ import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+// import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
 import lombok.Getter;
@@ -71,7 +75,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   public final Feeder feeder;
-  private final Intake intake;
+  private final Intake in
   public final Launcher launcher;
   public final Spindexer spindexer;
   private final Turret turret;

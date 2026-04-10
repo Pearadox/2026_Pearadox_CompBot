@@ -6,9 +6,12 @@ package frc.robot.subsystems.launcher;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import edu.wpi.first.math.util.Units;
 import frc.lib.drivers.PearadoxTalonFX;
 import frc.robot.util.EnergyTracker.Compeartment;
 import frc.robot.util.PhoenixUtil;
@@ -20,18 +23,17 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
   protected final PearadoxTalonFX launcher1Leader;
   protected final PearadoxTalonFX launcher2Follower;
 
-  // protected final VelocityVoltage launcher1Control;
   protected final VelocityTorqueCurrentFOC launcher1Control;
+  protected final VelocityVoltage velocityVoltageRequest;
+  protected final VoltageOut voltageRequest;
   protected final Follower launcher2Control;
 
-  protected final VelocityVoltage velocityVoltageRequest;
-
-  // protected final ServoHub hoodServoHub;
-
-  // protected final ServoChannel hoodServo1;
-  // protected final ServoChannel hoodServo2;
-
   private final TalonFXConfiguration launcherConfigs;
+
+  protected final PearadoxTalonFX hood;
+  private final TalonFXConfiguration hoodConfigs;
+
+  protected final PositionVoltage hoodControl;
 
   public LauncherIOTalonFX() {
     launcherConfigs = LauncherConstants.LAUNCHER_MOTOR_CONFIG();
@@ -43,32 +45,23 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
         new PearadoxTalonFX(
             LauncherConstants.LAUNCHER_2_CAN_ID, launcherConfigs, Compeartment.LAUNCHER);
 
-    // launcher1Control = new VelocityVoltage(0);
     launcher1Control = new VelocityTorqueCurrentFOC(0);
     velocityVoltageRequest = new VelocityVoltage(0);
+    voltageRequest = new VoltageOut(0);
     launcher2Control = new Follower(launcher1Leader.getDeviceID(), MotorAlignmentValue.Opposed);
 
-    // hoodServoHub = new ServoHub(LauncherConstants.HOOD_SERVO_HUB_CAN_ID);
+    hoodConfigs = LauncherConstants.HOOD_CONFIG();
 
-    // hoodServo1 = hoodServoHub.getServoChannel(LauncherConstants.HOOD_1_ID);
-    // hoodServo1.setEnabled(true);
-    // hoodServo1.setPowered(true);
+    hood = new PearadoxTalonFX(LauncherConstants.HOOD_ID, hoodConfigs, Compeartment.HOOD);
 
-    // hoodServo2 = hoodServoHub.getServoChannel(LauncherConstants.HOOD_2_ID);
-    // hoodServo2.setEnabled(true);
-    // hoodServo2.setPowered(true);
+    hoodControl = new PositionVoltage(0);
   }
 
   public void updateInputs(LauncherIOInputs inputs) {
     inputs.launcher1Data = launcher1Leader.getData();
     inputs.launcher2Data = launcher2Follower.getData();
 
-    // inputs.hoodServoHubVoltage = hoodServoHub.getDeviceVoltage();
-
-    // inputs.hoodServo1Position =
-    //     LauncherConstants.pulseWidthtoAngularPosition(hoodServo1.getPulseWidth());
-    // inputs.hoodServo2Position =
-    //     LauncherConstants.pulseWidthtoAngularPosition(hoodServo2.getPulseWidth());
+    inputs.hoodData = hood.getData();
   }
 
   public void runLauncherVelocity(double velocityRPS, double ffamps) {
@@ -80,11 +73,16 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
     // Logger.recordOutput(
     //     "Launcher/CurrentDrawStator", launcher1Leader.getStatorCurrent().getValueAsDouble());
   }
-
-  @Override
-  public void runLauncherVelocityWithoutFOC(double velocityRPS) {
+  
+  public void runLauncherVelocity(double velocityRPS) {
     launcher1Leader.setControl(
-        velocityVoltageRequest.withVelocity(velocityRPS).withEnableFOC(false));
+      velocityVoltageRequest.withVelocity(velocityRPS).withEnableFOC(false));
+    launcher2Follower.setControl(launcher2Control);
+    Logger.recordOutput("Launcher/VelocitySetpointRPS", velocityRPS);
+  }
+  
+  public void setLauncherVoltage(double voltage) {
+    launcher1Leader.setControl(voltageRequest.withOutput(voltage));
     launcher2Follower.setControl(launcher2Control);
   }
 
@@ -93,26 +91,27 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
     launcher2Follower.stopMotor();
   }
 
-  public void setHoodAngleRads(double angleRads) {
-    // if (angleRads < LauncherConstants.HOOD_MAX_ANGLE_RADS
-    //     && angleRads > LauncherConstants.HOOD_MIN_ANGLE_RADS) {
-    //   double angleRadsFromMinimum = angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS;
+  public void setHoodAngleRads(double angleRads, double feedforward) {
+    if (angleRads <= LauncherConstants.HOOD_MAX_ANGLE_RADS
+        && angleRads >= LauncherConstants.HOOD_MIN_ANGLE_RADS) {
+      double setpoint = Units.radiansToRotations(angleRads - LauncherConstants.HOOD_MIN_ANGLE_RADS)
+              * LauncherConstants.HOOD_GEARING;
+      hood.setControl(hoodControl.withPosition(setpoint).withFeedForward(feedforward));
+      Logger.recordOutput("Hood/AngleSetpointRots", setpoint);
+      Logger.recordOutput(
+          "Hood/HoodError", Math.abs(setpoint - hood.getPosition().getValueAsDouble()));
+      Logger.recordOutput("Hood/HoodAngle-inRange", true);
+    } else {
+      Logger.recordOutput("Hood/HoodAngle-inRange", false);
+    }
+  }
 
-    //   double servoRotations =
-    //       (Units.radiansToRotations(angleRadsFromMinimum) * LauncherConstants.HOOD_GEARING)
-    //           / LauncherConstants.SERVO_POSITION_TO_ROTATIONS_CONVERSION;
-
-    //   hoodServo1.setPulseWidth(LauncherConstants.rotationstoPulseWidth(servoRotations));
-    //   hoodServo2.setPulseWidth(
-    //       LauncherConstants.SERVO_MAX_PULSE_WIDTH
-    //           - LauncherConstants.rotationstoPulseWidth(servoRotations));
-    // } else {
-    //   Logger.recordOutput("HoodAngleOutOfRange", angleRads);
-    // }
+  public void zeroHood() {
+    hood.setPosition(0);
   }
 
   @Override
-  public void setPIDFF(double kP, double kD, double kS, double kV) {
+  public void setLauncherPIDFF(double kP, double kD, double kS, double kV) {
     launcherConfigs.Slot0.kP = kP;
     launcherConfigs.Slot0.kD = kD;
     launcherConfigs.Slot0.kS = kS;
@@ -129,5 +128,16 @@ public abstract class LauncherIOTalonFX implements LauncherIO {
 
     PhoenixUtil.tryUntilOk(5, () -> launcher1Leader.getConfigurator().apply(launcherConfigs));
     PhoenixUtil.tryUntilOk(5, () -> launcher2Follower.getConfigurator().apply(launcherConfigs));
+  }
+
+  @Override
+  public void setHoodPIDFF(double kP, double kI, double kD, double kS, double kG) {
+    hoodConfigs.Slot0.kP = kP;
+    hoodConfigs.Slot0.kI = kI;
+    hoodConfigs.Slot0.kD = kD;
+    hoodConfigs.Slot0.kS = kS;
+    hoodConfigs.Slot0.kG = kG;
+
+    PhoenixUtil.tryUntilOk(5, () -> hood.getConfigurator().apply(hoodConfigs));
   }
 }
