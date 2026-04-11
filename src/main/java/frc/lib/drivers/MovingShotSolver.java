@@ -102,7 +102,7 @@ public class MovingShotSolver {
   private final LoggedTunableNumber normalShotAngleDegrees =
       new LoggedTunableNumber("SOTM/normalShotAngleDegrees", 65);
   private final LoggedTunableNumber farShotAngleDegrees =
-      new LoggedTunableNumber("SOTM/farShotAngleDegrees", 55);
+      new LoggedTunableNumber("SOTM/farShotAngleDegrees", 60);
   private final LoggedTunableNumber farShotMinDistanceMeters =
       new LoggedTunableNumber("SOTM/farShotMinDistance", 3.0);
 

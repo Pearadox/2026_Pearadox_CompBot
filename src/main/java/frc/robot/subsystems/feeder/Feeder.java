@@ -74,13 +74,13 @@ public class Feeder extends SubsystemBase {
     lastDetected = isDetectedDebounced;
   }
 
-  public double canRangeGetDistanceMeters() {
-    return inputs.canRangeDistanceMeters;
-  }
+  // public double canRangeGetDistanceMeters() {
+  //   return inputs.canRangeDistanceMeters;
+  // }
 
-  public double canRangeGetSignalStrength() {
-    return inputs.canRangeSignal;
-  }
+  // public double canRangeGetSignalStrength() {
+  //   return inputs.canRangeSignal;
+  // }
 
   public int getFuelCount() {
     return fuelCount;
