@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.launcher;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,6 +34,8 @@ public class Launcher extends SubsystemBase {
           "Launcher/Manual Mode Default Velocity", LauncherConstants.DEFAULT_VELOCITY_SETPOINT_RPS);
   private final LoggedTunableNumber idleDefaultVelocity =
       new LoggedTunableNumber("Launcher/Idle Mode Default Velocity", 20);
+  private final LoggedTunableNumber defaultStateAngleDegrees =
+      new LoggedTunableNumber("Launcher/defaultStateAngle", 20);
 
   private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 99999);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0);
@@ -91,12 +94,23 @@ public class Launcher extends SubsystemBase {
     Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
 
     // io.setHoodAngleRads(launcherState.getHoodAngleRads());
-    // Logger.recordOutput("Hood/Desired-Angle", launcherState.getHoodAngleRads());
-    // Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
-    // Logger.recordOutput(
-    //     "Hood/Current-Angle",
-    //     LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
-    //         / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
+
+    double desiredHoodAngleRads;
+    if (launcherState == LauncherState.SELF_DIRECTING) {
+      desiredHoodAngleRads = MovingShotSolver.getShotSolution().hoodAngleRadians();
+    } else {
+      desiredHoodAngleRads = Units.degreesToRadians(defaultStateAngleDegrees.get());
+    }
+    io.setHoodAngleRads(desiredHoodAngleRads);
+    // desiredHoodAngleRads = RobotContainer.hoodAngleTesting;
+    // io.setHoodAngleRads(desiredHoodAngleRads);
+
+    Logger.recordOutput("Hood/Desired-Angle", desiredHoodAngleRads);
+    Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
+    Logger.recordOutput(
+        "Hood/Current-Angle",
+        LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
+            / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
     if (kP.hasChanged(hashCode())
         || kD.hasChanged(hashCode())
@@ -152,8 +166,4 @@ public class Launcher extends SubsystemBase {
           }
         });
   }
-
-  // public void setPassing() {
-  //   launcherState = LauncherState.PASSING;
-  // }
 }
