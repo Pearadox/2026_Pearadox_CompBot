@@ -9,6 +9,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -179,6 +181,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    autoChooser.addOption(
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
+
     visualizer =
         new RobotVisualizer(
             turret::getTurretAngleRads,
@@ -200,7 +205,7 @@ public class RobotContainer {
               LoggedTracer.record("MovingShotSolve");
             },
             vision));
-    ledStrip.isHubActive();
+    ledStrip.setDefaultCommand(new RunCommand(() -> ledStrip.isHubActive(), ledStrip));
   }
 
   /**
@@ -390,6 +395,14 @@ public class RobotContainer {
                     .withTimeout(FeederConstants.IS_HOPPER_EMPTY_BUFFER_TIME)));
 
     NamedCommands.registerCommand(
+        "Set Launching (No Wait)",
+        new InstantCommand(() -> launcher.setScoring())
+            .andThen(new WaitCommand(0.2))
+            .andThen(new InstantCommand(() -> feeder.setRunning()))
+            .andThen(new WaitCommand(0.2))
+            .andThen(new InstantCommand(() -> spindexer.setRunning())));
+
+    NamedCommands.registerCommand(
         "Stop Launching",
         new InstantCommand(() -> feeder.setStopped())
             .andThen(
@@ -404,5 +417,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
+
+    new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));
   }
 }
