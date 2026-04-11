@@ -14,12 +14,16 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.LinkedList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -29,6 +33,13 @@ public class Vision extends SubsystemBase {
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
+
+  private static final LoggedTunableNumber x =
+      new LoggedTunableNumber("Vision/x", -(27.5 / 2.0 - 3.0 / 4.0));
+  private static final LoggedTunableNumber y =
+      new LoggedTunableNumber("Vision/y", -(27.5 / 2.0 - 8));
+  private static final LoggedTunableNumber z = new LoggedTunableNumber("Vision/z", 13 + 7.0 / 8.0);
+  private static final LoggedTunableNumber theta = new LoggedTunableNumber("Vision/theta", -90);
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -192,5 +203,13 @@ public class Vision extends SubsystemBase {
     for (VisionIO camera : io) {
       camera.setThrottle(VisionConstants.ENABLED_THROTTLE);
     }
+  }
+
+  public static Transform3d getLumaOffset() {
+    return new Transform3d(
+        Units.inchesToMeters(x.get()),
+        Units.inchesToMeters(y.get()),
+        Units.inchesToMeters(z.get()),
+        new Rotation3d(0.0, 0.0, Math.toRadians(theta.get())));
   }
 }

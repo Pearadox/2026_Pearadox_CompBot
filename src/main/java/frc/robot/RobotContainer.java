@@ -117,7 +117,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation)
                 new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+                    VisionConstants.camera1Name, () -> Vision.getLumaOffset()));
 
         break;
 
