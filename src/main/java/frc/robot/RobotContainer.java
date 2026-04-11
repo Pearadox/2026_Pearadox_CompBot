@@ -12,6 +12,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -66,6 +67,7 @@ import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
 import lombok.Getter;
 import lombok.Setter;
+import org.littletonrobotics.junction.Logger;
 
 public class RobotContainer {
   // Subsystems
@@ -203,6 +205,9 @@ public class RobotContainer {
               LoggedTracer.reset();
               MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds);
               LoggedTracer.record("MovingShotSolve");
+              Logger.recordOutput(
+                  "Odometry/test",
+                  new Pose3d(drive.getPose()).transformBy(visualizer.getLlTransform()));
             },
             vision));
     ledStrip.setDefaultCommand(new RunCommand(() -> ledStrip.isHubActive(), ledStrip));

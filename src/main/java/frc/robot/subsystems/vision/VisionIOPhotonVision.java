@@ -22,6 +22,7 @@ import org.photonvision.PhotonCamera;
 public class VisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
   protected final Transform3d robotToCamera;
+  // private LoggedTunableNumber kV;
 
   /**
    * Creates a new VisionIOPhotonVision.
@@ -32,6 +33,8 @@ public class VisionIOPhotonVision implements VisionIO {
   public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
     camera = new PhotonCamera(name);
     this.robotToCamera = robotToCamera;
+
+    // kV = = new LoggedTunableNumber("Launcher/" + name + "/x",);
   }
 
   @Override

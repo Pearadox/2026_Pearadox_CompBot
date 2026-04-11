@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.VisualizerConstants;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class RobotVisualizer {
   private final DoubleSupplier climberDisplacementSupplier;
 
   @Getter private Transform3d hoodTransform = Transform3d.kZero;
+  @Getter private Transform3d llTransform = Transform3d.kZero;
 
   public RobotVisualizer(
       DoubleSupplier turretYawSupplier,
@@ -33,10 +35,11 @@ public class RobotVisualizer {
 
   public void periodic() {
     double turretYaw = turretYawSupplier.getAsDouble();
-    double hoodPitch = hoodAngleSupplier.getAsDouble();
-    double spindexerYaw = spindexerYawSupplier.getAsDouble();
-    double intakeRoll = intakeAngleSupplier.getAsDouble();
-    double climberDisplacement = climberDisplacementSupplier.getAsDouble();
+    double hoodPitch =
+        // 2 * Math.sin(RobotController.getFPGATime() / 1e6);
+         hoodAngleSupplier.getAsDouble();
+    double intakeRoll =
+        Math.sin(RobotController.getFPGATime() / 1e6); // intakeAngleSupplier.getAsDouble();
 
     Transform3d turret =
         new Transform3d(
@@ -47,40 +50,28 @@ public class RobotVisualizer {
             new Transform3d(
                 VisualizerConstants.MODEL1_OFFSET,
                 new Rotation3d(-hoodPitch + VisualizerConstants.HOOD_STARTING_ANGLE, 0, 0)));
-    Transform3d spindexer =
-        new Transform3d(VisualizerConstants.MODEL2_ZERO, new Rotation3d(0, 0, -spindexerYaw));
     Transform3d intake =
         new Transform3d(
-            VisualizerConstants.MODEL3_ZERO,
+            VisualizerConstants.MODEL2_ZERO,
             new Rotation3d(0, -intakeRoll + VisualizerConstants.INTAKE_STARTING_ANGLE, 0));
-    Transform3d intakeGravityRamp =
-        intake.plus(
-            new Transform3d(
-                VisualizerConstants.MODEL4_OFFSET,
-                new Rotation3d(0, getGravityRampAngle(intakeRoll), 0)));
-    Transform3d climber =
+
+    Transform3d hopper =
         new Transform3d(
             new Translation3d(
-                0, 0, climberDisplacement - VisualizerConstants.CLIMBER_MAX_DISPLACEMENT),
+                Math.pow(Math.sin(RobotController.getFPGATime() / 1e6), 2) * -VisualizerConstants.HOPPER_EXTENSION, 0, 0),
             Rotation3d.kZero);
 
     Logger.recordOutput(
-        "RobotVisualizer/Components",
-        new Transform3d[] {turret, hoodTransform, spindexer, intake, intakeGravityRamp, climber});
-  }
+        "RobotVisualizer/Components", new Transform3d[] {turret, hoodTransform, intake, hopper});
 
-  private static double getGravityRampAngle(double intakeAngle) {
-    double intakeAngleDegs = Units.radiansToDegrees(intakeAngle) % 360;
+    llTransform =
+        turret.plus(
+            new Transform3d(
+                0,
+                VisualizerConstants.LIMELIGHT_TO_CENTER_OF_TURRET,
+                VisualizerConstants.LIMELIGHT_HEIGHT,
+                new Rotation3d(0, Math.toRadians(-20), Math.toRadians(90))));
 
-    // the ramp wants to point downwards (with gravity) but is
-    // constrained (with string) from being more than
-    // 39 degrees away from the intake
-    double fieldRelativeAngle =
-        Math.min(intakeAngleDegs - 180 + VisualizerConstants.GRAVITY_RAMP_MAX_OFFSET_DEGS, -90);
-
-    // return an angle relative to the intake
-    // adding 180 bc the CAD was exported with the ramp facing down
-    // and negative of the side of the robot it's on
-    return -(Units.degreesToRadians(fieldRelativeAngle - intakeAngleDegs + 180));
+    Logger.recordOutput("RobotVisualizer/LL", llTransform);
   }
 }
