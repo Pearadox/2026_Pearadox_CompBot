@@ -50,16 +50,19 @@ public class MovingShotSolver {
   private final InterpolatingDoubleTreeMap LAUNCH_RPS_MAP() {
     // Mapping distance from hub (m) to desired launcher speed (rps)
     InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-    map.put(1.678, 34.906);
-    map.put(2.682, 38.719);
+    map.put(1.678, 34.906 + 3);
+    map.put(2.682, 38.719 + 3);
     map.put(3.623, 41.622);
-    map.put(4.805, 45.0);
+    map.put(4.805, 45.0 + 4);
     map.put(11.0, 75.0);
     return map;
   }
 
   private final InterpolatingDoubleTreeMap launchAngleMap = LAUNCH_ANGLE_MAP();
   private final InterpolatingDoubleTreeMap launchRPSMap = LAUNCH_RPS_MAP();
+
+  private static LoggedTunableNumber woahMultiplierAgain =
+      new LoggedTunableNumber("SOTM/everywhere multiplier", 1.0);
 
   public enum Goal {
     HUB(Hub.topCenterPointRed, Hub.topCenterPointBlue),
@@ -276,7 +279,7 @@ public class MovingShotSolver {
     double distanceY = targetYOffsetMeters - turretYMeters;
     double distanceToVirtualTarget = Math.hypot(distanceX, distanceY);
 
-    double shooterSpeedRPS = launchRPSMap.get(distanceToVirtualTarget);
+    double shooterSpeedRPS = launchRPSMap.get(distanceToVirtualTarget) * woahMultiplierAgain.get();
 
     // Compute field-relative turret angle
 

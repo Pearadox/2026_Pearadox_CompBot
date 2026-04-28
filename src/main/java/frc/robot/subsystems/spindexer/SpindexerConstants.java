@@ -47,7 +47,7 @@ public class SpindexerConstants {
     SPINDEXER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     SPINDEXER_CONFIG.MotorOutput.Inverted =
-        InvertedValue.Clockwise_Positive; // CounterClockwise_Positive
+        InvertedValue.CounterClockwise_Positive; // CounterClockwise_Positive
 
     SPINDEXER_SLOT0_CONFIGS.kP = 0.2; // 0.1
     SPINDEXER_SLOT0_CONFIGS.kI = 0.0;

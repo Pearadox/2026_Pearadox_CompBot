@@ -43,8 +43,8 @@ public class Launcher extends SubsystemBase {
   private final LoggedTunableNumber defaultHoodAngleDegs =
       new LoggedTunableNumber("Launcher/Default Hood Angle Degrees", 11);
 
-  private final LoggedTunableNumber overrideHoodAngle =
-      new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
+  // private final LoggedTunableNumber overrideHoodAngle =
+  //     new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
 
   private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 5);
   private final LoggedTunableNumber kI = new LoggedTunableNumber("Launcher/kI", 0.0);
