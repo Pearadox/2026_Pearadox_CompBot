@@ -7,38 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Center-Tower"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Set Intaking"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
+            "pathName": "OTrench-NZone-Rush"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Cross Depot"
+            "pathName": "OTrench-Circle"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Stop Intaking"
+            "pathName": "OTrench-BackUp"
           }
         },
         {
@@ -64,6 +45,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "WIP",
+  "folder": "Under-The-Trench Autos",
   "choreoAuto": false
 }

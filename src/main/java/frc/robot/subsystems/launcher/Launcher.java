@@ -41,6 +41,9 @@ public class Launcher extends SubsystemBase {
   private final LoggedTunableNumber defaultHoodAngleDegs =
       new LoggedTunableNumber("Launcher/Default Hood Angle Degrees", 11);
 
+  private final LoggedTunableNumber overrideHoodAngle =
+      new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
+
   private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 99999);
   private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Launcher/kS", 0);
@@ -114,6 +117,7 @@ public class Launcher extends SubsystemBase {
     double desiredHoodAngleRads;
     if (launcherState == LauncherState.SELF_DIRECTING) {
       desiredHoodAngleRads = MovingShotSolver.getShotSolution().hoodAngleRadians();
+      // desiredHoodAngleRads = Units.degreesToRadians(overrideHoodAngle.get());
     } else {
       desiredHoodAngleRads = Units.degreesToRadians(defaultHoodAngleDegs.get());
     }
@@ -164,6 +168,7 @@ public class Launcher extends SubsystemBase {
     return Units.rotationsToRadians(inputs.hoodData.position() / LauncherConstants.HOOD_GEARING)
         + Units.degreesToRadians(kGOffset.get());
   }
+
   // this is the CORRECT method to turn launcher off
   private void turnLauncherOff() {
     io.stopLauncher();
