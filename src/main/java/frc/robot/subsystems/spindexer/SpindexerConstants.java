@@ -28,7 +28,7 @@ public class SpindexerConstants {
   public static final int SPINDEXER_MOTOR_ID = 42;
 
   public static final int SPINDEXER_SUPPLY_CURRENT_LIMIT = 60; // changed 3/17/26 for #119
-  public static final int SPINDEXER_STATOR_CURRENT_LIMIT = 120;
+  public static final int SPINDEXER_STATOR_CURRENT_LIMIT = 80;
 
   public static final double SPINDEXER_GEARING = 1.0 / 3.0;
   // 1.0 / 15.0; // technically 1/18 (according to Hitesh)
