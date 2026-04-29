@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.drivers.MovingShotSolver;
+import frc.lib.drivers.MovingShotSolver.Goal;
 import frc.robot.Constants.VisualizerConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShootOnTheMove;
@@ -313,6 +314,7 @@ public class RobotContainer {
 
     drivercontroller
         .rightBumper()
+        .and(() -> MovingShotSolver.getInstance().getGoal() == Goal.HUB)
         .whileTrue(
             Commands.startEnd(
                 () -> {

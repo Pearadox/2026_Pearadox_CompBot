@@ -31,6 +31,8 @@ public class Launcher extends SubsystemBase {
     rpsAdjust += adj;
   }
 
+  private boolean isZeroing = false;
+
   private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
   private final LoggedTunableNumber manualDefaultVelocity =
       new LoggedTunableNumber(
@@ -41,11 +43,12 @@ public class Launcher extends SubsystemBase {
   private final LoggedTunableNumber defaultHoodAngleDegs =
       new LoggedTunableNumber("Launcher/Default Hood Angle Degrees", 11);
 
-  private final LoggedTunableNumber overrideHoodAngle =
-      new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
+  // private final LoggedTunableNumber overrideHoodAngle =
+  //     new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
 
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 99999);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 5);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Launcher/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Launcher/kS", 0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Launcher/kV", 0);
   private final LoggedTunableNumber statorCurrentLimit =
@@ -71,7 +74,7 @@ public class Launcher extends SubsystemBase {
   public Launcher(LauncherIO io) {
     this.io = io;
 
-    io.setLauncherPIDFF(kP.get(), kD.get(), kS.get(), kV.get());
+    io.setLauncherPIDFF(kP.get(), kI.get(), kD.get(), kS.get(), kV.get());
     io.setCurrentLimits(statorCurrentLimit.get(), supplyCurrentLimit.get());
     io.setHoodPIDFF(hoodkP.get(), hoodkI.get(), hoodkD.get(), hoodkS.get(), hoodkG.get());
   }
@@ -121,7 +124,11 @@ public class Launcher extends SubsystemBase {
     } else {
       desiredHoodAngleRads = Units.degreesToRadians(defaultHoodAngleDegs.get());
     }
-    io.setHoodAngleRads(desiredHoodAngleRads, getkG());
+
+    if (!isZeroing) {
+      io.setHoodAngleRads(desiredHoodAngleRads, getkG());
+    }
+
     // desiredHoodAngleRads = RobotContainer.hoodAngleTesting;
     // io.setHoodAngleRads(desiredHoodAngleRads);
 
@@ -131,7 +138,7 @@ public class Launcher extends SubsystemBase {
         || kD.hasChanged(hashCode())
         || kS.hasChanged(hashCode())
         || kV.hasChanged(hashCode())) {
-      io.setLauncherPIDFF(kP.get(), kD.get(), kS.get(), kV.get());
+      io.setLauncherPIDFF(kP.get(), kI.get(), kD.get(), kS.get(), kV.get());
     }
 
     if (statorCurrentLimit.hasChanged(hashCode()) || supplyCurrentLimit.hasChanged(hashCode())) {
@@ -148,7 +155,16 @@ public class Launcher extends SubsystemBase {
   }
 
   public Command zeroHoodCommand() {
-    return new RunCommand(() -> io.runHoodVolts(-0.5)).finallyDo((bool) -> zeroHood());
+    return new RunCommand(
+            () -> {
+              isZeroing = true;
+              io.runHoodVolts(-0.5);
+            })
+        .finallyDo(
+            (bool) -> {
+              isZeroing = false;
+              zeroHood();
+            });
   }
 
   /** velocity will be calculated from aim assist command factory */

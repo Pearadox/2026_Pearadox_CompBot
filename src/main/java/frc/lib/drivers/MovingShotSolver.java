@@ -50,10 +50,10 @@ public class MovingShotSolver {
   private final InterpolatingDoubleTreeMap LAUNCH_RPS_MAP() {
     // Mapping distance from hub (m) to desired launcher speed (rps)
     InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-    map.put(1.678, 34.906);
-    map.put(2.682, 38.719);
+    map.put(1.678, 34.906 + 3);
+    map.put(2.682, 38.719 + 3);
     map.put(3.623, 41.622);
-    map.put(4.805, 45.0);
+    map.put(4.805, 45.0 + 4);
     map.put(11.0, 75.0);
     return map;
   }
@@ -61,7 +61,10 @@ public class MovingShotSolver {
   private final InterpolatingDoubleTreeMap launchAngleMap = LAUNCH_ANGLE_MAP();
   private final InterpolatingDoubleTreeMap launchRPSMap = LAUNCH_RPS_MAP();
 
-  private enum Goal {
+  private static LoggedTunableNumber woahMultiplierAgain =
+      new LoggedTunableNumber("SOTM/everywhere multiplier", 1.0);
+
+  public enum Goal {
     HUB(Hub.topCenterPointRed, Hub.topCenterPointBlue),
     DEPOT_CORNER(
         new Translation3d(
@@ -128,6 +131,8 @@ public class MovingShotSolver {
   private double prevAccelerationX = 0;
   private double prevAccelerationY = 0;
 
+  @Getter private Goal goal;
+
   public record ShotSolution(
       double time, double speed, Rotation2d turretAngle, double hoodAngleRadians) {}
 
@@ -181,7 +186,7 @@ public class MovingShotSolver {
     Pose2d predictedRobotPose = new Pose2d(predictedRobotX, predictedRobotY, curPose.getRotation());
     // not finding predictedRotation above yet
 
-    Goal goal = Goal.findTarget(predictedRobotPose, alliance);
+    goal = Goal.findTarget(predictedRobotPose, alliance);
 
     // end of acceleration handling
 
@@ -274,7 +279,7 @@ public class MovingShotSolver {
     double distanceY = targetYOffsetMeters - turretYMeters;
     double distanceToVirtualTarget = Math.hypot(distanceX, distanceY);
 
-    double shooterSpeedRPS = launchRPSMap.get(distanceToVirtualTarget);
+    double shooterSpeedRPS = launchRPSMap.get(distanceToVirtualTarget) * woahMultiplierAgain.get();
 
     // Compute field-relative turret angle
 
