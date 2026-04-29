@@ -58,6 +58,7 @@ public class IntakeConstants {
   public static final double MASS_KG = 11.246;
 
   public static final double OP_ADJUST_INCREMENT_DEGREES = 2;
+  public static final double INTAKE_JOSTLE_TIME_SEC = 0.7;
 
   // intake sim constants
   public static final double SIM_STARTING_ANGLE_RADS = Units.degreesToRadians(0);
@@ -108,6 +109,7 @@ public class IntakeConstants {
     // Intaking pivot config
     // TODO: TUNE THIS.
     PIVOT_SLOT1_CONFIGS.kP = 1.5;
+    // PIVOT_SLOT1_CONFIGS.kV = 0.0;
 
     PIVOT_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 40.0;
     PIVOT_CONFIG.MotionMagic.MotionMagicAcceleration = 150;

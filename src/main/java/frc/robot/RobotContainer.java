@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -403,6 +404,20 @@ public class RobotContainer {
     // opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
     // opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
 
+    if (!drivercontroller.leftBumper().getAsBoolean()
+        || drivercontroller.povCenter().getAsBoolean()) {
+      opController
+          .rightBumper()
+          .whileTrue(
+              new SequentialCommandGroup(
+                      new InstantCommand(() -> intake.setFlow()),
+                      new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC),
+                      new InstantCommand(() -> intake.setDeployed()),
+                      new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC))
+                  .repeatedly())
+          .onFalse(new InstantCommand(() -> intake.setDeployed()));
+    }
+
     opController
         .start()
         .onTrue(
@@ -431,16 +446,26 @@ public class RobotContainer {
    */
   public void setUpAutonomousCommand() {
     autoChooser.addOption(
-        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
+        "OTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
     autoChooser.addOption(
-        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("DTrench-NZone-2.5-Sweeps", false));
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", false));
 
     autoChooser.addOption(
-        "Adamant Trench (Depot, 3 Sweeps, Rush)",
+        "Adamant Trench (Outpost, 3 Sweeps, Rush)",
         new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
     autoChooser.addOption(
         "Adamant Trench (Depot, 3 Sweeps, Rush)",
-        new PathPlannerAuto("Adamant Trench (Depot, 3 Sweeps, Rush)", false));
+        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", false));
+
+    autoChooser.addOption(
+        "CircleBack Outpost",
+        new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)", false));
+
+    autoChooser.addOption(
+        "CircleBack Depot",
+        new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
+
+    autoChooser.addOption("Center Depot", new PathPlannerAuto("Center (Depot Intaking)", false));
 
     SmartDashboard.putData("clean auto chooser", autoChooser);
   }
@@ -458,7 +483,7 @@ public class RobotContainer {
         "Set Launching",
         new InstantCommand(() -> launcher.setScoring())
             .andThen(new InstantCommand(() -> feeder.startTimer()))
-            .andThen(new WaitCommand(0.2))
+            .andThen(new WaitCommand(0.4))
             .andThen(new InstantCommand(() -> feeder.setRunning()))
             .andThen(new WaitCommand(0.2))
             .andThen(
@@ -501,12 +526,13 @@ public class RobotContainer {
         "Jostle Intake",
         new RunCommand(() -> intake.setIntaking(), intake)
             .withTimeout(1) // purposefully left a little longer so no jamming
-            .andThen(new RunCommand(() -> intake.setFlow(), intake).withTimeout(0.5))
-            .andThen(new RunCommand(() -> intake.setIntaking(), intake).withTimeout(0.5))
-            .andThen(new RunCommand(() -> intake.setFlow(), intake).withTimeout(0.5))
-            .andThen(new RunCommand(() -> intake.setIntaking(), intake).withTimeout(0.5))
-            .andThen(new RunCommand(() -> intake.setFlow(), intake).withTimeout(0.5))
-            .andThen(new RunCommand(() -> intake.setIntaking(), intake).withTimeout(0.5))
+            .andThen(
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> intake.setFlow()),
+                        new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC),
+                        new InstantCommand(() -> intake.setDeployed()),
+                        new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC))
+                    .repeatedly())
             .finallyDo((bool) -> intake.setIntaking()));
 
     new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));

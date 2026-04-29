@@ -7,13 +7,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Set Intaking"
+            "name": "Stop Intaking"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Center-Tower"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Intaking"
           }
         },
         {
