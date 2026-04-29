@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -402,6 +403,14 @@ public class RobotContainer {
 
     // opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
     // opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
+
+    if (!drivercontroller.leftBumper().getAsBoolean()
+        && drivercontroller.povCenter().getAsBoolean()) {
+            opController.rightBumper().whileTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> intake.setFlow()),
+                new WaitCommand(0.2)
+            )).onFalse(new InstantCommand(() -> intake.setDeployed()));
+        }
 
     opController
         .start()

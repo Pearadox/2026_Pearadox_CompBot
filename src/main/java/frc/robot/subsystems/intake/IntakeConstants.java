@@ -108,6 +108,7 @@ public class IntakeConstants {
     // Intaking pivot config
     // TODO: TUNE THIS.
     PIVOT_SLOT1_CONFIGS.kP = 1.5;
+    // PIVOT_SLOT1_CONFIGS.kV = 0.0;
 
     PIVOT_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 40.0;
     PIVOT_CONFIG.MotionMagic.MotionMagicAcceleration = 150;
