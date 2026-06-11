@@ -19,18 +19,18 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-lemon";
-  public static String camera1Name = "OV9281";
+  public static String camera0Name = "OV9281";
+  public static String camera1Name = "limelight-lemon";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
-  public static Transform3d robotToCamera0 = Transform3d.kZero;
+  public static Transform3d robotToCamera1 = Transform3d.kZero;
   // new Transform3d(
   //     -Units.inchesToMeters(14 - 1.75),
   //     Units.inchesToMeters(14 - 2.75),
   //     Units.inchesToMeters(9.403),
   //     new Rotation3d(0, -Units.degreesToRadians(20), Math.PI));
-  public static Transform3d robotToCamera1 =
+  public static Transform3d robotToCamera0 =
       new Transform3d(
           -Units.inchesToMeters(27.5 / 2.0 - 8),
           -Units.inchesToMeters(27.5 / 2.0 - 3.0 / 4.0),

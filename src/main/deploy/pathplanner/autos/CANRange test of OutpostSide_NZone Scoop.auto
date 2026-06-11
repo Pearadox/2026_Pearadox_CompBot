@@ -57,6 +57,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Runnables",
+  "folder": null,
   "choreoAuto": false
 }

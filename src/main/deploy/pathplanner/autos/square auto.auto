@@ -7,31 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "OTrench-NZone-Passing"
+            "pathName": "square 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NZone U-Turn"
+            "pathName": "square 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "NZone-Outpost-SOTM"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "pathName": "square 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Straight Line"
+            "pathName": "square 4"
           }
         }
       ]

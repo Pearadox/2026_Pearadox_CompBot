@@ -80,7 +80,7 @@ public class RobotContainer {
 
   // Visualizer
   public final RobotVisualizer visualizer;
-  @Getter @Setter private double robotSpeedMultiplier = 1.0;
+  @Getter @Setter private double robotSpeedMultiplier = 0.5;
 
   // Controller
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
@@ -117,7 +117,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation)
                 new VisionIOPhotonVision(
-                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+                    VisionConstants.camera0Name, VisionConstants.robotToCamera0));
 
         break;
 
@@ -222,7 +222,7 @@ public class RobotContainer {
             drive,
             () -> -drivercontroller.getLeftY() * getRobotSpeedMultiplier(),
             () -> -drivercontroller.getLeftX() * getRobotSpeedMultiplier(),
-            () -> -drivercontroller.getRightX()));
+            () -> -drivercontroller.getRightX() * getRobotSpeedMultiplier()));
 
     // Switch to X pattern when X button is pressed
     drivercontroller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -276,10 +276,10 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> {
-                  setRobotSpeedMultiplier(0.7);
+                  setRobotSpeedMultiplier(0.5);
                 },
                 () -> {
-                  setRobotSpeedMultiplier(1.0);
+                  setRobotSpeedMultiplier(0.5);
                 }));
 
     drivercontroller
