@@ -446,26 +446,26 @@ public class RobotContainer {
    */
   public void setUpAutonomousCommand() {
     autoChooser.addOption(
-        "OTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
+        "OTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps"));
     autoChooser.addOption(
-        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", false));
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     autoChooser.addOption(
         "Adamant Trench (Outpost, 3 Sweeps, Rush)",
-        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
+        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)"));
     autoChooser.addOption(
         "Adamant Trench (Depot, 3 Sweeps, Rush)",
-        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", false));
+        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
 
     autoChooser.addOption(
         "CircleBack Outpost",
-        new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)", false));
+        new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)"));
 
     autoChooser.addOption(
         "CircleBack Depot",
         new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
 
-    autoChooser.addOption("Center Depot", new PathPlannerAuto("Center (Depot Intaking)", false));
+    autoChooser.addOption("Center Depot", new PathPlannerAuto("Center (Depot Intaking)"));
 
     SmartDashboard.putData("clean auto chooser", autoChooser);
   }
