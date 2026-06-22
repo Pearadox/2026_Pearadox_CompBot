@@ -215,6 +215,8 @@ public class MovingShotSolver {
 
     boolean isFar = distanceToTarget > farShotMinDistanceMeters.get();
 
+    isFar = false;
+
     double hoodAngleRadians =
         isFar
             ? Units.degreesToRadians(farShotAngleDegrees.get())
