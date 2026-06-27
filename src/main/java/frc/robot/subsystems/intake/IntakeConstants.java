@@ -30,10 +30,10 @@ public class IntakeConstants {
     public static final Map<IntakeState, StateConfig> INTAKE_STATE_MAP =
         Map.of(
             IntakeState.STOWED, new StateConfig(60, 0, 0), // 7 deg
-            IntakeState.DEPLOYED, new StateConfig(120, 0, 1),
-            IntakeState.INTAKING, new StateConfig(120, 6.7, 1), // 4V
-            IntakeState.INTAKING_FAST, new StateConfig(120, 12, 1), // for auto
-            IntakeState.OUTTAKING, new StateConfig(120, -7.5, 1), // -4V
+            IntakeState.DEPLOYED, new StateConfig(135, 0, 1),
+            IntakeState.INTAKING, new StateConfig(135, 6.7, 1), // 4V
+            IntakeState.INTAKING_FAST, new StateConfig(135, 12, 1), // for auto
+            IntakeState.OUTTAKING, new StateConfig(135, -7.5, 1), // -4V
             IntakeState.FLOW_STATE, new StateConfig(60, 4.0, 0) // 7 deg
             );
   }
@@ -42,8 +42,8 @@ public class IntakeConstants {
   public static final int ROLLER_1_LEADER_ID = 33;
   public static final int ROLLER_2_FOLLOWER_ID = 34;
 
-  public static final int ROLLER_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
-  public static final int ROLLER_STATOR_CURRENT_LIMIT = 60;
+  public static final int ROLLER_SUPPLY_CURRENT_LIMIT = 40; // changed 3/17/26 for #119
+  public static final int ROLLER_STATOR_CURRENT_LIMIT = 40;
 
   // pivot constants
   public static final int PIVOT_1_LEADER_ID = 32;
