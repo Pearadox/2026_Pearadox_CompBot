@@ -296,7 +296,7 @@ public class RobotContainer {
     drivercontroller
         .b()
         .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer).alongWith(new RunCommand(() -> feeder.setReverse(), feeder)))
-        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer).alongWith(new InstantCommand(()-> feeder.setStopped())));
 
     // Op Bindings
     opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
