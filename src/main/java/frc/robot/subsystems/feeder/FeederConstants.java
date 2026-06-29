@@ -18,14 +18,18 @@ public class FeederConstants {
 
   public static enum FeederState {
     STOPPED,
-    RUNNING
+    RUNNING,
+    REVERSE
+
   }
 
   public static record StateConfig(double voltage) {
     public static final Map<FeederState, StateConfig> FEEDER_STATE_MAP =
         Map.of(
             FeederState.STOPPED, new StateConfig(0),
-            FeederState.RUNNING, new StateConfig(-12));
+            FeederState.RUNNING, new StateConfig((-12)),
+            FeederState.REVERSE, new StateConfig((12)));
+          
   }
 
   // feeder constants

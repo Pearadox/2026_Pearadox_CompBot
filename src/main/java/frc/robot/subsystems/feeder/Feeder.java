@@ -53,6 +53,9 @@ public class Feeder extends SubsystemBase {
   public void setRunning() {
     feederState = FeederState.RUNNING;
   }
+  public void setReverse() {
+    feederState = FeederState.REVERSE;
+  }
 
   // CANRange methods
   public boolean isDetectedDebounced() {
