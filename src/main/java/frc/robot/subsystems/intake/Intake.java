@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private IntakeIO io;
   @AutoLogOutput public IntakeState intakeState = IntakeState.STOWED;
-  @AutoLogOutput public static double pivotDegreesAdjust = 0.0;
+  @AutoLogOutput public static double pivotDegreesAdjust = -10;
   @AutoLogOutput public static double dutyAdjust = 0.0;
   @AutoLogOutput public static double voltAdjust = 0.0;
 
@@ -58,14 +58,14 @@ public class Intake extends SubsystemBase {
 
     io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + voltAdjust);
 
-    if (intakeState.equals(IntakeState.INTAKING)) {
-      io.runPivotVolts(0.25);
-    } else {
-      io.runPositionDegrees(
-          StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
-          getFFVolts(),
-          StateConfig.INTAKE_STATE_MAP.get(intakeState).slot());
-    }
+    // if (intakeState.equals(IntakeState.INTAKING)) {
+    //   io.runPivotVolts(0.25);
+    // } else {
+    io.runPositionDegrees(
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
+        getFFVolts(),
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).slot());
+    // }
 
     Logger.recordOutput(
         "Intake/Target Position Rots",
