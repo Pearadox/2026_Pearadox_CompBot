@@ -25,7 +25,7 @@ public class ShootOnTheMove extends Command {
   private Supplier<Rotation2d> turretRotationSupplier;
 
   private boolean atDesiredVelocity = false;
-  private boolean atDesiredRotation = false;
+  // private boolean atDesiredRotation = false;
   private boolean readyToShoot = false;
 
   public ShootOnTheMove(
@@ -46,14 +46,14 @@ public class ShootOnTheMove extends Command {
   @Override
   public void execute() {
     double desiredVelocity = MovingShotSolver.getShotSolution().speed();
-    Rotation2d desiredRotation = MovingShotSolver.getShotSolution().turretAngle();
+    // Rotation2d desiredRotation = MovingShotSolver.getShotSolution().turretAngle();
 
     double shooterVelocityError = launcher.getLauncherVelocity() - desiredVelocity;
 
     double currentAngle = turretRotationSupplier.get().getRotations();
     double desiredAngle = desiredRotation.getRotations();
 
-    double turretRotationError = currentAngle - desiredAngle;
+    // double turretRotationError = currentAngle - desiredAngle;
 
     atDesiredVelocity = debouncer.calculate(Math.abs(shooterVelocityError) < 7.0);
     atDesiredRotation = turretRotationDebouncer.calculate(Math.abs(turretRotationError) < 0.5);

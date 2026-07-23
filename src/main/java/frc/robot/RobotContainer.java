@@ -207,6 +207,7 @@ public class RobotContainer {
             () -> {
               LoggedTracer.reset();
               MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds);
+
               LoggedTracer.record("MovingShotSolve");
 
               //   Logger.recordOutput(
