@@ -8,7 +8,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.servohub.ServoChannel.ChannelId;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
@@ -21,8 +20,8 @@ public class LauncherConstants {
     SELF_DIRECTING,
   }
 
-  public static final int LAUNCHER_1_CAN_ID = 22;
-  public static final int LAUNCHER_2_CAN_ID = 21;
+  public static final int LAUNCHER_1_CAN_ID = 21;
+  public static final int LAUNCHER_2_CAN_ID = 22;
 
   public static final double SHOOTER_VELOCITY_DEADBAND = 3.0; // in rps
   public static final double SHOOTER_MAX_VELOCITY = 100.0; // in rps
@@ -31,7 +30,7 @@ public class LauncherConstants {
   public static final int LAUNCHER_STATOR_CURRENT_LIMIT = 60;
 
   public static final double LAUNCHER_GEARING = 1.0;
-  public static final double DEFAULT_VELOCITY_SETPOINT_RPS = 51.3;
+  public static final double DEFAULT_VELOCITY_SETPOINT_RPS = 46; // 51.3
 
   public static final TalonFXConfiguration LAUNCHER_CONFIG = new TalonFXConfiguration();
   public static final Slot0Configs LAUNCHER_CONFIG_SLOT0 = LAUNCHER_CONFIG.Slot0;
@@ -45,7 +44,7 @@ public class LauncherConstants {
 
     LAUNCHER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    LAUNCHER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     LAUNCHER_CONFIG.TorqueCurrent.PeakForwardTorqueCurrent = 40.0; // added for bang-bang control
     LAUNCHER_CONFIG.TorqueCurrent.PeakReverseTorqueCurrent = 0.0; // added for bang-bang control
@@ -61,58 +60,56 @@ public class LauncherConstants {
     return LAUNCHER_CONFIG;
   }
 
-  // SERVO
-  public static final int HOOD_SERVO_HUB_CAN_ID = 23; // TODO: set
-  public static final ChannelId HOOD_1_ID = ChannelId.kChannelId0; // TODO: set
-  public static final ChannelId HOOD_2_ID = ChannelId.kChannelId5; // TODO: set
+  public static final int HOOD_ID = 23;
 
-  public static final double HOOD_GEARING = 25. / 12.; // TODO: double check
+  public static final double HOOD_STATOR_CURRENT = 40.0;
+  public static final double HOOD_SUPPLY_CURRENT = 30.0;
 
-  public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(60.0);
-  public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(20.0);
+  public static final double HOOD_GEARING = 29.0; // 14.5
 
-  public static final int SERVO_MAX_PULSE_WIDTH = 2500;
-  public static final int SERVO_MIN_PULSE_WIDTH = 500;
+  public static final double HOOD_MIN_ANGLE_RADS = Units.degreesToRadians(10);
+  public static final double HOOD_MAX_ANGLE_RADS = Units.degreesToRadians(40);
 
-  public static final double SERVO_POSITION_TO_ROTATIONS_CONVERSION = 4.25;
-  public static final double SERVO_POSITION_TO_PW_CONVERSION = 2000;
-  public static final double SERVO_ROTATIONS_TO_PW_CONVERSION =
-      SERVO_POSITION_TO_PW_CONVERSION / SERVO_POSITION_TO_ROTATIONS_CONVERSION;
+  public static final TalonFXConfiguration HOOD_CONFIG = HOOD_CONFIG();
+  public static final Slot0Configs HOOD_CONFIG_SLOT0 = HOOD_CONFIG.Slot0;
 
-  public static final double pulseWidthtoAngularPosition(int pulseWidth) {
-    return (pulseWidth - SERVO_MIN_PULSE_WIDTH) / SERVO_POSITION_TO_PW_CONVERSION;
+  public static final TalonFXConfiguration HOOD_CONFIG() {
+    TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
+    hoodConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    hoodConfig.CurrentLimits.StatorCurrentLimit = HOOD_STATOR_CURRENT;
+
+    hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    hoodConfig.CurrentLimits.SupplyCurrentLimit = HOOD_SUPPLY_CURRENT;
+
+    hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    hoodConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    hoodConfig.Voltage.PeakForwardVoltage = 4;
+    hoodConfig.Voltage.PeakReverseVoltage = -4;
+
+    hoodConfig.Slot0.kP = 5; // 4
+    hoodConfig.Slot0.kI = 1.18;
+    hoodConfig.Slot0.kD = 0.0; // 0.1323
+    // HOOD_CONFIG_SLOT0.kG = 0.254;
+    hoodConfig.Slot0.kS = 0.07115;
+
+    return hoodConfig;
   }
 
-  public static final double pulseWidthtoRotations(int pulseWidth) {
-    return (pulseWidth - SERVO_MIN_PULSE_WIDTH) / SERVO_ROTATIONS_TO_PW_CONVERSION;
-  }
-
-  public static final int angularPositiontoPulseWidth(double angularPosition) {
-    return (int) (angularPosition * SERVO_POSITION_TO_PW_CONVERSION)
-        + LauncherConstants.SERVO_MIN_PULSE_WIDTH;
-  }
-
-  public static final double angularPositiontoRotations(double angularPosition) {
-    return angularPosition * SERVO_POSITION_TO_ROTATIONS_CONVERSION;
-  }
-
-  public static final int rotationstoPulseWidth(double rotations) {
-    return (int) (rotations * SERVO_ROTATIONS_TO_PW_CONVERSION) + SERVO_MIN_PULSE_WIDTH;
-  }
-
-  public static final double rotationstoAngularPosition(double rotations) {
-    return rotations / SERVO_POSITION_TO_ROTATIONS_CONVERSION;
-  }
+  public static final double HOOD_KG_OFFSET_DEG = 40.0;
 
   // SIM
   public static final DCMotor ROLLER_MOTOR = DCMotor.getKrakenX60(1);
   public static final double ROLLER_RADIUS_METERS = Units.inchesToMeters(2.0);
-  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.7); // TODO: get weight
+  public static final double ROLLER_MASS_KG = Units.lbsToKilograms(0.6);
   public static final double ROLLER_CIRCUMFERENCE_METERS = Units.inchesToMeters(4.0 * Math.PI);
-  public static final double LAUNCHER_HEIGHT_METERS =
-      Units.inchesToMeters(22.5); // TODO: double check
   public static final double LAUNCHER_ROLLER_MOI = 0.003;
   // 0.5 * ROLLER_MASS_KG * Math.pow(ROLLER_RADIUS_METERS, 2);
-  public static final int ROLLER_SEGMENT_COUNT = 60;
+  public static final int ROLLER_SEGMENT_COUNT = 20;
   public static final int SIM_LINE_WIDTH = 5;
+
+  public static final DCMotor HOOD_MOTOR = DCMotor.getKrakenX44(1);
+  public static final double HOOD_LENGTH_METERS = Units.inchesToMeters(9);
+  public static final double HOOD_MASS_KG = Units.lbsToKilograms(3);
+  public static final double HOOD_P_COEFFICIENT = (2 * Math.PI) / LauncherConstants.HOOD_GEARING;
 }

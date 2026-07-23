@@ -3,16 +3,18 @@
   "robotLength": 0.857,
   "holonomicMode": true,
   "pathFolders": [
-    "To Trench",
+    "604 inspired paths",
     "Sweeps & Scoops",
     "To Alliance Zone",
     "To Depot",
     "To Neutral Zone",
-    "To Outpost"
+    "To Outpost",
+    "To Trench"
   ],
   "autoFolders": [
-    "Runnables",
-    "WIP"
+    "604 Autos",
+    "Under-The-Trench Autos",
+    "Over-The-Bump Autos"
   ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,

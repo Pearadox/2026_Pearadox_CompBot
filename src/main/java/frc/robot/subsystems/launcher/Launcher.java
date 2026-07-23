@@ -7,8 +7,11 @@ package frc.robot.subsystems.launcher;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.drivers.MovingShotSolver;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import frc.robot.util.LoggedTunableNumber;
 import lombok.Getter;
@@ -28,17 +31,24 @@ public class Launcher extends SubsystemBase {
     rpsAdjust += adj;
   }
 
+  private boolean isZeroing = false;
+
   private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
   private final LoggedTunableNumber manualDefaultVelocity =
       new LoggedTunableNumber(
           "Launcher/Manual Mode Default Velocity", LauncherConstants.DEFAULT_VELOCITY_SETPOINT_RPS);
   private final LoggedTunableNumber idleDefaultVelocity =
-      new LoggedTunableNumber("Launcher/Idle Mode Default Velocity", 20);
-  private final LoggedTunableNumber defaultStateAngleDegrees =
-      new LoggedTunableNumber("Launcher/defaultStateAngle", 20);
+      new LoggedTunableNumber("Launcher/Idle Mode Default Velocity", 40);
 
-  private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 99999);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0);
+  private final LoggedTunableNumber defaultHoodAngleDegs =
+      new LoggedTunableNumber("Launcher/Default Hood Angle Degrees", 11);
+
+  // private final LoggedTunableNumber overrideHoodAngle =
+  //     new LoggedTunableNumber("Launcher/Tuning for Hood Angle Degrees", 12);
+
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Launcher/kP", 5);
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Launcher/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Launcher/kD", 0.0);
   private final LoggedTunableNumber kS = new LoggedTunableNumber("Launcher/kS", 0);
   private final LoggedTunableNumber kV = new LoggedTunableNumber("Launcher/kV", 0);
   private final LoggedTunableNumber statorCurrentLimit =
@@ -48,11 +58,25 @@ public class Launcher extends SubsystemBase {
       new LoggedTunableNumber(
           "Launcher/Supply Current Limit", LauncherConstants.LAUNCHER_SUPPLY_CURRENT_LIMIT);
 
+  private final LoggedTunableNumber hoodkP =
+      new LoggedTunableNumber("Hood/kP", LauncherConstants.HOOD_CONFIG_SLOT0.kP);
+  private final LoggedTunableNumber hoodkI =
+      new LoggedTunableNumber("Hood/kI", LauncherConstants.HOOD_CONFIG_SLOT0.kI);
+  private final LoggedTunableNumber hoodkD =
+      new LoggedTunableNumber("Hood/kD", LauncherConstants.HOOD_CONFIG_SLOT0.kD);
+  private final LoggedTunableNumber hoodkS =
+      new LoggedTunableNumber("Hood/kS", LauncherConstants.HOOD_CONFIG_SLOT0.kS);
+  private final LoggedTunableNumber hoodkG =
+      new LoggedTunableNumber("Hood/kG", LauncherConstants.HOOD_CONFIG_SLOT0.kG);
+  private final LoggedTunableNumber kGOffset =
+      new LoggedTunableNumber("Hood/kG-AngleOffset-Deg", LauncherConstants.HOOD_KG_OFFSET_DEG);
+
   public Launcher(LauncherIO io) {
     this.io = io;
 
-    io.setPIDFF(kP.get(), kD.get(), kS.get(), kV.get());
+    io.setLauncherPIDFF(kP.get(), kI.get(), kD.get(), kS.get(), kV.get());
     io.setCurrentLimits(statorCurrentLimit.get(), supplyCurrentLimit.get());
+    io.setHoodPIDFF(hoodkP.get(), hoodkI.get(), hoodkD.get(), hoodkS.get(), hoodkG.get());
   }
 
   @Override
@@ -72,6 +96,7 @@ public class Launcher extends SubsystemBase {
     }
 
     desiredVelocity = Math.abs(desiredVelocity + rpsAdjust);
+    // desiredVelocity = 0; FOR TESTING ONLY
 
     if (desiredVelocity < LauncherConstants.SHOOTER_VELOCITY_DEADBAND) {
       desiredVelocity = 0;
@@ -80,47 +105,66 @@ public class Launcher extends SubsystemBase {
       setVelocity(desiredVelocity, tunableffAmps.get());
     }
 
-    // this is taking 3-4 ms each cycle
-    // LoggedTracer.reset();
-    // LauncherVisualizer.getInstance()
-    //     .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
-    // LauncherVisualizer.getInstance()
-    //     .updateHoodPositionDeg(
-    //         Units.rotationsToDegrees(
-    //             LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)));
-    // LoggedTracer.record("LauncherViz");
+    if (Constants.currentMode == Mode.SIM) {
+      LauncherVisualizer.getInstance()
+          .updateFlywheelPositionDeg(Units.rotationsToDegrees(inputs.launcher1Data.position()));
+      LauncherVisualizer.getInstance()
+          .updateHoodPositionDeg(
+              Units.radiansToDegrees(getHoodAngleRads() - LauncherConstants.HOOD_MIN_ANGLE_RADS));
+    }
 
     Logger.recordOutput("Launcher/adjust", rpsAdjust);
-    Logger.recordOutput("Debug/getLauncherVelocity", getLauncherVelocity());
-
-    // io.setHoodAngleRads(launcherState.getHoodAngleRads());
+    Logger.recordOutput("Launcher/launcherVelocity", getLauncherVelocity());
+    Logger.recordOutput("Hood/kG-Value", getkG());
 
     double desiredHoodAngleRads;
     if (launcherState == LauncherState.SELF_DIRECTING) {
       desiredHoodAngleRads = MovingShotSolver.getShotSolution().hoodAngleRadians();
+      // desiredHoodAngleRads = Units.degreesToRadians(overrideHoodAngle.get());
     } else {
-      desiredHoodAngleRads = Units.degreesToRadians(defaultStateAngleDegrees.get());
+      desiredHoodAngleRads = Units.degreesToRadians(defaultHoodAngleDegs.get());
     }
-    io.setHoodAngleRads(desiredHoodAngleRads);
+
+    if (!isZeroing) {
+      io.setHoodAngleRads(desiredHoodAngleRads, getkG());
+    }
+
     // desiredHoodAngleRads = RobotContainer.hoodAngleTesting;
     // io.setHoodAngleRads(desiredHoodAngleRads);
 
     Logger.recordOutput("Hood/Desired-Angle", desiredHoodAngleRads);
-    Logger.recordOutput("Hood/Servo-Position", inputs.hoodServo1Position);
-    Logger.recordOutput(
-        "Hood/Current-Angle",
-        LauncherConstants.angularPositiontoRotations(inputs.hoodServo1Position)
-            / LauncherConstants.HOOD_GEARING); // 5 because 1.0 position -> 5 rotations
 
     if (kP.hasChanged(hashCode())
         || kD.hasChanged(hashCode())
         || kS.hasChanged(hashCode())
         || kV.hasChanged(hashCode())) {
-      io.setPIDFF(kP.get(), kD.get(), kS.get(), kV.get());
+      io.setLauncherPIDFF(kP.get(), kI.get(), kD.get(), kS.get(), kV.get());
     }
+
     if (statorCurrentLimit.hasChanged(hashCode()) || supplyCurrentLimit.hasChanged(hashCode())) {
       io.setCurrentLimits(statorCurrentLimit.get(), supplyCurrentLimit.get());
     }
+
+    if (hoodkP.hasChanged(hashCode())
+        || hoodkI.hasChanged(hashCode())
+        || hoodkD.hasChanged(hashCode())
+        || hoodkS.hasChanged(hashCode())
+        || hoodkG.hasChanged(hashCode())) {
+      io.setHoodPIDFF(hoodkP.get(), hoodkI.get(), hoodkD.get(), hoodkS.get(), hoodkG.get());
+    }
+  }
+
+  public Command zeroHoodCommand() {
+    return new RunCommand(
+            () -> {
+              isZeroing = true;
+              io.runHoodVolts(-0.5);
+            })
+        .finallyDo(
+            (bool) -> {
+              isZeroing = false;
+              zeroHood();
+            });
   }
 
   /** velocity will be calculated from aim assist command factory */
@@ -130,6 +174,15 @@ public class Launcher extends SubsystemBase {
 
   public double getLauncherVelocity() {
     return inputs.launcher1Data.velocity();
+  }
+
+  public double getkG() {
+    return hoodkG.get() * Math.cos(getHoodAngleRads());
+  }
+
+  public double getHoodAngleRads() {
+    return Units.rotationsToRadians(inputs.hoodData.position() / LauncherConstants.HOOD_GEARING)
+        + Units.degreesToRadians(kGOffset.get());
   }
 
   // this is the CORRECT method to turn launcher off
@@ -166,4 +219,12 @@ public class Launcher extends SubsystemBase {
           }
         });
   }
+
+  public void zeroHood() {
+    io.zeroHood();
+  }
+
+  // public void setPassing() {
+  //   launcherState = LauncherState.PASSING;
+  // }
 }

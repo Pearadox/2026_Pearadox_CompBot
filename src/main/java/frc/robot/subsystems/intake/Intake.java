@@ -11,7 +11,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   private IntakeIO io;
   @AutoLogOutput public IntakeState intakeState = IntakeState.STOWED;
-  @AutoLogOutput public static double pivotDegreesAdjust = 0.0;
+  @AutoLogOutput public static double pivotDegreesAdjust = -10;
   @AutoLogOutput public static double dutyAdjust = 0.0;
   @AutoLogOutput public static double voltAdjust = 0.0;
 
@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io) {
     this.io = io;
-    io.setPIDFF(rollerkP.get(), rollerkV.get(), pivotkp.get(), pivotkd.get());
+    io.setPIDFF(rollerkP.get(), rollerkV.get(), pivotkp.get(), pivotkd.get(), pivotkg.get());
   }
 
   private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
@@ -40,9 +40,11 @@ public class Intake extends SubsystemBase {
   // private static LoggedTunableNumber ffamps = new LoggedTunableNumber("Intake/ffamps", 30.0);
   private static LoggedTunableNumber rollerkP = new LoggedTunableNumber("Intake/roller kp", 0.05);
   private static LoggedTunableNumber rollerkV = new LoggedTunableNumber("Intake/roller kv", 0.05);
-  private static LoggedTunableNumber pivotkp = new LoggedTunableNumber("Intake/pivot kp", 0.5);
+  private static LoggedTunableNumber pivotkp = new LoggedTunableNumber("Intake/pivot kp", 0.4);
   private static LoggedTunableNumber pivotkd = new LoggedTunableNumber("Intake/pivotkd", 0.0);
-  private static LoggedTunableNumber pivotkg = new LoggedTunableNumber("Intake/pivot kg", -0.5);
+  // might need retuning
+  private static LoggedTunableNumber pivotkg =
+      new LoggedTunableNumber("Intake/pivot kg", 0); // -0.45
 
   @Override
   public void periodic() {
@@ -54,54 +56,43 @@ public class Intake extends SubsystemBase {
     Logger.recordOutput(
         "Intake/VoltageOut", StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + voltAdjust);
 
-    // io.runRollersAmps(loggedIntakeStatorCurrent.get(), maxDuty.get());
-    // io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage());
-
-    // if (intakeState == IntakeState.INTAKING) {
-    //   io.runRollersVelocityTorqueCurrentFOC(rps.get(), ffamps.get());
-
-    // } else {
     io.runRollersVolts(StateConfig.INTAKE_STATE_MAP.get(intakeState).voltage() + voltAdjust);
 
-    // }
+    // if (intakeState.equals(IntakeState.INTAKING)) {
+    //   io.runPivotVolts(0.25);
+    // } else {
     io.runPositionDegrees(
         StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg() + pivotDegreesAdjust,
-        getFFVolts());
+        getFFVolts(),
+        StateConfig.INTAKE_STATE_MAP.get(intakeState).slot());
+    // }
 
-    MechVisualizer.getInstance()
-        .updatePositionDegrees(Units.rotationsToDegrees(inputs.pivotMotorData.position()));
-
+    Logger.recordOutput(
+        "Intake/Target Position Rots",
+        Units.degreesToRotations(StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg())
+            * IntakeConstants.GEARING);
     Logger.recordOutput(
         "Intake/Target Position Degrees", StateConfig.INTAKE_STATE_MAP.get(intakeState).angleDeg());
-    Logger.recordOutput("Intake/VoltageOut", inputs.rollerMotorData.appliedVolts());
     Logger.recordOutput(
         "Intake/Current Position Degrees",
-        Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING);
+        Units.rotationsToDegrees(inputs.pivot1MotorData.position()) / IntakeConstants.GEARING);
 
     if (rollerkP.hasChanged(hashCode())
         || rollerkV.hasChanged(hashCode())
         || pivotkp.hasChanged(hashCode())
-        || pivotkd.hasChanged(hashCode())) {
-      io.setPIDFF(rollerkP.get(), rollerkV.get(), pivotkp.get(), pivotkd.get());
+        || pivotkd.hasChanged(hashCode())
+        || pivotkg.hasChanged(hashCode())) {
+      io.setPIDFF(rollerkP.get(), rollerkV.get(), pivotkp.get(), pivotkd.get(), pivotkg.get());
     }
-
-    // UNCOMMENT WHEN TESTING INTAKE TO TUNE VOLTAGE!
-    // if(loggedIntakeRollerVoltage.hasChanged(hashCode())) { inputs.rollerVoltage =
-    // loggedIntakeRollerVoltage.get(); }
-
-    // if (intakeState == IntakeState.INTAKING) {
-    //     io.runRollersVolts(loggedIntakeRollerVoltage.getAsDouble());
-    // } else {
-    //     io.runRollersVolts(0);
-    // }
   }
 
   private double getFFVolts() {
     return Math.sin(Math.toRadians(getAngleDegs())) * pivotkg.get();
   }
 
+  @AutoLogOutput
   public double getAngleDegs() {
-    return Units.rotationsToDegrees(inputs.pivotMotorData.position()) / IntakeConstants.GEARING;
+    return Units.rotationsToDegrees(inputs.pivot1MotorData.position()) / IntakeConstants.GEARING;
   }
 
   public void setStowed() {
@@ -112,11 +103,20 @@ public class Intake extends SubsystemBase {
     intakeState = IntakeState.FLOW_STATE;
   }
 
+  public void setHold() {
+    intakeState = IntakeState.HOLD_STATE;
+  }
+
   public void setDeployed() {
     intakeState = IntakeState.DEPLOYED; // rollers aren't running; intake is deployed
   }
 
   public void setIntaking() {
+    IntakeConstants.PIVOT_CONFIG.withSlot1(IntakeConstants.PIVOT_SLOT1_CONFIGS);
+    intakeState = IntakeState.INTAKING;
+  }
+
+  public void setIntakingFast() {
     intakeState = IntakeState.INTAKING;
   }
 
@@ -126,5 +126,10 @@ public class Intake extends SubsystemBase {
 
   public IntakeState getIntakeState() {
     return intakeState;
+  }
+
+  @AutoLogOutput
+  public boolean turretHasClearance() {
+    return getAngleDegs() > IntakeConstants.MIN_ANGLE_FOR_TURRET_CLEARANCE_DEGS;
   }
 }

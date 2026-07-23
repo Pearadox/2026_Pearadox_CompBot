@@ -8,19 +8,16 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
+import frc.robot.Constants.FieldConstants;
 
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout = FieldConstants.aprilTagLayout;
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "limelight-lemon";
-  public static String camera1Name = "OV9281";
+  public static String camera0Name = "limelight-pearl";
+  public static String camera1Name = "limelight-pearr";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -30,16 +27,17 @@ public class VisionConstants {
   //     Units.inchesToMeters(14 - 2.75),
   //     Units.inchesToMeters(9.403),
   //     new Rotation3d(0, -Units.degreesToRadians(20), Math.PI));
-  public static Transform3d robotToCamera1 =
-      new Transform3d(
-          -Units.inchesToMeters(27.5 / 2.0 - 8),
-          -Units.inchesToMeters(27.5 / 2.0 - 3.0 / 4.0),
-          Units.inchesToMeters(13 + 7.0 / 8.0),
-          new Rotation3d(0.0, 0.0, -(Math.PI * 0.5)));
+  public static Transform3d robotToCamera1 = Transform3d.kZero;
+  // new Transform3d(
+  //     -Units.inchesToMeters(10.547),
+  //     -Units.inchesToMeters(2.928),
+  //     Units.inchesToMeters(14.537),
+  //     new Rotation3d(0.0, 0.0, -(Math.PI * 0.5)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;
   public static double maxZError = 0.1; // 0.75;
+  public static double maxRotsPerSecond = 2.0;
 
   // Standard deviation baselines, for 1 meter distance and 1 tag
   // (Adjusted automatically based on distance and # of tags)
@@ -60,7 +58,7 @@ public class VisionConstants {
       Double.POSITIVE_INFINITY; // No rotation data available
 
   public static final int MIN_REWIND_LENGTH_SECONDS = 10;
-  public static final int MAX_REWIND_LENGTH_SECONDS = 235;
+  public static final int MAX_REWIND_LENGTH_SECONDS = 240;
   // skip 120 frames per second while disabled
   public static final int DISABLED_THROTTLE = 120;
   // do not skip frames while robot enabled

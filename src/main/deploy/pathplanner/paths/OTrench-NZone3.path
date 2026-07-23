@@ -1,0 +1,59 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.778710843373494,
+        "y": 0.5599879518072293
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.042976178608871,
+        "y": 0.3788467249883979
+      },
+      "isLocked": false,
+      "linkedName": "OTrench Shooting Spot"
+    },
+    {
+      "anchor": {
+        "x": 5.669329529243937,
+        "y": 3.510984308131241
+      },
+      "prevControl": {
+        "x": 6.497403708987161,
+        "y": 1.2079029957203988
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5607675906183343,
+      "rotationDegrees": 59.139649070752036
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 90.96286362563619
+  },
+  "reversed": false,
+  "folder": "To Neutral Zone",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

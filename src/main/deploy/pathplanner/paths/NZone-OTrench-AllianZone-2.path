@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.416048502139798,
+        "y": 3.45922967189729
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.959472182596286,
+        "y": 2.1394864479315263
+      },
+      "isLocked": false,
+      "linkedName": "Outpost NZone Center 2"
+    },
+    {
+      "anchor": {
+        "x": 3.778710843373494,
+        "y": 0.5599879518072293
+      },
+      "prevControl": {
+        "x": 7.336842084457661,
+        "y": 0.18476683911108216
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "OTrench Shooting Spot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "To Alliance Zone",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 98.32565033042698
+  },
+  "useDefaultConstraints": true
+}

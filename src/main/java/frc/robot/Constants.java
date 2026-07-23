@@ -20,7 +20,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -51,7 +55,7 @@ public final class Constants {
 
   public static final int NEWTONS_METHOD_NUM_STEPS = 15;
 
-  public static final double BROWNOUT_VOLTAGE = 6.0; // TODO: TUNE
+  public static final double BROWNOUT_VOLTAGE = 5.0;
 
   public static final class AlignConstants {
     public static final double ALIGN_STRAFE_KP = 0.02;
@@ -68,31 +72,48 @@ public final class Constants {
   }
 
   public static final class VisualizerConstants {
-    public static final Translation3d MODEL0_ZERO = new Translation3d(-0.134550, -0.143323, 0);
-    public static final Translation3d Z1_ZERO = new Translation3d(-0.1235075, -0.041317, 0.519888);
-    public static final Translation3d MODEL2_ZERO = new Translation3d(0.024588, 0, 0);
-    public static final Translation3d MODEL3_ZERO = new Translation3d(0.205374, 0, 0.260350);
-    public static final Translation3d Z4_ZERO = new Translation3d(0.302910, 0, 0.646415);
+    public static final Translation3d MODEL0_ZERO =
+        new Translation3d(-0.146050, -0.133350, 0); // turret
+    public static final Translation3d MODEL1_ZERO =
+        new Translation3d(0, -0.029545, 0.446088); // hood
+    public static final Translation3d MODEL2_ZERO =
+        new Translation3d(0.279344, 0, 0.213924); // intake
+    public static final Translation3d MODEL1_OFFSET = MODEL1_ZERO.minus(MODEL0_ZERO);
 
-    public static final Translation3d MODEL1_OFFSET = Z1_ZERO.minus(MODEL0_ZERO);
-    public static final Translation3d MODEL4_OFFSET = Z4_ZERO.minus(MODEL3_ZERO);
+    public static final double TURRET_STARTING_ANGLE = 0; // this is only used in sim
 
-    public static final double TURRET_STARTING_ANGLE = -Math.PI / 2; // this is only used in sim
-
-    public static final double HOOD_STARTING_ANGLE = Units.degreesToRadians(61.549451);
+    public static final double HOOD_STARTING_ANGLE =
+        Units.degreesToRadians(61.549451); // TODO: update
     public static final double HOOD_MIN_ANGLE = Units.degreesToRadians(24.652849);
     public static final double HOOD_MAX_ANGLE = Units.degreesToRadians(69.652849);
 
-    public static final double INTAKE_STARTING_ANGLE = Math.PI / 2; // radians
-    public static final double GRAVITY_RAMP_MAX_OFFSET_DEGS = 39; // degrees
+    public static final double INTAKE_STARTING_ANGLE = Units.degreesToRadians(125);
 
-    public static final double CLIMBER_MAX_DISPLACEMENT = Units.inchesToMeters(5.875);
+    public static final double LIMELIGHT_TO_CENTER_OF_TURRET = 0.185652; // m
+    public static final double LIMELIGHT_HEIGHT = 0.476693; // m
+
+    public static final double MAX_HOPPER_EXTENSION = 0.3019; // m from starting position (<12 in)
   }
 
   public static class FieldConstants {
     // AprilTag related constants
-    public static final AprilTagFieldLayout aprilTagLayout =
-        AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+
+    public static final boolean PRACTICE_FIELD = false;
+
+    private static AprilTagFieldLayout loadFieldLayout() {
+      if (PRACTICE_FIELD) {
+        try {
+          return new AprilTagFieldLayout(
+              Path.of(Filesystem.getDeployDirectory().getAbsolutePath(), "practice_field.json"));
+        } catch (IOException e) {
+          DriverStation.reportError(
+              "Failed to load practice field layout: " + e.getMessage(), false);
+        }
+      }
+      return AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+    }
+
+    public static final AprilTagFieldLayout aprilTagLayout = loadFieldLayout();
     public static final int aprilTagCount = aprilTagLayout.getTags().size();
     public static final double aprilTagWidth = Units.inchesToMeters(6.5);
 
@@ -112,6 +133,7 @@ public final class Constants {
           aprilTagLayout.getTagPose(4).get().getX() + Hub.width / 2.0;
       public static final double oppAllianceZone = aprilTagLayout.getTagPose(10).get().getX();
     }
+
     /**
      * Officially defined and relevant horizontal lines found on the field (defined by Y-axis
      * offset)

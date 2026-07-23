@@ -8,12 +8,14 @@
 package frc.robot;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.intake.MechVisualizer;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+// import frc.robot.subsystems.intake.MechVisualizer;
 import frc.robot.subsystems.launcher.LauncherVisualizer;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.EnergyTracker;
@@ -86,9 +88,6 @@ public class Robot extends LoggedRobot {
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
 
-    // Pathplanner warm-up command
-    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
-
     RobotController.setBrownoutVoltage(Constants.BROWNOUT_VOLTAGE);
   }
 
@@ -114,9 +113,9 @@ public class Robot extends LoggedRobot {
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
 
-    LoggedTracer.reset();
-    robotContainer.visualizer.periodic();
-    LoggedTracer.record("Visualizer");
+    // LoggedTracer.reset();
+    // robotContainer.visualizer.periodic();
+    // LoggedTracer.record("Visualizer");
 
     LoggedTracer.reset();
     EnergyTracker.periodic();
@@ -142,6 +141,13 @@ public class Robot extends LoggedRobot {
     }
 
     robotContainer.vision.throttleLimelights();
+
+    // Pathplanner warm-up command
+    CommandScheduler.getInstance()
+        .schedule(
+            FollowPathCommand.warmupCommand()
+                .andThen(PathfindingCommand.warmupCommand())
+                .andThen(new InstantCommand(() -> System.out.println("Done warming up!"))));
   }
 
   /** This function is called periodically when disabled. */
@@ -152,6 +158,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.vision.unthrottleLimelights();
+    robotContainer.launcher.zeroHood();
+    robotContainer.feeder.resetForAuto();
     enabledTimestamp = RobotController.getFPGATime();
 
     autonomousCommand = robotContainer.getAutonomousCommand();
@@ -210,7 +218,7 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    MechVisualizer.getInstance().periodic();
+    // MechVisualizer.getInstance().periodic();
     LauncherVisualizer.getInstance().periodic();
   }
 

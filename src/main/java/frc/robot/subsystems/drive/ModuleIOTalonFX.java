@@ -127,8 +127,9 @@ public class ModuleIOTalonFX implements ModuleIO {
           case RemoteCANcoder -> FeedbackSensorSourceValue.RemoteCANcoder;
           case FusedCANcoder -> FeedbackSensorSourceValue.FusedCANcoder;
           case SyncCANcoder -> FeedbackSensorSourceValue.SyncCANcoder;
-          default -> throw new RuntimeException(
-              "You have selected a turn feedback source that is not supported by the default implementation of ModuleIOTalonFX. Please check the AdvantageKit documentation for more information on alternative configurations: https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations");
+          default ->
+              throw new RuntimeException(
+                  "You have selected a turn feedback source that is not supported by the default implementation of ModuleIOTalonFX. Please check the AdvantageKit documentation for more information on alternative configurations: https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations");
         };
     turnConfig.Feedback.RotorToSensorRatio = constants.SteerMotorGearRatio;
     turnConfig.MotionMagic.MotionMagicCruiseVelocity = 100.0 / constants.SteerMotorGearRatio;
@@ -192,10 +193,14 @@ public class ModuleIOTalonFX implements ModuleIO {
     // Refresh all signals
     var driveStatus =
         BaseStatusSignal.refreshAll(
-            drivePosition, driveVelocity, driveAppliedVolts, driveStatorCurrent);
+            drivePosition,
+            driveVelocity,
+            driveAppliedVolts,
+            driveSupplyCurrent,
+            driveStatorCurrent);
     var turnStatus =
         BaseStatusSignal.refreshAll(
-            turnPosition, turnVelocity, turnAppliedVolts, turnStatorCurrent);
+            turnPosition, turnVelocity, turnAppliedVolts, driveStatorCurrent, turnStatorCurrent);
     var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
     // Update drive inputs
@@ -265,8 +270,8 @@ public class ModuleIOTalonFX implements ModuleIO {
     turnTalon.setControl(
         switch (constants.SteerMotorClosedLoopOutput) {
           case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
-          case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(
-              rotation.getRotations());
+          case TorqueCurrentFOC ->
+              positionTorqueCurrentRequest.withPosition(rotation.getRotations());
         });
   }
 }
