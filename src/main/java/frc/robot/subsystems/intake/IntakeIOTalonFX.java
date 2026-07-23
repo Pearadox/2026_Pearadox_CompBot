@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -16,17 +15,12 @@ import frc.robot.util.PhoenixUtil;
 public abstract class IntakeIOTalonFX implements IntakeIO {
   protected final PearadoxTalonFX roller1Leader;
   protected final PearadoxTalonFX roller2Follower;
-  protected final PearadoxTalonFX pivot1Leader;
-  protected final PearadoxTalonFX pivot2Follower;
+  protected final PearadoxTalonFX pivotMotor;
   protected final PositionVoltage pivotPositionVoltage;
   protected final VoltageOut rollerVoltage;
-  protected final Follower rollerFollowerRequest;
-  protected final Follower pivotFollowerRequest;
+  protected final Follower followerRequest;
   protected final TorqueCurrentFOC torqueCurrentFOC;
   protected final VelocityTorqueCurrentFOC velocityTorqueCurrentFOC;
-  protected final VoltageOut pivotVoltageRequest;
-
-  protected final MotionMagicDutyCycle motionMagicDutyCycle;
 
   private TalonFXConfiguration rollerConfigs;
   private TalonFXConfiguration pivotConfigs;
@@ -42,50 +36,39 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
     roller2Follower =
         new PearadoxTalonFX(
             IntakeConstants.ROLLER_2_FOLLOWER_ID, rollerConfigs, Compeartment.INTAKE_ROLLERS);
-    pivot1Leader =
-        new PearadoxTalonFX(
-            IntakeConstants.PIVOT_1_LEADER_ID, pivotConfigs, Compeartment.INTAKE_PIVOT);
-    pivot2Follower =
-        new PearadoxTalonFX(
-            IntakeConstants.PIVOT_2_FOLLOWER_ID, pivotConfigs, Compeartment.INTAKE_PIVOT);
-
+    pivotMotor =
+        new PearadoxTalonFX(IntakeConstants.PIVOT_ID, pivotConfigs, Compeartment.INTAKE_PIVOT);
     pivotPositionVoltage = new PositionVoltage(0);
     torqueCurrentFOC = new TorqueCurrentFOC(0);
     velocityTorqueCurrentFOC = new VelocityTorqueCurrentFOC(0);
-    motionMagicDutyCycle = new MotionMagicDutyCycle(0);
-    pivotVoltageRequest = new VoltageOut(0);
-
-    pivotFollowerRequest =
-        new Follower(IntakeConstants.PIVOT_1_LEADER_ID, MotorAlignmentValue.Opposed);
-    pivot2Follower.setControl(pivotFollowerRequest);
 
     rollerVoltage = new VoltageOut(0);
-    rollerFollowerRequest =
-        new Follower(IntakeConstants.ROLLER_1_LEADER_ID, MotorAlignmentValue.Opposed);
-    roller2Follower.setControl(rollerFollowerRequest);
+    followerRequest = new Follower(IntakeConstants.ROLLER_1_LEADER_ID, MotorAlignmentValue.Opposed);
+    roller2Follower.setControl(followerRequest);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-    inputs.roller1MotorData = roller1Leader.getData();
+    inputs.rollerMotorData = roller1Leader.getData();
     inputs.roller2MotorData = roller2Follower.getData();
 
-    inputs.pivot1MotorData = pivot1Leader.getData();
-    inputs.pivot2MotorData = pivot2Follower.getData();
+    inputs.pivotMotorData = pivotMotor.getData();
   }
 
   @Override
   public void runRollersAmps(double amps, double maxDutyOut) {
+    // roller1Leader.setControl(rollerVoltage.withOutput(volts));
     roller1Leader.setControl(torqueCurrentFOC.withOutput(amps).withMaxAbsDutyCycle(maxDutyOut));
 
-    roller2Follower.setControl(rollerFollowerRequest);
+    roller2Follower.setControl(followerRequest);
   }
 
   @Override
   public void runRollersVelocityTorqueCurrentFOC(double velocity, double ffAmps) {
+    // roller1Leader.setControl(rollerVoltage.withOutput(volts));
     roller1Leader.setControl(velocityTorqueCurrentFOC.withVelocity(velocity));
 
-    roller2Follower.setControl(rollerFollowerRequest);
+    roller2Follower.setControl(followerRequest);
   }
 
   @Override
@@ -95,48 +78,24 @@ public abstract class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void runPositionDegrees(double degrees, double ffvolts, int slot) {
-    pivot1Leader.setControl(
+  public void runPositionDegrees(double degrees, double ffvolts) {
+    pivotMotor.setControl(
         pivotPositionVoltage
             .withPosition(Units.degreesToRotations(degrees) * IntakeConstants.GEARING)
-            .withFeedForward(ffvolts)
-            .withSlot(slot));
+            .withFeedForward(ffvolts));
     // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
-
-    pivot2Follower.setControl(pivotFollowerRequest);
   }
 
   @Override
-  public void runPositionDegreesWithoutFF(double degrees) {
-    // pivot1Leader.setControl(
-    //     pivotPositionVoltage.withPosition(
-    //         Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
-    pivot1Leader.setControl(
-        motionMagicDutyCycle.withPosition(
-            Units.degreesToRotations(degrees) * IntakeConstants.GEARING));
-    // pivotMotor.setControl(new PositionVoltage(Units.degreesToRotations(degrees)));
-
-    pivot2Follower.setControl(pivotFollowerRequest);
-  }
-
-  @Override
-  public void runPivotVolts(double volts) {
-    pivot1Leader.setControl(pivotVoltageRequest.withOutput(volts));
-    pivot2Follower.setControl(pivotFollowerRequest);
-  }
-
-  @Override
-  public void setPIDFF(double kp, double kv, double pivotkp, double pivotkd, double pivotkg) {
-    // rollerConfigs.Slot0.kP = kp;
-    // rollerConfigs.Slot0.kV = kv;
+  public void setPIDFF(double kp, double kv, double pivotkp, double pivotkd) {
+    rollerConfigs.Slot0.kP = kp;
+    rollerConfigs.Slot0.kV = kv;
 
     pivotConfigs.Slot0.kP = pivotkp;
     pivotConfigs.Slot0.kD = pivotkd;
-    pivotConfigs.Slot0.kG = pivotkg;
 
     PhoenixUtil.tryUntilOk(5, () -> roller1Leader.getConfigurator().apply(rollerConfigs));
     PhoenixUtil.tryUntilOk(5, () -> roller2Follower.getConfigurator().apply(rollerConfigs));
-    PhoenixUtil.tryUntilOk(5, () -> pivot1Leader.getConfigurator().apply(pivotConfigs));
-    PhoenixUtil.tryUntilOk(5, () -> pivot2Follower.getConfigurator().apply(pivotConfigs));
+    PhoenixUtil.tryUntilOk(5, () -> pivotMotor.getConfigurator().apply(pivotConfigs));
   }
 }

@@ -13,7 +13,6 @@ public class EnergyTracker {
     INTAKE_ROLLERS,
     INTAKE_PIVOT,
     LAUNCHER,
-    HOOD,
     TURRET,
     SPINDEXER,
     CLIMBER

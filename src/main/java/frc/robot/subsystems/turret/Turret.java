@@ -10,10 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.util.LoggedTunableNumber;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -25,32 +22,29 @@ public class Turret extends SubsystemBase {
 
   private Supplier<ChassisSpeeds> speedsSupplier;
   private Supplier<Rotation2d> robotRotationSupplier;
-  private BooleanSupplier turretHasClearanceSupplier;
 
   @AutoLogOutput @Getter private boolean hasZeroed = false;
 
-  @AutoLogOutput private double turretRotationAdjust = 0; // -0.13
+  @AutoLogOutput private double turretRotationAdjust = 0;
 
   public void adjustRotationBy(double adj) {
     turretRotationAdjust -= adj;
   }
 
-  private final LoggedTunableNumber kP =
-      new LoggedTunableNumber("Turret/kP", Constants.currentMode == Mode.SIM ? 3.0 : 6.7, false);
-  private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0, false);
-  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0, false);
-  private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0, false);
-  private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0, false);
-  private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0, false);
-  private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0, false);
+  private final LoggedTunableNumber kP = new LoggedTunableNumber("Turret/kP", 6.7); // 4
+  private final LoggedTunableNumber kI = new LoggedTunableNumber("Turret/kI", 0.0);
+  private final LoggedTunableNumber kD = new LoggedTunableNumber("Turret/kD", 0.0); // 0
+  private final LoggedTunableNumber kS = new LoggedTunableNumber("Turret/kS", 0.0);
+  private final LoggedTunableNumber kV = new LoggedTunableNumber("Turret/kV", 0.0);
+  private final LoggedTunableNumber kA = new LoggedTunableNumber("Turret/kA", 0.0);
+  private final LoggedTunableNumber kOmega = new LoggedTunableNumber("Turret/kOmega", 0.0); // 0.2
   private final LoggedTunableNumber mmCruiseVel =
-      new LoggedTunableNumber("Turret/mmCruiseVel", 85, false); // 85
-  private final LoggedTunableNumber mmAcceleration =
-      new LoggedTunableNumber("Turret/mmAcc", 450, false);
+      new LoggedTunableNumber("Turret/mmCruiseVel", 85); // 85
+  private final LoggedTunableNumber mmAcceleration = new LoggedTunableNumber("Turret/mmAcc", 450);
   private final LoggedTunableNumber testSetpoint =
       new LoggedTunableNumber("Turret/test Setpoint", -90);
   private final LoggedTunableNumber fieldRelOffset =
-      new LoggedTunableNumber("Turret/fieldreloffset", -90); // turret now zeros facing right
+      new LoggedTunableNumber("Turret/fieldreloffset", 0);
   @AutoLogOutput private boolean shouldApplyFF = true;
 
   private final SysIdRoutine sysId;
@@ -58,12 +52,10 @@ public class Turret extends SubsystemBase {
   public Turret(
       TurretIO io,
       Supplier<ChassisSpeeds> chassisSpeedsSupplier,
-      Supplier<Rotation2d> robotRotationSupplier,
-      BooleanSupplier turretHasClearanceSupplier) {
+      Supplier<Rotation2d> robotRotationSupplier) {
     this.io = io;
     this.speedsSupplier = chassisSpeedsSupplier;
     this.robotRotationSupplier = robotRotationSupplier;
-    this.turretHasClearanceSupplier = turretHasClearanceSupplier;
 
     sysId =
         new SysIdRoutine(
@@ -99,8 +91,7 @@ public class Turret extends SubsystemBase {
 
   /** Follows a robot-centric angle. */
   public void followRobotCentricTarget(Supplier<Rotation2d> robotCentricAngleSupplier) {
-    if (!hasZeroed || !turretHasClearanceSupplier.getAsBoolean()) return;
-
+    if (!hasZeroed) return;
     double setpointTurretRads = wrap(robotCentricAngleSupplier.get().getRadians());
     double setpointMotorRots = setpointTurretRads / TurretConstants.TURRET_P_COEFFICIENT;
 
@@ -115,8 +106,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void followFieldCentricTarget(Supplier<Rotation2d> fieldCentricAngleSupplier) {
-    if (!hasZeroed || !turretHasClearanceSupplier.getAsBoolean()) return;
-
+    if (!hasZeroed) return;
     Rotation2d offset =
         Rotation2d.fromDegrees(fieldRelOffset.get() + Units.radiansToDegrees(turretRotationAdjust));
     followRobotCentricTarget(
@@ -139,7 +129,7 @@ public class Turret extends SubsystemBase {
   public void requestZero() {
     if (inputs.cancoderConnected) {
       io.setPosition(
-          (inputs.cancoderPosition * -TurretConstants.TURRET_TO_CANCODER_RATIO)
+          (inputs.cancoderPosition * TurretConstants.TURRET_TO_CANCODER_RATIO)
                   * TurretConstants.TURRET_GEAR_RATIO
               + TurretConstants.TURRET_STARTING_ANGLE / TurretConstants.TURRET_P_COEFFICIENT);
       hasZeroed = true;

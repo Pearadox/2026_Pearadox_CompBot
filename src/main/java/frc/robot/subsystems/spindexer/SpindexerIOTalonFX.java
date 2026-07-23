@@ -22,7 +22,7 @@ public abstract class SpindexerIOTalonFX implements SpindexerIO {
   }
 
   @Override
-  public void updateInputs(SpindexerIOInputs inputs) {
+  public void updateInputs(SpindexerIOInputsAutoLogged inputs) {
     inputs.spindexerMotorData = spindexer.getData();
   }
 

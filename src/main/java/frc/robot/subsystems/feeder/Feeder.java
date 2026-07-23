@@ -10,17 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.feeder.FeederConstants.FeederState;
 import frc.robot.subsystems.feeder.FeederConstants.StateConfig;
-import frc.robot.util.LoggedTunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
+
   private final FeederIO io;
   private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
   private FeederState feederState = FeederState.STOPPED;
-
-  // TODO: try lowering later
-  private static LoggedTunableNumber feederVolts =
-      new LoggedTunableNumber("Feeder/On Voltage", -11);
 
   private Debouncer canRangeDebouncer = new Debouncer(0.1, DebounceType.kFalling);
   private boolean isDetectedDebounced = false;
@@ -41,26 +36,14 @@ public class Feeder extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     io.updateInputs(inputs);
-    isDetectedDebounced = canRangeDebouncer.calculate(inputs.canRangeIsDetected);
-    Logger.processInputs("FeederInputs", inputs);
-    Logger.recordOutput("Feeder/CanRange/Distance from Fuel", canRangeGetDistanceMeters());
-    Logger.recordOutput("Feeder/CanRange/FuelIsDetected", isDetectedDebounced());
-    Logger.recordOutput("Feeder/CanRange/Number of Fuel", getFuelCount());
-    Logger.recordOutput("Feeder/CanRange/Signal", canRangeGetSignalStrength());
-
-    Logger.recordOutput("Hopper/isDetectedDebounced", isDetectedDebounced);
-    Logger.recordOutput("Hopper/hasSeenFuel", hasSeenFuel);
-    Logger.recordOutput("Hopper/timer", getTimestamp());
-    Logger.recordOutput(
-        "Hopper/passedBufferTime", getTimestamp() >= FeederConstants.IS_HOPPER_EMPTY_BUFFER_TIME);
-    Logger.recordOutput("Hopper/isEmpty", isHopperEmpty());
-
-    if (feederState == FeederState.RUNNING) {
-      io.runFeederVoltage(feederVolts.get());
-    } else {
-      io.runFeederVoltage(StateConfig.FEEDER_STATE_MAP.get(feederState).voltage());
-    }
-    updateFuelCount();
+    // isDetectedDebounced = canRangeDebouncer.calculate(inputs.canRangeIsDetected);
+    // Logger.processInputs("FeederInputs", inputs);
+    // Logger.recordOutput("Feeder/CanRange/Distance from Fuel", canRangeGetDistanceMeters());
+    // Logger.recordOutput("Feeder/CanRange/FuelIsDetected", isDetectedDebounced());
+    // Logger.recordOutput("Feeder/CanRange/Number of Fuel", getFuelCount());
+    // Logger.recordOutput("Feeder/CanRange/Signal", canRangeGetSignalStrength());
+    io.runFeederVoltage(StateConfig.FEEDER_STATE_MAP.get(feederState).voltage());
+    // updateFuelCount();
   }
 
   public void setStopped() {
@@ -115,7 +98,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public void startTimer() {
-    timer.restart();
+    timer.start();
   }
 
   // public void launch() {
@@ -125,11 +108,4 @@ public class Feeder extends SubsystemBase {
   // public void stopLaunch() {
   //   io.runFeederVoltage(0.0);
   // }
-
-  public void resetForAuto() {
-    isDetectedDebounced = false;
-    timer = new Timer();
-    timer.stop();
-    hasSeenFuel = false;
-  }
 }

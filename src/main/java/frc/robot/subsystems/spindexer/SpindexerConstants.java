@@ -18,7 +18,7 @@ public class SpindexerConstants {
     public static final Map<SpindexerState, StateConfig> SPINDEXER_STATE_MAP =
         Map.of(
             SpindexerState.STOPPED, new StateConfig(0),
-            SpindexerState.RUNNING, new StateConfig(4),
+            SpindexerState.RUNNING, new StateConfig(8),
             SpindexerState.REVERSE, new StateConfig(-12));
   }
 
@@ -27,10 +27,10 @@ public class SpindexerConstants {
 
   public static final int SPINDEXER_MOTOR_ID = 42;
 
-  public static final int SPINDEXER_SUPPLY_CURRENT_LIMIT = 60; // changed 3/17/26 for #119
-  public static final int SPINDEXER_STATOR_CURRENT_LIMIT = 80;
+  public static final int SPINDEXER_SUPPLY_CURRENT_LIMIT = 50; // changed 3/17/26 for #119
+  public static final int SPINDEXER_STATOR_CURRENT_LIMIT = 60;
 
-  public static final double SPINDEXER_GEARING = 1.0 / 3.0;
+  public static final double SPINDEXER_GEARING = 1.0 / 9.0;
   // 1.0 / 15.0; // technically 1/18 (according to Hitesh)
   public static final double SPINDEXER_RADIUS_METERS = Units.inchesToMeters(4);
   public static final double SPINDEXER_MASS_KG = Units.lbsToKilograms(5);
@@ -46,8 +46,7 @@ public class SpindexerConstants {
 
     SPINDEXER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    SPINDEXER_CONFIG.MotorOutput.Inverted =
-        InvertedValue.CounterClockwise_Positive; // CounterClockwise_Positive
+    SPINDEXER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     SPINDEXER_SLOT0_CONFIGS.kP = 0.2; // 0.1
     SPINDEXER_SLOT0_CONFIGS.kI = 0.0;

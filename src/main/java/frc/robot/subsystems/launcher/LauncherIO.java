@@ -15,7 +15,15 @@ public interface LauncherIO {
     public MotorData launcher1Data = new MotorData();
     public MotorData launcher2Data = new MotorData();
 
-    public MotorData hoodData = new MotorData();
+    public double hoodServoHubVoltage = 0.0;
+
+    public double hoodServo1Position = 0.0;
+    public double hoodServo2Position = 0.0;
+
+    public double hoodServo1PulseWidth = 0.0;
+    public double hoodServo2PulseWidth = 0.0;
+
+    public boolean limitSwitchPressed = false;
   }
 
   public default void updateInputs(LauncherIOInputs inputs) {}
@@ -24,29 +32,25 @@ public interface LauncherIO {
 
   /**
    * @param velocityRPS the rotor velocity setpoint in Rotations per Second
-   * @param ffamps the feedforward value applied to the launcher motors in Amps
    */
   public default void runLauncherVelocity(double velocityRPS, double ffamps) {}
 
-  /**
-   * @param velocityRPS the rotor velocity setpoint in Rotations per Second
-   */
-  public default void runLauncherVelocity(double velocityRPS) {}
-
-  public default void setLauncherVoltage(double voltage) {}
+  public default void runLauncherVelocityWithoutFOC(double velocityRPS) {}
 
   /**
+   * This is assuming that the left servo is at 0.0 and the right servo is at 1.0 when the hood is
+   * at it's lowest.
+   *
    * @param angleRads the desired angle of the hood
    */
-  public default void setHoodAngleRads(double angleRads, double feedforward) {}
+  public default void setHoodAngleRads(double angleRads) {}
 
-  public default void setLauncherPIDFF(double kP, double kI, double kD, double kS, double kV) {}
+  /**
+   * @param isPassing if the robot is in PASSING mode or other modes
+   */
+  public default void setHoodAngle(boolean isPassing) {}
+
+  public default void setPIDFF(double kP, double kD, double kS, double kV) {}
 
   public default void setCurrentLimits(double stator, double supply) {}
-
-  public default void setHoodPIDFF(double kP, double kI, double kD, double kS, double kG) {}
-
-  public default void runHoodVolts(double volts) {}
-
-  public default void zeroHood() {}
 }

@@ -30,7 +30,7 @@ public class SpindexerIOSim extends SpindexerIOTalonFX {
     spindexerSimState = spindexer.getSimState();
   }
 
-  public void updateInputs(SpindexerIOInputs inputs) {
+  public void updateInputs(SpindexerIOInputsAutoLogged inputs) {
     super.updateInputs(inputs);
     updateSim();
   }
