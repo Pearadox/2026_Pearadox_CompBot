@@ -22,7 +22,7 @@ public class IntakeIOSim extends IntakeIOTalonFX {
   private TalonFXSimState pivotSimState;
 
   public IntakeIOSim() {
-    pivotSimState = pivot1Leader.getSimState();
+    pivotSimState = pivotMotor.getSimState();
   }
 
   public void updateInputs(IntakeIOInputs inputs) {
@@ -33,8 +33,7 @@ public class IntakeIOSim extends IntakeIOTalonFX {
     pivotSim.setInputVoltage(pivotSimState.getMotorVoltage());
     pivotSim.update(Constants.UPDATE_FREQ_SEC);
 
-    pivotSimState.setRawRotorPosition(
-        Units.radiansToRotations(pivotSim.getAngleRads()) * IntakeConstants.GEARING);
+    pivotSimState.setRawRotorPosition(Units.radiansToRotations(pivotSim.getAngleRads()));
     pivotSimState.setRotorVelocity(
         Units.radiansToRotations(pivotSim.getVelocityRadPerSec()) * IntakeConstants.GEARING);
   }

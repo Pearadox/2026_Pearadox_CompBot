@@ -7,29 +7,26 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.drivers.MovingShotSolver;
-import frc.lib.drivers.MovingShotSolver.Goal;
-import frc.robot.Constants.VisualizerConstants;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
@@ -40,6 +37,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederConstants;
 import frc.robot.subsystems.feeder.FeederIO;
 import frc.robot.subsystems.feeder.FeederIOReal;
 import frc.robot.subsystems.feeder.FeederIOSim;
@@ -49,7 +47,6 @@ import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.launcher.Launcher;
-import frc.robot.subsystems.launcher.LauncherConstants.LauncherState;
 import frc.robot.subsystems.launcher.LauncherIO;
 import frc.robot.subsystems.launcher.LauncherIOReal;
 import frc.robot.subsystems.launcher.LauncherIOSim;
@@ -64,10 +61,9 @@ import frc.robot.subsystems.turret.TurretIOReal;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
-import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -90,10 +86,8 @@ public class RobotContainer {
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
   private final CommandXboxController opController = new CommandXboxController(1);
 
-  private final CommandXboxController blakeController = new CommandXboxController(3);
-
   // Dashboard inputs
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final SendableChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -117,21 +111,13 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOReal());
         launcher = new Launcher(new LauncherIOReal());
         spindexer = new Spindexer(new SpindexerIOReal());
-        turret =
-            new Turret(
-                new TurretIOReal(),
-                drive::getChassisSpeeds,
-                drive::getRotation,
-                intake::turretHasClearance);
+        turret = new Turret(new TurretIOReal(), drive::getChassisSpeeds, drive::getRotation);
         vision =
             new Vision(
                 drive::addVisionMeasurement,
-                drive::getChassisSpeeds,
-                new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
-                new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation)
-                // new VisionIOPhotonVision(
-                //     VisionConstants.camera1Name, VisionConstants.robotToCamera1)
-                );
+                // new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation)
+                new VisionIOPhotonVision(
+                    VisionConstants.camera1Name, VisionConstants.robotToCamera1));
 
         break;
 
@@ -149,15 +135,8 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         launcher = new Launcher(new LauncherIOSim());
         spindexer = new Spindexer(new SpindexerIOSim());
-        turret =
-            new Turret(
-                new TurretIOSim(),
-                drive::getChassisSpeeds,
-                drive::getRotation,
-                intake::turretHasClearance);
-        vision = new Vision(drive::addVisionMeasurement, drive::getChassisSpeeds);
-
-        DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
+        turret = new Turret(new TurretIOSim(), drive::getChassisSpeeds, drive::getRotation);
+        vision = new Vision(drive::addVisionMeasurement);
 
         break;
 
@@ -175,29 +154,44 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         launcher = new Launcher(new LauncherIO() {});
         spindexer = new Spindexer(new SpindexerIO() {});
-        turret =
-            new Turret(
-                new TurretIO() {},
-                drive::getChassisSpeeds,
-                drive::getRotation,
-                intake::turretHasClearance);
-        vision = new Vision(drive::addVisionMeasurement, drive::getChassisSpeeds);
+        turret = new Turret(new TurretIO() {}, drive::getChassisSpeeds, drive::getRotation);
+        vision = new Vision(drive::addVisionMeasurement);
 
         break;
     }
 
     registerNamedCommands();
-
     // Set up auto routines
-    setUpAutonomousCommand();
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Super auto chooser", autoChooser);
+
+    // Set up SysId routines
+    autoChooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Forward)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Quasistatic Reverse)",
+        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addOption(
+        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    autoChooser.addOption(
+        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     visualizer =
         new RobotVisualizer(
             turret::getTurretAngleRads,
-            launcher::getHoodAngleRads,
-            () ->
-                VisualizerConstants.INTAKE_STARTING_ANGLE
-                    - Units.degreesToRadians(intake.getAngleDegs()));
+            () -> 0, // TODO: replace with hood angle supplier
+            () -> 0, // TODO: replace with spindexer angle supplier
+            () -> Units.degreesToRadians(90 - intake.getAngleDegs()),
+            () -> 0 // TODO: replace with climber displacement supplier
+            );
 
     // Configure the button bindings
     configureButtonBindings();
@@ -209,10 +203,6 @@ public class RobotContainer {
               MovingShotSolver.getInstance().solve(drive::getPose, drive::getChassisSpeeds);
 
               LoggedTracer.record("MovingShotSolve");
-
-              //   Logger.recordOutput(
-              //       "Odometry/test",
-              //       new Pose3d(drive.getPose()).transformBy(visualizer.getLlTransform()));
             },
             vision));
     ledStrip.setDefaultCommand(new RunCommand(() -> ledStrip.isHubActive(), ledStrip));
@@ -225,53 +215,21 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Define preferred controller active checking logic:
-    // If the drivercontroller is trying to drive (sticks pushed beyond standard 0.1
-    // deadband),
-    // we use drivercontroller joysticks and ignore blakeController completely.
-    DoubleSupplier activeY =
-        () -> {
-          boolean driverActive =
-              Math.abs(drivercontroller.getLeftY()) > 0.1
-                  || Math.abs(drivercontroller.getLeftX()) > 0.1
-                  || Math.abs(drivercontroller.getRightX()) > 0.1;
-          return driverActive ? drivercontroller.getLeftY() : blakeController.getLeftY();
-        };
-
-    DoubleSupplier activeX =
-        () -> {
-          boolean driverActive =
-              Math.abs(drivercontroller.getLeftY()) > 0.1
-                  || Math.abs(drivercontroller.getLeftX()) > 0.1
-                  || Math.abs(drivercontroller.getRightX()) > 0.1;
-          return driverActive ? drivercontroller.getLeftX() : blakeController.getLeftX();
-        };
-
-    DoubleSupplier activeOmega =
-        () -> {
-          boolean driverActive =
-              Math.abs(drivercontroller.getLeftY()) > 0.1
-                  || Math.abs(drivercontroller.getLeftX()) > 0.1
-                  || Math.abs(drivercontroller.getRightX()) > 0.1;
-          return driverActive ? drivercontroller.getRightX() : blakeController.getRightX();
-        };
-
     // Driver Bindings
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -activeY.getAsDouble() * getRobotSpeedMultiplier(),
-            () -> -activeX.getAsDouble() * getRobotSpeedMultiplier(),
-            () -> -activeOmega.getAsDouble()));
+            () -> -drivercontroller.getLeftY() * getRobotSpeedMultiplier(),
+            () -> -drivercontroller.getLeftX() * getRobotSpeedMultiplier(),
+            () -> -drivercontroller.getRightX()));
 
     // Switch to X pattern when X button is pressed
-    drivercontroller.x().or(blakeController.x()).onTrue(Commands.runOnce(drive::stopWithX, drive));
+    drivercontroller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when start button is pressed
     drivercontroller
         .start()
-        .or(blakeController.start())
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -283,81 +241,42 @@ public class RobotContainer {
     // Drive at a 45° for going over the bump
     drivercontroller
         .a()
-        .or(blakeController.a())
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -activeY.getAsDouble(),
-                () -> -activeX.getAsDouble(),
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
                 () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
     drivercontroller
         .y()
-        .or(blakeController.y())
         .toggleOnTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -activeY.getAsDouble(),
-                () -> -activeX.getAsDouble(),
+                () -> -drivercontroller.getLeftY(),
+                () -> -drivercontroller.getLeftX(),
                 () ->
                     DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds, drive::getRotation)));
 
-    // drivercontroller
-    //     .rightBumper()
-    //     .and(() -> launcher.getLauncherState() != LauncherState.MANUAL)
-    //     .whileTrue(
-    //         new ShootOnTheMove(
-    //                 launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-    //             .alongWith(launcher.score()))
-    //     .onFalse(
-    //         new InstantCommand(() -> spindexer.setStopped())
-    //             .andThen(new WaitCommand(0.2))
-    //             .andThen(new InstantCommand(() -> feeder.setStopped())));
-
-    // drivercontroller
-    //     .rightBumper()
-    //     .and(() -> launcher.getLauncherState() == LauncherState.MANUAL)
-    //     .whileTrue(
-    //         new InstantCommand(
-    //             () -> {
-    //               feeder.setRunning();
-    //               spindexer.setRunning();
-    //             }))
-    //     .onFalse(
-    //         new InstantCommand(() -> spindexer.setStopped())
-    //             .andThen(new WaitCommand(0.2))
-    //             .andThen(new InstantCommand(() -> feeder.setStopped())));
-
     drivercontroller
         .rightBumper()
         .whileTrue(
-            Commands.either(
-                Commands.startEnd(
-                    () -> {
-                      feeder.setRunning();
-                      spindexer.setRunning();
-                    },
-                    () -> {
-                      spindexer.setStopped();
-                      feeder.setStopped();
-                    }),
-                new ShootOnTheMove(
-                        launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-                    .alongWith(launcher.score())
-                    .finallyDo(
-                        (b) -> {
-                          spindexer.setStopped();
-                          feeder.setStopped();
-                        }),
-                () -> launcher.getLauncherState() == LauncherState.MANUAL));
+            new ShootOnTheMove(
+                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
+                .alongWith(launcher.score()))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  feeder.setStopped();
+                  spindexer.setStopped();
+                }));
 
     drivercontroller
         .rightBumper()
-        .and(() -> MovingShotSolver.getInstance().getGoal() == Goal.HUB)
         .whileTrue(
             Commands.startEnd(
                 () -> {
-                  setRobotSpeedMultiplier(Math.sqrt(0.25));
+                  setRobotSpeedMultiplier(0.7);
                 },
                 () -> {
                   setRobotSpeedMultiplier(1.0);
@@ -365,26 +284,17 @@ public class RobotContainer {
 
     drivercontroller
         .leftBumper()
-        .or(blakeController.leftTrigger())
         .whileTrue(new InstantCommand(() -> intake.setIntaking()))
         .onFalse(new InstantCommand(() -> intake.setDeployed()));
-
-    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setFlow()));
-
-    drivercontroller
-        .povDown()
-        .or(blakeController.povDown())
-        .onTrue(new InstantCommand(() -> intake.setDeployed()));
-
+    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
     drivercontroller
         .povLeft()
-        .or(blakeController.povLeft())
         .onTrue(new InstantCommand(() -> intake.setOuttaking()))
         .onFalse(new InstantCommand(() -> intake.setDeployed()));
 
     drivercontroller
         .b()
-        .or(blakeController.b())
         .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer))
         .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
 
@@ -399,16 +309,7 @@ public class RobotContainer {
                   spindexer.setStopped();
                   feeder.setStopped();
                 }));
-
-    opController
-        .y()
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  if (launcher.getLauncherState() != LauncherState.MANUAL) {
-                    launcher.setManual();
-                  } else launcher.setIdle();
-                }));
+    opController.y().onTrue(new InstantCommand(() -> launcher.setManual()));
 
     opController.povLeft().whileTrue(new RunCommand(() -> turret.adjustRotationBy(+0.01)));
     opController.povRight().whileTrue(new RunCommand(() -> turret.adjustRotationBy(-0.01)));
@@ -441,7 +342,6 @@ public class RobotContainer {
 
     opController
         .back()
-        .or(blakeController.back())
         .onTrue(
             new RunCommand( // same as default cmd btw
                 () ->
@@ -449,22 +349,8 @@ public class RobotContainer {
                         () -> MovingShotSolver.getShotSolution().turretAngle()),
                 turret));
 
-    // opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
-    // opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
-
-    if (!drivercontroller.leftBumper().getAsBoolean()
-        || drivercontroller.povCenter().getAsBoolean()) {
-      opController
-          .rightBumper()
-          .whileTrue(
-              new SequentialCommandGroup(
-                      new InstantCommand(() -> intake.setFlow()),
-                      new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC),
-                      new InstantCommand(() -> intake.setDeployed()),
-                      new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC))
-                  .repeatedly())
-          .onFalse(new InstantCommand(() -> intake.setDeployed()));
-    }
+    opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
+    opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
 
     opController
         .start()
@@ -481,192 +367,6 @@ public class RobotContainer {
                       }
                     })
                 .ignoringDisable(true));
-
-    // runs the hood down, then when released, zeroes the hood
-    // if disabled, the hood won't run down
-    opController.x().whileTrue(launcher.zeroHoodCommand().ignoringDisable(true));
-
-    // ==========================================
-    // Blake Controller (Port 3) Bindings
-    // ==========================================
-
-    // STOW Intake when HELD (Left Bumper)
-    blakeController
-        .leftBumper()
-        .whileTrue(new InstantCommand(() -> intake.setStowed()))
-        .onFalse(new InstantCommand(() -> intake.setDeployed()));
-
-    // STOW Intake (Dpad Up)
-    blakeController.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
-
-    // IN-Take Intake (Dpad Right)
-    blakeController
-        .povRight()
-        .onTrue(new InstantCommand(() -> intake.setIntaking()))
-        .onFalse(new InstantCommand(() -> intake.setDeployed()));
-
-    // Toggle AUTO Shoot (Right Bumper)
-    blakeController
-        .rightBumper()
-        .toggleOnTrue(
-            new ShootOnTheMove(
-                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-                .alongWith(launcher.score())
-                .alongWith(
-                    new SequentialCommandGroup(
-                            Commands.run(
-                                    () -> {
-                                      blakeController
-                                          .getHID()
-                                          .setRumble(GenericHID.RumbleType.kLeftRumble, 1.0);
-                                      blakeController
-                                          .getHID()
-                                          .setRumble(GenericHID.RumbleType.kRightRumble, 0.5);
-                                    })
-                                .withTimeout(0.5),
-                            new SequentialCommandGroup(
-                                    Commands.run(
-                                            () -> {
-                                              blakeController
-                                                  .getHID()
-                                                  .setRumble(
-                                                      GenericHID.RumbleType.kLeftRumble, 0.0);
-                                              blakeController
-                                                  .getHID()
-                                                  .setRumble(
-                                                      GenericHID.RumbleType.kRightRumble, 1.0);
-                                            })
-                                        .withTimeout(0.2),
-                                    Commands.run(
-                                            () -> {
-                                              blakeController
-                                                  .getHID()
-                                                  .setRumble(
-                                                      GenericHID.RumbleType.kLeftRumble, 0.0);
-                                              blakeController
-                                                  .getHID()
-                                                  .setRumble(
-                                                      GenericHID.RumbleType.kRightRumble, 0.0);
-                                            })
-                                        .withTimeout(0.05))
-                                .repeatedly())
-                        .finallyDo(
-                            (b) -> {
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                            }))
-                .finallyDo(
-                    (b) -> {
-                      spindexer.setStopped();
-                      feeder.setStopped();
-                    }));
-
-    // Shoot OTM (Right Trigger)
-    blakeController
-        .rightTrigger()
-        .whileTrue(
-            new ShootOnTheMove(
-                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-                .alongWith(launcher.score())
-                .alongWith(
-                    Commands.startEnd(
-                        () -> {
-                          blakeController
-                              .getHID()
-                              .setRumble(GenericHID.RumbleType.kLeftRumble, 0.5);
-                          blakeController
-                              .getHID()
-                              .setRumble(GenericHID.RumbleType.kRightRumble, 1.0);
-                        },
-                        () -> {
-                          blakeController
-                              .getHID()
-                              .setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                          blakeController
-                              .getHID()
-                              .setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                        }))
-                .finallyDo(
-                    (b) -> {
-                      spindexer.setStopped();
-                      feeder.setStopped();
-                    }));
-
-    // Rumble for Left Trigger (Intake)
-    blakeController
-        .leftTrigger()
-        .whileTrue(
-            Commands.startEnd(
-                () -> {
-                  blakeController.getHID().setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                  blakeController.getHID().setRumble(GenericHID.RumbleType.kRightRumble, 0.22);
-                },
-                () -> {
-                  blakeController.getHID().setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                  blakeController.getHID().setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                }));
-
-    // Rumble for B Button (Reverse Spindexer)
-    blakeController
-        .b()
-        .onTrue(
-            Commands.run(
-                    () -> {
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kRightRumble, 0.5);
-                    })
-                .withTimeout(0.25)
-                .finallyDo(
-                    (b) -> {
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                    }));
-
-    // Rumble for Start Button (Zero Turret Heartbeat)
-    blakeController
-        .start()
-        .onTrue(
-            new SequentialCommandGroup(
-                    Commands.run(
-                            () -> {
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kLeftRumble, 1.0);
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                            })
-                        .withTimeout(0.15),
-                    Commands.run(
-                            () -> {
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                            })
-                        .withTimeout(0.15),
-                    Commands.run(
-                            () -> {
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kLeftRumble, 1.0);
-                              blakeController
-                                  .getHID()
-                                  .setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                            })
-                        .withTimeout(0.15))
-                .ignoringDisable(true)
-                .finallyDo(
-                    (b) -> {
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-                      blakeController.getHID().setRumble(GenericHID.RumbleType.kRightRumble, 0.0);
-                    }));
   }
 
   /**
@@ -674,32 +374,6 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public void setUpAutonomousCommand() {
-    // autoChooser.addOption(
-    //     "OTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps"));
-    // autoChooser.addOption(
-    //     "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
-
-    autoChooser.addOption(
-        "Adamant Trench (Outpost, 3 Sweeps, Rush)",
-        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)"));
-    autoChooser.addOption(
-        "Adamant Trench (Depot, 3 Sweeps, Rush)",
-        new PathPlannerAuto("Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
-
-    // autoChooser.addOption(
-    //     "CircleBack Outpost",
-    //     new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)"));
-
-    // autoChooser.addOption(
-    //     "CircleBack Depot",
-    //     new PathPlannerAuto("CircleBack Adamant Trench (Outpost, 3 Sweeps, Rush)", true));
-
-    autoChooser.addOption("Center Depot", new PathPlannerAuto("Center (Depot Intaking)"));
-
-    SmartDashboard.putData("clean auto chooser", autoChooser);
-  }
-
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
@@ -712,20 +386,13 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "Set Launching",
         new InstantCommand(() -> launcher.setScoring())
-            .andThen(new InstantCommand(() -> feeder.startTimer()))
-            .andThen(new WaitCommand(0.4))
+            .andThen(new WaitCommand(0.2))
             .andThen(new InstantCommand(() -> feeder.setRunning()))
             .andThen(new WaitCommand(0.2))
             .andThen(
                 (new RunCommand(() -> spindexer.setRunning(), spindexer))
-                    .until(() -> feeder.isHopperEmpty()))
-            // .withTimeout(FeederConstants.IS_HOPPER_EMPTY_BUFFER_TIME))
-            .finallyDo(
-                (bool) -> {
-                  feeder.setStopped();
-                  spindexer.setStopped();
-                  launcher.setIdle();
-                }));
+                    .until(() -> feeder.isHopperEmpty())
+                    .withTimeout(FeederConstants.IS_HOPPER_EMPTY_BUFFER_TIME)));
 
     NamedCommands.registerCommand(
         "Set Launching (No Wait)",
@@ -747,23 +414,9 @@ public class RobotContainer {
 
     // Intake Commands
     NamedCommands.registerCommand("Set Intaking", new InstantCommand(() -> intake.setIntaking()));
-    NamedCommands.registerCommand(
-        "Set Intaking Fast", new InstantCommand(() -> intake.setIntakingFast()));
     NamedCommands.registerCommand("Stop Intaking", new InstantCommand(() -> intake.setDeployed()));
     NamedCommands.registerCommand("Stow Intake", new InstantCommand(() -> intake.setStowed()));
     NamedCommands.registerCommand("Flow Intake", new InstantCommand(() -> intake.setFlow()));
-    NamedCommands.registerCommand(
-        "Jostle Intake",
-        new RunCommand(() -> intake.setIntaking(), intake)
-            .withTimeout(1) // purposefully left a little longer so no jamming
-            .andThen(
-                new SequentialCommandGroup(
-                        new InstantCommand(() -> intake.setFlow()),
-                        new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC),
-                        new InstantCommand(() -> intake.setDeployed()),
-                        new WaitCommand(IntakeConstants.INTAKE_JOSTLE_TIME_SEC))
-                    .repeatedly())
-            .finallyDo((bool) -> intake.setIntaking()));
 
     new EventTrigger("Set Intaking").onTrue(new InstantCommand(() -> intake.setIntaking()));
   }

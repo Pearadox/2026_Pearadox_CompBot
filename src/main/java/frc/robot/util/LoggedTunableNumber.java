@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
  */
 public class LoggedTunableNumber implements DoubleSupplier {
   private static final String tableKey = "/Tuning";
-  private boolean tuningMode = true;
+  private static final boolean tuningMode = true;
 
   private final String key;
   private boolean hasDefault = false;
@@ -45,12 +45,6 @@ public class LoggedTunableNumber implements DoubleSupplier {
    */
   public LoggedTunableNumber(String dashboardKey, double defaultValue) {
     this(dashboardKey);
-    initDefault(defaultValue);
-  }
-
-  public LoggedTunableNumber(String dashboardKey, double defaultValue, boolean tuningMode) {
-    this(dashboardKey);
-    this.tuningMode = tuningMode;
     initDefault(defaultValue);
   }
 
