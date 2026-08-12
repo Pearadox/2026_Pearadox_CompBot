@@ -9,7 +9,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -181,8 +180,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    autoChooser.addOption(
-        "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
+    // cleo can't trench
+    // autoChooser.addOption(
+    //     "DTrench-NZone-2.5-Sweeps", new PathPlannerAuto("OTrench-NZone-2.5-Sweeps", true));
 
     visualizer =
         new RobotVisualizer(
@@ -286,7 +286,7 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(new InstantCommand(() -> intake.setIntaking()))
         .onFalse(new InstantCommand(() -> intake.setDeployed()));
-    drivercontroller.povUp().onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller.povUp().or(drivercontroller.leftTrigger()).onTrue(new InstantCommand(() -> intake.setStowed()));
     drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
     drivercontroller
         .povLeft()
@@ -295,8 +295,8 @@ public class RobotContainer {
 
     drivercontroller
         .b()
-        .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer))
-        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer));
+        .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer).alongWith(new RunCommand(() -> feeder.setReverse(), feeder)))
+        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer).alongWith(new InstantCommand(()-> feeder.setStopped())));
 
     // Op Bindings
     opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));
@@ -349,8 +349,8 @@ public class RobotContainer {
                         () -> MovingShotSolver.getShotSolution().turretAngle()),
                 turret));
 
-    opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
-    opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
+    // opController.leftBumper().onTrue(new RunCommand(() -> turret.goToZero(), turret));
+    // opController.rightBumper().onTrue(new RunCommand(() -> turret.goToTestSetpoint(), turret));
 
     opController
         .start()

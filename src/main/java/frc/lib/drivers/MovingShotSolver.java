@@ -215,6 +215,8 @@ public class MovingShotSolver {
 
     boolean isFar = distanceToTarget > farShotMinDistanceMeters.get();
 
+    isFar = false;
+
     double hoodAngleRadians =
         isFar
             ? Units.degreesToRadians(farShotAngleDegrees.get())
@@ -282,7 +284,7 @@ public class MovingShotSolver {
 
     double multiplier = isFar ? farRpsMultiplier.get() : rpsMultiplier.get();
 
-    double outputtedShooterVelocity = MathUtil.clamp(multiplier * shooterSpeedRPS, 40, 100);
+    double outputtedShooterVelocity = MathUtil.clamp(multiplier * shooterSpeedRPS, 10, 100);
 
     // Compute field-relative turret angle
 
