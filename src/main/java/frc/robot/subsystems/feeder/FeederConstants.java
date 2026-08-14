@@ -20,7 +20,6 @@ public class FeederConstants {
     STOPPED,
     RUNNING,
     REVERSE
-
   }
 
   public static record StateConfig(double voltage) {
@@ -29,7 +28,6 @@ public class FeederConstants {
             FeederState.STOPPED, new StateConfig(0),
             FeederState.RUNNING, new StateConfig((-12)),
             FeederState.REVERSE, new StateConfig((12)));
-          
   }
 
   // feeder constants
