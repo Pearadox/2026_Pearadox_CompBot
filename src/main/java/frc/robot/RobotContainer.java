@@ -286,7 +286,10 @@ public class RobotContainer {
         .leftBumper()
         .whileTrue(new InstantCommand(() -> intake.setIntaking()))
         .onFalse(new InstantCommand(() -> intake.setDeployed()));
-    drivercontroller.povUp().or(drivercontroller.leftTrigger()).onTrue(new InstantCommand(() -> intake.setStowed()));
+    drivercontroller
+        .povUp()
+        .or(drivercontroller.leftTrigger())
+        .onTrue(new InstantCommand(() -> intake.setStowed()));
     drivercontroller.povDown().onTrue(new InstantCommand(() -> intake.setDeployed()));
     drivercontroller
         .povLeft()
@@ -295,8 +298,12 @@ public class RobotContainer {
 
     drivercontroller
         .b()
-        .whileTrue(new RunCommand(() -> spindexer.setReverse(), spindexer).alongWith(new RunCommand(() -> feeder.setReverse(), feeder)))
-        .onFalse(new InstantCommand(() -> spindexer.setStopped(), spindexer).alongWith(new InstantCommand(()-> feeder.setStopped())));
+        .whileTrue(
+            new RunCommand(() -> spindexer.setReverse(), spindexer)
+                .alongWith(new RunCommand(() -> feeder.setReverse(), feeder)))
+        .onFalse(
+            new InstantCommand(() -> spindexer.setStopped(), spindexer)
+                .alongWith(new InstantCommand(() -> feeder.setStopped())));
 
     // Op Bindings
     opController.a().onTrue(new InstantCommand(() -> launcher.setIdle()));

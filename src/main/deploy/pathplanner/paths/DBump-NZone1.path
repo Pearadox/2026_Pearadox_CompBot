@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.585,
-        "y": 5.504084507042253
+        "x": 3.52151212553495,
+        "y": 5.34827389443652
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.91777108433735,
-        "y": 5.318192940777192
+        "x": 4.8541940085592,
+        "y": 5.490599144079885
       },
       "isLocked": false,
       "linkedName": "Depot bump"
     },
     {
       "anchor": {
-        "x": 6.045,
-        "y": 5.736
+        "x": 6.368017118402282,
+        "y": 5.34827389443652
       },
       "prevControl": {
-        "x": 5.505289156626507,
-        "y": 5.3463253012048195
+        "x": 5.785777460770329,
+        "y": 5.257703281027106
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "neutral2"
     }
   ],
   "rotationTargets": [],
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.0,
+    "velocity": 0.0,
     "rotation": -90.0
   },
   "reversed": false,
