@@ -28,6 +28,10 @@ public class Launcher extends SubsystemBase {
     rpsAdjust += adj;
   }
 
+  public void setAdjust(double d) {
+    rpsAdjust = d;
+  }
+
   private final LoggedTunableNumber tunableffAmps = new LoggedTunableNumber("Launcher/ffamps", 0);
   private final LoggedTunableNumber manualDefaultVelocity =
       new LoggedTunableNumber(

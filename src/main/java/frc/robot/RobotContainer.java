@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.drivers.MovingShotSolver;
+import frc.robot.commands.DemoLaunching;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ShootOnTheMove;
 import frc.robot.generated.TunerConstants;
@@ -80,7 +81,7 @@ public class RobotContainer {
 
   // Visualizer
   public final RobotVisualizer visualizer;
-  @Getter @Setter private double robotSpeedMultiplier = 1.0;
+  @Getter @Setter private double robotSpeedMultiplier = 0.5;
 
   // Controller
   private final CommandXboxController drivercontroller = new CommandXboxController(0);
@@ -258,29 +259,31 @@ public class RobotContainer {
                 () ->
                     DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds, drive::getRotation)));
 
-    drivercontroller
-        .rightBumper()
-        .whileTrue(
-            new ShootOnTheMove(
-                    launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
-                .alongWith(launcher.score()))
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  feeder.setStopped();
-                  spindexer.setStopped();
-                }));
+    // drivercontroller
+    //     .rightBumper()
+    //     .whileTrue(
+    //         new ShootOnTheMove(
+    //                 launcher, feeder, spindexer, turret::getFieldRelativeTurretAngleRotation2d)
+    //             .alongWith(launcher.score()))
+    //     .onFalse(
+    //         new InstantCommand(
+    //             () -> {
+    //               feeder.setStopped();
+    //               spindexer.setStopped();
+    //             }));
 
-    drivercontroller
-        .rightBumper()
-        .whileTrue(
-            Commands.startEnd(
-                () -> {
-                  setRobotSpeedMultiplier(0.7);
-                },
-                () -> {
-                  setRobotSpeedMultiplier(1.0);
-                }));
+    // drivercontroller
+    //     .rightBumper()
+    //     .whileTrue(
+    //         Commands.startEnd(
+    //             () -> {
+    //               setRobotSpeedMultiplier(0.7);
+    //             },
+    //             () -> {
+    //               setRobotSpeedMultiplier(1.0);
+    //             }));
+
+    drivercontroller.rightBumper().whileTrue(DemoLaunching.launchRandomly(launcher, turret, feeder, spindexer));
 
     drivercontroller
         .leftBumper()
