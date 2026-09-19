@@ -6,6 +6,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
 public class MovingShotSolver {
+
   private static MovingShotSolver INSTANCE;
 
   public static MovingShotSolver getInstance() {
@@ -30,6 +32,19 @@ public class MovingShotSolver {
     }
     return INSTANCE;
   }
+
+  private final InterpolatingDoubleTreeMap LAUNCH_RPS_MAP() {
+    // Mapping distance from hub (m) to desired launcher speed (rps)
+    InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+    map.put(1.78, 37.09);
+    map.put(2.96, 44.78);
+    map.put(4.57, 55.54);
+    map.put(4.86, 61.46);
+    map.put(5.72, 63.23);
+    return map;
+  }
+
+  private final InterpolatingDoubleTreeMap launchRPSMap = LAUNCH_RPS_MAP();
 
   private MovingShotSolver() {}
 
@@ -276,15 +291,15 @@ public class MovingShotSolver {
 
     // Shooter wheel speed (rot / s) magnitude:
 
-    double shooterSpeedRPS = shooterSpeedMPS * MPSToRPSConversion;
-
     double targetXOffsetMeters = goalXMeters - predictedRobotVx * ToF;
     double targetYOffsetMeters = goalYMeters - predictedRobotVy * ToF;
     Pose2d targetPose = new Pose2d(targetXOffsetMeters, targetYOffsetMeters, new Rotation2d());
+    double distanceX = targetXOffsetMeters - turretXMeters;
+    double distanceY = targetYOffsetMeters - turretYMeters;
 
-    double multiplier = isFar ? farRpsMultiplier.get() : rpsMultiplier.get();
+    double distanceToVirtualTarget = Math.hypot(distanceX, distanceY);
 
-    double outputtedShooterVelocity = MathUtil.clamp(multiplier * shooterSpeedRPS, 10, 100);
+    double shooterSpeedRPS = MathUtil.clamp(launchRPSMap.get(distanceToVirtualTarget), 0, 100);
 
     // Compute field-relative turret angle
 
@@ -293,18 +308,15 @@ public class MovingShotSolver {
     Logger.recordOutput(
         "SOTM/fieldRelativeTurretAngle", fieldRelativeTurretAngleRot2d.getDegrees());
     Logger.recordOutput("SOTM/timeOfFlight", ToF);
-    Logger.recordOutput("SOTM/desiredShooterSpeed_RPS", shooterSpeedRPS * rpsMultiplier.get());
-    Logger.recordOutput("SOTM/cappedShooterSpeed_RPS", outputtedShooterVelocity);
+    Logger.recordOutput("SOTM/desiredShooterSpeed_RPS", shooterSpeedRPS);
     Logger.recordOutput("SOTM/currentRotation", curPose.getRotation().getDegrees());
     Logger.recordOutput("SOTM/targetPose", targetPose);
     Logger.recordOutput("SOTM/Goal", goal.toString());
     Logger.recordOutput("SOTM/desiredHoodAngle", Units.radiansToDegrees(hoodAngleRadians));
+    Logger.recordOutput("SOTM/distanceToVirtualTarget", distanceToVirtualTarget);
 
     return shotSolution =
         new ShotSolution(
-            ToF,
-            outputtedShooterVelocity,
-            fieldRelativeTurretAngleRot2d,
-            Math.PI / 2 - hoodAngleRadians);
+            ToF, shooterSpeedRPS, fieldRelativeTurretAngleRot2d, Math.PI / 2 - hoodAngleRadians);
   }
 }
