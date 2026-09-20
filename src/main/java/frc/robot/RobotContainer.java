@@ -61,7 +61,6 @@ import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
 import lombok.Getter;
 import lombok.Setter;
@@ -266,7 +265,8 @@ public class RobotContainer {
     //             () -> -drivercontroller.getLeftY(),
     //             () -> -drivercontroller.getLeftX(),
     //             () ->
-    //                 DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds, drive::getRotation)));
+    //                 DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds,
+    // drive::getRotation)));
 
     drivercontroller
         .rightBumper()
