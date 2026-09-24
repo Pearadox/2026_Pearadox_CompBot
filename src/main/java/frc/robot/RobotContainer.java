@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -61,7 +61,6 @@ import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.util.DriveHelpers;
 import frc.robot.util.LoggedTracer;
 import lombok.Getter;
 import lombok.Setter;
@@ -86,7 +85,7 @@ public class RobotContainer {
   private final CommandXboxController opController = new CommandXboxController(1);
 
   // Dashboard inputs
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -161,7 +160,17 @@ public class RobotContainer {
 
     registerNamedCommands();
     // Set up auto routines
-    autoChooser = AutoBuilder.buildAutoChooser();
+
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser.addOption(
+        "Depot-Side Bump", new PathPlannerAuto("shoot + DepotSide_NZone Scoop + Uturn"));
+    autoChooser.addOption(
+        "Outpost-Side Bump", new PathPlannerAuto("shoot + DepotSide_NZone Scoop + Uturn", true));
+    autoChooser.addOption("Center - Preload only", new PathPlannerAuto("Center-Shoot"));
+    // autoChooser.addOption(
+    //         "Center + Depot Sweep (untested)",
+    //         new PathPlannerAuto("Center-Depot"));
+
     SmartDashboard.putData("Super auto chooser", autoChooser);
 
     // Set up SysId routines
@@ -239,24 +248,25 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // Drive at a 45° for going over the bump
-    drivercontroller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -drivercontroller.getLeftY(),
-                () -> -drivercontroller.getLeftX(),
-                () -> DriveHelpers.findClosestCorner(drive::getPose)));
+    // drivercontroller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -drivercontroller.getLeftY(),
+    //             () -> -drivercontroller.getLeftX(),
+    //             () -> DriveHelpers.findClosestCorner(drive::getPose)));
 
-    drivercontroller
-        .y()
-        .toggleOnTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -drivercontroller.getLeftY(),
-                () -> -drivercontroller.getLeftX(),
-                () ->
-                    DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds, drive::getRotation)));
+    // drivercontroller
+    //     .y()
+    //     .toggleOnTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -drivercontroller.getLeftY(),
+    //             () -> -drivercontroller.getLeftX(),
+    //             () ->
+    //                 DriveHelpers.getCourseRotation2d(drive::getChassisSpeeds,
+    // drive::getRotation)));
 
     drivercontroller
         .rightBumper()
